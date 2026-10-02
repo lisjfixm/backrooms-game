@@ -71,6 +71,35 @@
     letter-spacing:2px; text-align:center;
   }
   .path-steps { list-style:none; }
+  .method-header {
+    padding:12px 16px; margin:16px 0 8px 0;
+    background:rgba(201,168,76,0.08);
+    border:1px solid rgba(201,168,76,0.2);
+    border-radius:4px;
+    font-size:14px; color:#c9a84c; font-weight:bold;
+  }
+  .method-header.rare {
+    background:rgba(180,80,80,0.08);
+    border-color:rgba(180,80,80,0.25);
+    color:#d49090;
+  }
+  .method-tag {
+    display:inline-block; padding:2px 10px;
+    background:rgba(201,168,76,0.2); border-radius:3px;
+    margin-right:8px; font-size:12px;
+  }
+  .method-header.rare .method-tag {
+    background:rgba(180,80,80,0.2);
+  }
+  .rare-badge {
+    display:inline-block; padding:1px 6px;
+    background:rgba(180,80,80,0.2); color:#d49090;
+    border-radius:3px; font-size:10px; margin-left:6px;
+  }
+  .path-divider {
+    text-align:center; padding:16px;
+    color:rgba(201,168,76,0.4); font-size:14px; letter-spacing:4px;
+  }
   .path-card {
     background:rgba(20,16,10,0.7);
     border:1px solid rgba(201,168,76,0.2);
@@ -727,25 +756,25 @@ const CONNECTIONS = [
   { from:'23', to:'69', method:'在 Level 23 中穿過地板會憑空消失，並在 Level 69 隨機車內醒來' },
   // Level 25
   { from:'25', to:'9', method:'黃色街機櫃' },
-  { from:'25', to:'0', method:'在 Level 25 中找到一台正常運作的街機（平均每1500台才有1台未損毀），投入一枚25美分硬幣並集中精神，即可被傳送至 Level 0。到達後在身後約100步處可找到另一台街機返回。' },
-  { from:'25', to:'5', method:'在 Level 25 中找到一台正常運作的街機（平均每1500台才有1台未損毀），投入一枚25美分硬幣並集中精神，即可被傳送至 Level 5。到達後在身後約100步處可找到另一台街機返回。' },
+  { from:'25', to:'0', method:'在 Level 25 中找到一台正常運作的街機（平均每1500台才有1台未損毀），投入一枚25美分硬幣並集中精神，即可被傳送至 Level 0。到達後在身後約100步處可找到另一台街機返回。', rare:true },
+  { from:'25', to:'5', method:'在 Level 25 中找到一台正常運作的街機（平均每1500台才有1台未損毀），投入一枚25美分硬幣並集中精神，即可被傳送至 Level 5。到達後在身後約100步處可找到另一台街機返回。', rare:true },
   { from:'25', to:'10', method:'Level 25 中通向 Level 10 的街機因進水已徹底失去效用，無法使用。' },
-  { from:'25', to:'11', method:'在 Level 25 中找到一台正常運作的街機（平均每1500台才有1台未損毀），投入一枚25美分硬幣並集中精神，即可被傳送至 Level 11。到達後在身後約100步處可找到另一台街機返回。' },
-  { from:'25', to:'19', method:'在 Level 25 中找到一台正常運作的街機（平均每1500台才有1台未損毀），投入一枚25美分硬幣並集中精神，即可被傳送至 Level 19。到達後在身後約100步處可找到另一台街機返回。' },
-  { from:'25', to:'24', method:'在 Level 25 中找到一台正常運作的街機（平均每1500台才有1台未損毀），投入一枚25美分硬幣並集中精神，即可被傳送至 Level 24。到達後在身後約100步處可找到另一台街機返回。' },
-  { from:'25', to:'29', method:'在 Level 25 中找到一台正常運作的街機（平均每1500台才有1台未損毀），投入一枚25美分硬幣並集中精神，即可被傳送至 Level 29。到達後在身後約100步處可找到另一台街機返回。' },
-  { from:'25', to:'37', method:'在 Level 25 中找到一台正常運作的街機（平均每1500台才有1台未損毀），投入一枚25美分硬幣並集中精神，即可被傳送至 Level 37。到達後在身後約100步處可找到另一台街機返回。' },
-  { from:'25', to:'50', method:'在 Level 25 中找到一台正常運作的街機（平均每1500台才有1台未損毀），投入一枚25美分硬幣並集中精神，即可被傳送至 Level 50。到達後在身後約100步處可找到另一台街機返回。' },
-  { from:'25', to:'90', method:'在 Level 25 中找到一台正常運作的街機（平均每1500台才有1台未損毀），投入一枚25美分硬幣並集中精神，即可被傳送至 Level 90。到達後在身後約100步處可找到另一台街機返回。' },
-  { from:'25', to:'108', method:'在 Level 25 中找到一台正常運作的街機（平均每1500台才有1台未損毀），投入一枚25美分硬幣並集中精神，即可被傳送至 Level 108。到達後在身後約100步處可找到另一台街機返回。' },
-  { from:'25', to:'120', method:'在 Level 25 中找到一台正常運作的街機（平均每1500台才有1台未損毀），投入一枚25美分硬幣並集中精神，即可被傳送至 Level 120。到達後在身後約100步處可找到另一台街機返回。' },
-  { from:'25', to:'141', method:'在 Level 25 中找到一台正常運作的街機（平均每1500台才有1台未損毀），投入一枚25美分硬幣並集中精神，即可被傳送至 Level 141。到達後在身後約100步處可找到另一台街機返回。' },
-  { from:'25', to:'150', method:'在 Level 25 中找到一台正常運作的街機（平均每1500台才有1台未損毀），投入一枚25美分硬幣並集中精神，即可被傳送至 Level 150。到達後在身後約100步處可找到另一台街機返回。' },
-  { from:'25', to:'165', method:'在 Level 25 中找到一台正常運作的街機（平均每1500台才有1台未損毀），投入一枚25美分硬幣並集中精神，即可被傳送至 Level 165。到達後在身後約100步處可找到另一台街機返回。' },
-  { from:'25', to:'188', method:'在 Level 25 中找到一台正常運作的街機（平均每1500台才有1台未損毀），投入一枚25美分硬幣並集中精神，即可被傳送至 Level 188。到達後在身後約100步處可找到另一台街機返回。' },
-  { from:'25', to:'201', method:'在 Level 25 中找到一台正常運作的街機（平均每1500台才有1台未損毀），投入一枚25美分硬幣並集中精神，即可被傳送至 Level 201。到達後在身後約100步處可找到另一台街機返回。' },
-  { from:'25', to:'790', method:'在 Level 25 中找到一台正常運作的街機（平均每1500台才有1台未損毀），投入一枚25美分硬幣並集中精神，即可被傳送至 Level 790。到達後在身後約100步處可找到另一台街機返回。' },
-  { from:'25', to:'888', method:'在 Level 25 中找到一台正常運作的街機（平均每1500台才有1台未損毀），投入一枚25美分硬幣並集中精神，即可被傳送至 Level 888。到達後在身後約100步處可找到另一台街機返回。' },
+  { from:'25', to:'11', method:'在 Level 25 中找到一台正常運作的街機（平均每1500台才有1台未損毀），投入一枚25美分硬幣並集中精神，即可被傳送至 Level 11。到達後在身後約100步處可找到另一台街機返回。', rare:true },
+  { from:'25', to:'19', method:'在 Level 25 中找到一台正常運作的街機（平均每1500台才有1台未損毀），投入一枚25美分硬幣並集中精神，即可被傳送至 Level 19。到達後在身後約100步處可找到另一台街機返回。', rare:true },
+  { from:'25', to:'24', method:'在 Level 25 中找到一台正常運作的街機（平均每1500台才有1台未損毀），投入一枚25美分硬幣並集中精神，即可被傳送至 Level 24。到達後在身後約100步處可找到另一台街機返回。', rare:true },
+  { from:'25', to:'29', method:'在 Level 25 中找到一台正常運作的街機（平均每1500台才有1台未損毀），投入一枚25美分硬幣並集中精神，即可被傳送至 Level 29。到達後在身後約100步處可找到另一台街機返回。', rare:true },
+  { from:'25', to:'37', method:'在 Level 25 中找到一台正常運作的街機（平均每1500台才有1台未損毀），投入一枚25美分硬幣並集中精神，即可被傳送至 Level 37。到達後在身後約100步處可找到另一台街機返回。', rare:true },
+  { from:'25', to:'50', method:'在 Level 25 中找到一台正常運作的街機（平均每1500台才有1台未損毀），投入一枚25美分硬幣並集中精神，即可被傳送至 Level 50。到達後在身後約100步處可找到另一台街機返回。', rare:true },
+  { from:'25', to:'90', method:'在 Level 25 中找到一台正常運作的街機（平均每1500台才有1台未損毀），投入一枚25美分硬幣並集中精神，即可被傳送至 Level 90。到達後在身後約100步處可找到另一台街機返回。', rare:true },
+  { from:'25', to:'108', method:'在 Level 25 中找到一台正常運作的街機（平均每1500台才有1台未損毀），投入一枚25美分硬幣並集中精神，即可被傳送至 Level 108。到達後在身後約100步處可找到另一台街機返回。', rare:true },
+  { from:'25', to:'120', method:'在 Level 25 中找到一台正常運作的街機（平均每1500台才有1台未損毀），投入一枚25美分硬幣並集中精神，即可被傳送至 Level 120。到達後在身後約100步處可找到另一台街機返回。', rare:true },
+  { from:'25', to:'141', method:'在 Level 25 中找到一台正常運作的街機（平均每1500台才有1台未損毀），投入一枚25美分硬幣並集中精神，即可被傳送至 Level 141。到達後在身後約100步處可找到另一台街機返回。', rare:true },
+  { from:'25', to:'150', method:'在 Level 25 中找到一台正常運作的街機（平均每1500台才有1台未損毀），投入一枚25美分硬幣並集中精神，即可被傳送至 Level 150。到達後在身後約100步處可找到另一台街機返回。', rare:true },
+  { from:'25', to:'165', method:'在 Level 25 中找到一台正常運作的街機（平均每1500台才有1台未損毀），投入一枚25美分硬幣並集中精神，即可被傳送至 Level 165。到達後在身後約100步處可找到另一台街機返回。', rare:true },
+  { from:'25', to:'188', method:'在 Level 25 中找到一台正常運作的街機（平均每1500台才有1台未損毀），投入一枚25美分硬幣並集中精神，即可被傳送至 Level 188。到達後在身後約100步處可找到另一台街機返回。', rare:true },
+  { from:'25', to:'201', method:'在 Level 25 中找到一台正常運作的街機（平均每1500台才有1台未損毀），投入一枚25美分硬幣並集中精神，即可被傳送至 Level 201。到達後在身後約100步處可找到另一台街機返回。', rare:true },
+  { from:'25', to:'790', method:'在 Level 25 中找到一台正常運作的街機（平均每1500台才有1台未損毀），投入一枚25美分硬幣並集中精神，即可被傳送至 Level 790。到達後在身後約100步處可找到另一台街機返回。', rare:true },
+  { from:'25', to:'888', method:'在 Level 25 中找到一台正常運作的街機（平均每1500台才有1台未損毀），投入一枚25美分硬幣並集中精神，即可被傳送至 Level 888。到達後在身後約100步處可找到另一台街機返回。', rare:true },
   { from:'25', to:'40', method:'在 Level 25 中擊碎玻璃後走進其中的建築，可到達 Level 40。' },
   // Level 26
   { from:'26', to:'4', method:'觸摸反轉模糊的派對海報' },
@@ -1234,9 +1263,8 @@ function buildGraph() {
   for (const c of CONNECTIONS) {
     if (!graph[c.from]) graph[c.from] = [];
     if (!graph[c.to]) graph[c.to] = [];
-    graph[c.from].push({ to:c.to, method:c.method });
-    // 雙向（反向方法描述可能不同，但這裡用同一描述的反向）
-    graph[c.to].push({ to:c.from, method:'（反向）' + c.method });
+    graph[c.from].push({ to:c.to, method:c.method, rare:!!c.rare });
+    graph[c.to].push({ to:c.from, method:'（反向）' + c.method, rare:!!c.rare });
   }
   return graph;
 }
@@ -1275,8 +1303,8 @@ function getAllMethods(from, to) {
   return methods;
 }
 
-// BFS 最快路線（最少跳轉）
-function bfs(from, to) {
+// BFS 最快路線（最少跳轉），avoidRare=true 時跳過稀有通道
+function bfs(from, to, avoidRare) {
   if (!GRAPH[from] || !GRAPH[to]) return null;
   if (from === to) return [{ level:from, method:null }];
   const visited = { [from]:true };
@@ -1285,8 +1313,9 @@ function bfs(from, to) {
     const { level, path } = queue.shift();
     for (const edge of GRAPH[level]) {
       if (visited[edge.to]) continue;
+      if (avoidRare && edge.rare) continue;
       visited[edge.to] = true;
-      const newPath = [...path, { level:edge.to, method:edge.method }];
+      const newPath = [...path, { level:edge.to, method:edge.method, rare:edge.rare }];
       if (edge.to === to) return newPath;
       queue.push({ level:edge.to, path:newPath });
     }
@@ -1294,8 +1323,8 @@ function bfs(from, to) {
   return null;
 }
 
-// Dijkstra 最安全路線（避開高危險層級）
-function dijkstra(from, to) {
+// Dijkstra 最安全路線（避開高危險層級），avoidRare=true 時跳過稀有通道
+function dijkstra(from, to, avoidRare) {
   if (!GRAPH[from] || !GRAPH[to]) return null;
   if (from === to) return [{ level:from, method:null }];
   const dist = {};
@@ -1308,11 +1337,12 @@ function dijkstra(from, to) {
     if (level === to) break;
     if (cost > (dist[level] || Infinity)) continue;
     for (const edge of GRAPH[level]) {
-      const w = getDanger(edge.to) + 0.1; // +0.1 鼓勵少跳轉
+      if (avoidRare && edge.rare) continue;
+      const w = getDanger(edge.to) + 0.1;
       const newCost = cost + w;
       if (newCost < (dist[edge.to] || Infinity)) {
         dist[edge.to] = newCost;
-        prev[edge.to] = { from:level, method:edge.method };
+        prev[edge.to] = { from:level, method:edge.method, rare:edge.rare };
         pq.push({ level:edge.to, cost:newCost });
       }
     }
@@ -1322,7 +1352,7 @@ function dijkstra(from, to) {
   let cur = to;
   while (cur) {
     const p = prev[cur];
-    path.unshift({ level:cur, method: p ? p.method : null });
+    path.unshift({ level:cur, method: p ? p.method : null, rare: p ? p.rare : false });
     cur = p ? p.from : null;
   }
   return path;
@@ -1341,76 +1371,104 @@ function findPath() {
   if (!GRAPH[from]) { alert('Level ' + from + ' 尚未收錄或不存在'); return; }
   if (!GRAPH[to]) { alert('Level ' + to + ' 尚未收錄或不存在'); return; }
 
-  const path = routeType === 'safest' ? dijkstra(from, to) : bfs(from, to);
+  const algo = routeType === 'safest' ? dijkstra : bfs;
+
+  // 方法一：正常路線（跳過稀有通道）
+  const normalPath = algo(from, to, true);
+  // 方法二：包含稀有通道的最短路線
+  const rarePath = algo(from, to, false);
+
   pathSteps.innerHTML = '';
 
-  if (!path) {
+  if (!normalPath && !rarePath) {
     resultTitle.textContent = '找不到路徑';
     pathSteps.innerHTML = '<div class="no-path">目前資料中沒有從 Level ' + from + ' 到 Level ' + to + ' 的已知路徑。</div>';
     resultArea.classList.add('show');
     return;
   }
 
-  const jumps = path.length - 1;
-  const totalDanger = path.reduce((s, p) => s + getDanger(p.level), 0);
   const routeLabel = routeType === 'safest' ? '最安全路線' : '最快路線';
-  resultTitle.textContent = 'Level ' + from + ' → Level ' + to + '（' + routeLabel + '，' + jumps + ' 次跳轉，危險度 ' + totalDanger + '）';
+  resultTitle.textContent = 'Level ' + from + ' → Level ' + to + '（' + routeLabel + '）';
 
-  path.forEach((step, i) => {
-    const info = LEVEL_INFO[step.level] || { name:'未知', class:'?' };
-    const isLast = (i === path.length - 1);
-    const nextLevel = isLast ? null : path[i + 1].level;
-    const nextInfo = nextLevel ? (LEVEL_INFO[nextLevel] || { name:'未知' }) : null;
-    const wikiUrl = 'https://backrooms-wiki-cn.wikidot.com/level-' + step.level;
+  // Helper: render a single path
+  function renderPath(path, label, isRare) {
+    const header = document.createElement('div');
+    header.className = 'method-header' + (isRare ? ' rare' : '');
+    const jumps = path.length - 1;
+    const totalDanger = path.reduce((s, p) => s + getDanger(p.level), 0);
+    header.innerHTML = '<span class="method-tag">' + label + '</span> ' + jumps + ' 次跳轉，危險度 ' + totalDanger + (isRare ? '（含稀有通道）' : '');
+    pathSteps.appendChild(header);
 
-    // Level card
-    const card = document.createElement('div');
-    card.className = 'path-card';
-    card.innerHTML =
-      '<div class="path-card-header">' +
-        '<div class="step-num">' + (i + 1) + '</div>' +
-        '<div class="step-header-info">' +
-          '<div class="step-level"><span class="level-badge">Level ' + step.level + '</span>' + info.name + '</div>' +
-          '<div class="step-name">生存難度等級 ' + info.class + (isLast ? ' · 終點' : '') + '</div>' +
-        '</div>' +
-        '<a class="step-wiki-link" href="' + wikiUrl + '" target="_blank">維基頁面</a>' +
-      '</div>';
-    pathSteps.appendChild(card);
+    path.forEach((step, i) => {
+      const info = LEVEL_INFO[step.level] || { name:'未知', class:'?' };
+      const isLast = (i === path.length - 1);
+      const nextLevel = isLast ? null : path[i + 1].level;
+      const nextInfo = nextLevel ? (LEVEL_INFO[nextLevel] || { name:'未知' }) : null;
+      const wikiUrl = 'https://backrooms-wiki-cn.wikidot.com/level-' + step.level;
 
-    // Transition box with ALL methods
-    if (!isLast) {
-      const allMethods = getAllMethods(step.level, nextLevel);
-      let methodsHtml = '';
-      if (allMethods.length > 0) {
-        methodsHtml = '<ul class="method-list">' +
-          allMethods.map(m => '<li>' + m + '</li>').join('') +
-          '</ul>';
-      } else {
-        methodsHtml = '<div class="transition-method">' + (step.method || '未知方式') + '</div>';
-      }
-
-      // Build intro text
-      const fromName = info.name;
-      const toName = nextInfo ? nextInfo.name : '';
-      const intro = '從「' + fromName + '」前往「' + toName + '」，共有 ' + allMethods.length + ' 種已知方式：';
-
-      const trans = document.createElement('div');
-      trans.className = 'transition-connector';
-      trans.innerHTML =
-        '<div class="transition-arrow">▼ ▼</div>' +
-        '<div class="transition-box">' +
-          '<div class="transition-label">Level ' + step.level + ' → Level ' + nextLevel + '</div>' +
-          '<div class="transition-intro">' + intro + '</div>' +
-          methodsHtml +
+      const card = document.createElement('div');
+      card.className = 'path-card';
+      card.innerHTML =
+        '<div class="path-card-header">' +
+          '<div class="step-num">' + (i + 1) + '</div>' +
+          '<div class="step-header-info">' +
+            '<div class="step-level"><span class="level-badge">Level ' + step.level + '</span>' + info.name + (step.rare ? ' <span class="rare-badge">稀有</span>' : '') + '</div>' +
+            '<div class="step-name">生存難度等級 ' + info.class + (isLast ? ' · 終點' : '') + '</div>' +
+          '</div>' +
+          '<a class="step-wiki-link" href="' + wikiUrl + '" target="_blank">維基頁面</a>' +
         '</div>';
-      pathSteps.appendChild(trans);
-    } else {
-      const end = document.createElement('div');
-      end.className = 'transition-connector';
-      end.innerHTML = '<div class="transition-end">✓ 已到達目標 Level ' + step.level + '</div>';
-      pathSteps.appendChild(end);
+      pathSteps.appendChild(card);
+
+      if (!isLast) {
+        const allMethods = getAllMethods(step.level, nextLevel);
+        let methodsHtml = '';
+        if (allMethods.length > 0) {
+          methodsHtml = '<ul class="method-list">' +
+            allMethods.map(m => '<li>' + m + '</li>').join('') +
+            '</ul>';
+        } else {
+          methodsHtml = '<div class="transition-method">' + (step.method || '未知方式') + '</div>';
+        }
+        const fromName = info.name;
+        const toName = nextInfo ? nextInfo.name : '';
+        const intro = '從「' + fromName + '」前往「' + toName + '」，共有 ' + allMethods.length + ' 種已知方式：';
+
+        const trans = document.createElement('div');
+        trans.className = 'transition-connector';
+        trans.innerHTML =
+          '<div class="transition-arrow">▼ ▼</div>' +
+          '<div class="transition-box">' +
+            '<div class="transition-label">Level ' + step.level + ' → Level ' + nextLevel + (step.rare ? ' ⚠ 稀有通道' : '') + '</div>' +
+            '<div class="transition-intro">' + intro + '</div>' +
+            methodsHtml +
+          '</div>';
+        pathSteps.appendChild(trans);
+      } else {
+        const end = document.createElement('div');
+        end.className = 'transition-connector';
+        end.innerHTML = '<div class="transition-end">✓ 已到達目標 Level ' + step.level + '</div>';
+        pathSteps.appendChild(end);
+      }
+    });
+  }
+
+  // 方法一：正常路線
+  if (normalPath) {
+    renderPath(normalPath, '方法一：正常路線', false);
+  }
+
+  // 方法二：稀有路線（如果與正常路線不同）
+  if (rarePath) {
+    const normalStr = normalPath ? normalPath.map(p => p.level).join(',') : '';
+    const rareStr = rarePath.map(p => p.level).join(',');
+    if (rareStr !== normalStr) {
+      const divider = document.createElement('div');
+      divider.className = 'path-divider';
+      divider.textContent = '— 或 —';
+      pathSteps.appendChild(divider);
+      renderPath(rarePath, '方法二：困難路線（含稀有通道）', true);
     }
-  });
+  }
 
   resultArea.classList.add('show');
   resultArea.scrollIntoView({ behavior:'smooth', block:'start' });
