@@ -532,10 +532,6 @@ const CONNECTIONS = [
   { from:'-5', to:'56', method:'在 Level -5 中走入洞穴可進入本層' },
   // Level 0
   { from:'0', to:'1', method:'在 Level 0 的黃色房間中不斷行走，留意外觀詭異、不斷閃爍的牆壁；發現後穿過那面牆（切出），即可進入 Level 1。這是 Level 0 唯一已知的出口。' },
-  { from:'0', to:'44', method:'打開其中一扇金屬門' },
-  { from:'0', to:'46', method:'找到一扇生鏽的門' },
-  { from:'0', to:'58', method:'據稱在 Level 0 內乘坐多色水滑梯可到達（未經確認）' },
-  { from:'0', to:'72', method:'從 Level 0 的某處落阱中墜落極長時間會進入 Level 72' },
   // Level 1
   { from:'1', to:'2', method:'在 Level 1 中沿著管道與儀表盤逐漸顯現的方向移動，持續行走足夠遠的距離，周圍環境會逐步變為工業風格，即可進入 Level 2「廢棄公共帶」。這是 Level 1 最常見且最穩定的出口。' },
   { from:'1', to:'hub', method:'在特定地點按特定方式切入，可到達樞紐（Hub）。' },
@@ -1255,6 +1251,25 @@ const CONNECTIONS = [
   { from:'level-9-1', to:'73', method:'在 old:level-9-1 的幽暗處停留太久會抵達 Level 73' },
   // Level 地铁
   { from:'地铁', to:'43', method:'攜帶與水有關的物品乘坐列車' },
+  { from:'0', to:'25', method:'在 Level 0 中，距離傳送點約100步處找到一台街機，投入25美分硬幣即可傳送至 Level 25「四分之一樞紐」。', rare:true },
+  { from:'5', to:'25', method:'在 Level 5 中，距離傳送點約100步處找到一台街機，投入25美分硬幣即可傳送至 Level 25「四分之一樞紐」。', rare:true },
+  { from:'9', to:'25', method:'在 Level 9 中，距離傳送點約100步處找到一台街機，投入25美分硬幣即可傳送至 Level 25「四分之一樞紐」。', rare:true },
+  { from:'11', to:'25', method:'在 Level 11 中，距離傳送點約100步處找到一台街機，投入25美分硬幣即可傳送至 Level 25「四分之一樞紐」。', rare:true },
+  { from:'19', to:'25', method:'在 Level 19 中，距離傳送點約100步處找到一台街機，投入25美分硬幣即可傳送至 Level 25「四分之一樞紐」。', rare:true },
+  { from:'24', to:'25', method:'在 Level 24 中，距離傳送點約100步處找到一台街機，投入25美分硬幣即可傳送至 Level 25「四分之一樞紐」。', rare:true },
+  { from:'29', to:'25', method:'在 Level 29 中，距離傳送點約100步處找到一台街機，投入25美分硬幣即可傳送至 Level 25「四分之一樞紐」。', rare:true },
+  { from:'37', to:'25', method:'在 Level 37 中，距離傳送點約100步處找到一台街機，投入25美分硬幣即可傳送至 Level 25「四分之一樞紐」。', rare:true },
+  { from:'50', to:'25', method:'在 Level 50 中，距離傳送點約100步處找到一台街機，投入25美分硬幣即可傳送至 Level 25「四分之一樞紐」。', rare:true },
+  { from:'90', to:'25', method:'在 Level 90 中，距離傳送點約100步處找到一台街機，投入25美分硬幣即可傳送至 Level 25「四分之一樞紐」。', rare:true },
+  { from:'108', to:'25', method:'在 Level 108 中，距離傳送點約100步處找到一台街機，投入25美分硬幣即可傳送至 Level 25「四分之一樞紐」。', rare:true },
+  { from:'120', to:'25', method:'在 Level 120 中，距離傳送點約100步處找到一台街機，投入25美分硬幣即可傳送至 Level 25「四分之一樞紐」。', rare:true },
+  { from:'141', to:'25', method:'在 Level 141 中，距離傳送點約100步處找到一台街機，投入25美分硬幣即可傳送至 Level 25「四分之一樞紐」。', rare:true },
+  { from:'150', to:'25', method:'在 Level 150 中，距離傳送點約100步處找到一台街機，投入25美分硬幣即可傳送至 Level 25「四分之一樞紐」。', rare:true },
+  { from:'165', to:'25', method:'在 Level 165 中，距離傳送點約100步處找到一台街機，投入25美分硬幣即可傳送至 Level 25「四分之一樞紐」。', rare:true },
+  { from:'188', to:'25', method:'在 Level 188 中，距離傳送點約100步處找到一台街機，投入25美分硬幣即可傳送至 Level 25「四分之一樞紐」。', rare:true },
+  { from:'201', to:'25', method:'在 Level 201 中，距離傳送點約100步處找到一台街機，投入25美分硬幣即可傳送至 Level 25「四分之一樞紐」。', rare:true },
+  { from:'790', to:'25', method:'在 Level 790 中，距離傳送點約100步處找到一台街機，投入25美分硬幣即可傳送至 Level 25「四分之一樞紐」。', rare:true },
+  { from:'888', to:'25', method:'在 Level 888 中，距離傳送點約100步處找到一台街機，投入25美分硬幣即可傳送至 Level 25「四分之一樞紐」。', rare:true },
 ];
 
 // 構建鄰接表
@@ -1264,7 +1279,6 @@ function buildGraph() {
     if (!graph[c.from]) graph[c.from] = [];
     if (!graph[c.to]) graph[c.to] = [];
     graph[c.from].push({ to:c.to, method:c.method, rare:!!c.rare });
-    graph[c.to].push({ to:c.from, method:'（反向）' + c.method, rare:!!c.rare });
   }
   return graph;
 }
