@@ -124,6 +124,8 @@
     font-size:11px; color:#c9a84c; letter-spacing:2px;
     margin-bottom:6px; text-transform:uppercase;
   }
+  .method-list { margin:0; padding-left:18px; }
+  .method-list li { font-size:13px; color:#c0b8a8; line-height:1.7; margin-bottom:4px; }
   .transition-method {
     font-size:13px; color:#c0b8a8; line-height:1.7;
   }
@@ -1232,14 +1234,32 @@ function initLevelList() {
 }
 initLevelList();
 
-// BFS 最短路徑
+// 取得層級的危險權重（用於最安全路線）
+function getDanger(level) {
+  const info = LEVEL_INFO[level];
+  if (!info) return 3;
+  const c = info.class;
+  if (typeof c === 'number') return c;
+  const map = { 'habitable':0, '宜居':0, 'deadzone':5, '死區':5, 'unknown':3, '未知':3, 'pending':3, '等待分級':3, 'n/a':4, '不適用':4, 'amended':4, '修正':4, 'omega':5, '終結':5 };
+  return map[c] !== undefined ? map[c] : 3;
+}
+
+// 取得兩層級之間所有的跳轉方式
+function getAllMethods(from, to) {
+  const methods = [];
+  for (const c of CONNECTIONS) {
+    if (c.from === from && c.to === to) methods.push(c.method);
+    if (c.from === to && c.to === from) methods.push('（反向）' + c.method);
+  }
+  return methods;
+}
+
+// BFS 最快路線（最少跳轉）
 function bfs(from, to) {
   if (!GRAPH[from] || !GRAPH[to]) return null;
   if (from === to) return [{ level:from, method:null }];
-
   const visited = { [from]:true };
   const queue = [{ level:from, path:[{ level:from, method:null }] }];
-
   while (queue.length > 0) {
     const { level, path } = queue.shift();
     for (const edge of GRAPH[level]) {
@@ -1253,9 +1273,44 @@ function bfs(from, to) {
   return null;
 }
 
+// Dijkstra 最安全路線（避開高危險層級）
+function dijkstra(from, to) {
+  if (!GRAPH[from] || !GRAPH[to]) return null;
+  if (from === to) return [{ level:from, method:null }];
+  const dist = {};
+  const prev = {};
+  const pq = [{ level:from, cost:0 }];
+  dist[from] = 0;
+  while (pq.length > 0) {
+    pq.sort((a,b) => a.cost - b.cost);
+    const { level, cost } = pq.shift();
+    if (level === to) break;
+    if (cost > (dist[level] || Infinity)) continue;
+    for (const edge of GRAPH[level]) {
+      const w = getDanger(edge.to) + 0.1; // +0.1 鼓勵少跳轉
+      const newCost = cost + w;
+      if (newCost < (dist[edge.to] || Infinity)) {
+        dist[edge.to] = newCost;
+        prev[edge.to] = { from:level, method:edge.method };
+        pq.push({ level:edge.to, cost:newCost });
+      }
+    }
+  }
+  if (dist[to] === undefined) return null;
+  const path = [];
+  let cur = to;
+  while (cur) {
+    const p = prev[cur];
+    path.unshift({ level:cur, method: p ? p.method : null });
+    cur = p ? p.from : null;
+  }
+  return path;
+}
+
 function findPath() {
   const from = document.getElementById('from-level').value.trim();
   const to = document.getElementById('to-level').value.trim();
+  const routeType = document.querySelector('input[name="route-type"]:checked').value;
   const resultArea = document.getElementById('result-area');
   const resultTitle = document.getElementById('result-title');
   const pathSteps = document.getElementById('path-steps');
@@ -1264,7 +1319,7 @@ function findPath() {
   if (!GRAPH[from]) { alert('Level ' + from + ' 尚未收錄或不存在'); return; }
   if (!GRAPH[to]) { alert('Level ' + to + ' 尚未收錄或不存在'); return; }
 
-  const path = bfs(from, to);
+  const path = routeType === 'safest' ? dijkstra(from, to) : bfs(from, to);
   pathSteps.innerHTML = '';
 
   if (!path) {
@@ -1275,7 +1330,9 @@ function findPath() {
   }
 
   const jumps = path.length - 1;
-  resultTitle.textContent = 'Level ' + from + ' → Level ' + to + '（' + jumps + ' 次跳轉）';
+  const totalDanger = path.reduce((s, p) => s + getDanger(p.level), 0);
+  const routeLabel = routeType === 'safest' ? '最安全路線' : '最快路線';
+  resultTitle.textContent = 'Level ' + from + ' → Level ' + to + '（' + routeLabel + '，' + jumps + ' 次跳轉，危險度 ' + totalDanger + '）';
 
   path.forEach((step, i) => {
     const info = LEVEL_INFO[step.level] || { name:'未知', class:'?' };
@@ -1284,7 +1341,7 @@ function findPath() {
     const nextInfo = nextLevel ? (LEVEL_INFO[nextLevel] || { name:'未知' }) : null;
     const wikiUrl = 'https://backrooms-wiki-cn.wikidot.com/level-' + step.level;
 
-    // === Level card (always visible) ===
+    // Level card
     const card = document.createElement('div');
     card.className = 'path-card';
     card.innerHTML =
@@ -1294,22 +1351,32 @@ function findPath() {
           '<div class="step-level"><span class="level-badge">Level ' + step.level + '</span>' + info.name + '</div>' +
           '<div class="step-name">生存難度等級 ' + info.class + (isLast ? ' · 終點' : '') + '</div>' +
         '</div>' +
-        '<a class="step-wiki-link" href="' + wikiUrl + '" target="_blank" onclick="event.stopPropagation()">維基頁面</a>' +
+        '<a class="step-wiki-link" href="' + wikiUrl + '" target="_blank">維基頁面</a>' +
       '</div>';
     pathSteps.appendChild(card);
 
-    // === Transition box (always visible between steps) ===
-    if (!isLast && step.method) {
+    // Transition box with ALL methods
+    if (!isLast) {
+      const allMethods = getAllMethods(step.level, nextLevel);
+      let methodsHtml = '';
+      if (allMethods.length > 0) {
+        methodsHtml = '<ul class="method-list">' +
+          allMethods.map(m => '<li>' + m + '</li>').join('') +
+          '</ul>';
+      } else {
+        methodsHtml = '<div class="transition-method">' + (step.method || '未知方式') + '</div>';
+      }
+
       const trans = document.createElement('div');
       trans.className = 'transition-connector';
       trans.innerHTML =
         '<div class="transition-arrow">↓</div>' +
         '<div class="transition-box">' +
-          '<div class="transition-label">從 Level ' + step.level + ' 前往 Level ' + nextLevel + '（' + (nextInfo ? nextInfo.name : '') + '）</div>' +
-          '<div class="transition-method">' + step.method + '</div>' +
+          '<div class="transition-label">從 Level ' + step.level + ' 前往 Level ' + nextLevel + '（' + (nextInfo ? nextInfo.name : '') + '）— 共 ' + allMethods.length + ' 種方式</div>' +
+          methodsHtml +
         '</div>';
       pathSteps.appendChild(trans);
-    } else if (isLast) {
+    } else {
       const end = document.createElement('div');
       end.className = 'transition-connector';
       end.innerHTML = '<div class="transition-end">✓ 已到達目標 Level ' + step.level + '</div>';
