@@ -71,40 +71,73 @@
     letter-spacing:2px; text-align:center;
   }
   .path-steps { list-style:none; }
-  .path-step {
-    display:flex; gap:14px; margin-bottom:0;
-    position:relative;
+  .path-card {
+    background:rgba(20,16,10,0.7);
+    border:1px solid rgba(201,168,76,0.2);
+    border-radius:6px;
+    margin-bottom:0;
+    overflow:hidden;
+    transition:border-color 0.3s;
   }
-  .path-step:not(:last-child)::after {
-    content:''; position:absolute;
-    left:19px; top:40px; bottom:-8px;
-    width:2px; background:rgba(201,168,76,0.3);
+  .path-card:hover { border-color:rgba(201,168,76,0.4); }
+  .path-card-header {
+    display:flex; align-items:center; gap:12px;
+    padding:14px 16px; cursor:pointer;
+    user-select:none;
   }
+  .path-card-header:hover { background:rgba(201,168,76,0.03); }
   .step-num {
-    flex:none; width:40px; height:40px;
+    flex:none; width:36px; height:36px;
     border-radius:50%;
     background:rgba(201,168,76,0.1);
     border:2px solid rgba(201,168,76,0.5);
     display:flex; align-items:center; justify-content:center;
-    font-size:14px; color:#c9a84c; font-weight:bold;
-    z-index:1;
+    font-size:13px; color:#c9a84c; font-weight:bold;
   }
-  .step-content {
-    flex:1; padding-bottom:20px;
-  }
+  .step-header-info { flex:1; }
   .step-level {
     font-size:16px; font-weight:bold; color:#e0d8c8;
-    margin-bottom:4px;
+    margin-bottom:2px;
   }
-  .step-name { font-size:13px; color:#a09080; margin-bottom:6px; }
-  .step-method {
-    font-size:13px; color:#8a8070; line-height:1.6;
-    padding:8px 12px;
-    background:rgba(201,168,76,0.05);
-    border-left:2px solid rgba(201,168,76,0.3);
-    border-radius:0 4px 4px 0;
+  .step-name { font-size:12px; color:#a09080; }
+  .step-expand-icon {
+    color:#7a7060; font-size:18px; transition:transform 0.3s;
   }
-  .step-method .arrow { color:#c9a84c; margin-right:6px; }
+  .path-card.open .step-expand-icon { transform:rotate(180deg); }
+  .path-card-body {
+    max-height:0; overflow:hidden;
+    transition:max-height 0.4s ease;
+  }
+  .path-card.open .path-card-body { max-height:500px; }
+  .step-detail {
+    padding:0 16px 16px 64px;
+  }
+  .step-class-row {
+    font-size:12px; color:#8a8070; margin-bottom:10px;
+  }
+  .step-wiki-link {
+    font-size:12px; color:#7a9ac0; text-decoration:none;
+    margin-bottom:10px; display:inline-block;
+  }
+  .step-wiki-link:hover { text-decoration:underline; }
+  .transition-box {
+    background:rgba(201,168,76,0.06);
+    border:1px solid rgba(201,168,76,0.15);
+    border-radius:4px;
+    padding:12px 14px;
+    margin-top:8px;
+  }
+  .transition-label {
+    font-size:11px; color:#c9a84c; letter-spacing:2px;
+    margin-bottom:6px; text-transform:uppercase;
+  }
+  .transition-method {
+    font-size:13px; color:#c0b8a8; line-height:1.7;
+  }
+  .transition-arrow {
+    text-align:center; padding:6px 0;
+    color:rgba(201,168,76,0.4); font-size:14px;
+  }
   .no-path {
     text-align:center; padding:30px;
     color:#a06060; font-size:15px;
@@ -1222,18 +1255,9 @@ function findPath() {
   const resultTitle = document.getElementById('result-title');
   const pathSteps = document.getElementById('path-steps');
 
-  if (!from || !to) {
-    alert('請輸入當前層級和目標層級');
-    return;
-  }
-  if (!GRAPH[from]) {
-    alert(`Level ${from} 尚未收錄或不存在`);
-    return;
-  }
-  if (!GRAPH[to]) {
-    alert(`Level ${to} 尚未收錄或不存在`);
-    return;
-  }
+  if (!from || !to) { alert('請輸入當前層級和目標層級'); return; }
+  if (!GRAPH[from]) { alert('Level ' + from + ' 尚未收錄或不存在'); return; }
+  if (!GRAPH[to]) { alert('Level ' + to + ' 尚未收錄或不存在'); return; }
 
   const path = bfs(from, to);
   pathSteps.innerHTML = '';
@@ -1246,32 +1270,59 @@ function findPath() {
   }
 
   const jumps = path.length - 1;
-  resultTitle.textContent = `Level ${from} → Level ${to}（${jumps} 次跳轉）`;
+  resultTitle.textContent = 'Level ' + from + ' → Level ' + to + '（' + jumps + ' 次跳轉）';
 
   path.forEach((step, i) => {
     const info = LEVEL_INFO[step.level] || { name:'未知', class:'?' };
-    const li = document.createElement('li');
-    li.className = 'path-step';
+    const isLast = (i === path.length - 1);
+    const nextLevel = isLast ? null : path[i + 1].level;
+    const nextInfo = nextLevel ? (LEVEL_INFO[nextLevel] || { name:'未知' }) : null;
 
-    let methodHtml = '';
-    if (step.method && i > 0) {
-      methodHtml = `<div class="step-method"><span class="arrow">▶</span>${step.method}</div>`;
-    } else if (i === 0) {
-      methodHtml = '<div class="step-method"><span class="arrow">▶</span>起點</div>';
+    const card = document.createElement('div');
+    card.className = 'path-card' + (i === 0 ? ' open' : '');
+
+    // Transition method for this step (how to get to next level)
+    let transitionHtml = '';
+    if (!isLast && step.method) {
+      transitionHtml = '<div class="transition-box">' +
+        '<div class="transition-label">前往 Level ' + nextLevel + ' — ' + (nextInfo ? nextInfo.name : '') + '</div>' +
+        '<div class="transition-method">' + step.method + '</div>' +
+        '</div>';
+    } else if (isLast) {
+      transitionHtml = '<div class="transition-box">' +
+        '<div class="transition-label">已到達目標</div>' +
+        '<div class="transition-method">你已到達 Level ' + step.level + '。</div>' +
+        '</div>';
     }
 
-    li.innerHTML = `
-      <div class="step-num">${i + 1}</div>
-      <div class="step-content">
-        <div class="step-level">
-          <span class="level-badge">Level ${step.level}</span>
-          生存難度等級 ${info.class}
-        </div>
-        <div class="step-name">${info.name}</div>
-        ${methodHtml}
-      </div>
-    `;
-    pathSteps.appendChild(li);
+    const wikiUrl = 'https://backrooms-wiki-cn.wikidot.com/level-' + step.level;
+
+    card.innerHTML =
+      '<div class="path-card-header" onclick="this.parentElement.classList.toggle('open')">' +
+        '<div class="step-num">' + (i + 1) + '</div>' +
+        '<div class="step-header-info">' +
+          '<div class="step-level"><span class="level-badge">Level ' + step.level + '</span>' + info.name + '</div>' +
+          '<div class="step-name">生存難度等級 ' + info.class + (isLast ? ' · 終點' : (nextLevel ? ' → Level ' + nextLevel : '')) + '</div>' +
+        '</div>' +
+        '<div class="step-expand-icon">▼</div>' +
+      '</div>' +
+      '<div class="path-card-body">' +
+        '<div class="step-detail">' +
+          '<div class="step-class-row">生存難度：等級 ' + info.class + '　|　層級名稱：' + info.name + '</div>' +
+          '<a class="step-wiki-link" href="' + wikiUrl + '" target="_blank">📖 查看 Wikidot 完整頁面</a>' +
+          transitionHtml +
+        '</div>' +
+      '</div>';
+
+    pathSteps.appendChild(card);
+
+    // Add arrow connector between cards
+    if (!isLast) {
+      const arrow = document.createElement('div');
+      arrow.className = 'transition-arrow';
+      arrow.textContent = '↓';
+      pathSteps.appendChild(arrow);
+    }
   });
 
   resultArea.classList.add('show');
