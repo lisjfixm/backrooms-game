@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>後室路徑查詢 — Backrooms Pathfinder</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body {
+    width:100%; min-height:100%;
+    background:#0d0b08;
+    color:#e0d8c8;
+    font-family:'Noto Sans TC','Microsoft JhengHei',sans-serif;
+  }
+  body {
+    background:
+      radial-gradient(ellipse at 20% 0%, rgba(60,45,20,0.15) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 100%, rgba(40,30,15,0.2) 0%, transparent 50%),
+      #0d0b08;
+    padding: 30px 15px;
+  }
+  .container { max-width:720px; margin:0 auto; }
+  h1 {
+    text-align:center; font-size:28px; letter-spacing:6px;
+    color:#c9a84c; margin-bottom:6px;
+    text-shadow:0 0 20px rgba(201,168,76,0.3);
+  }
+  .subtitle {
+    text-align:center; font-size:12px; color:#7a7060;
+    letter-spacing:3px; margin-bottom:30px;
+  }
+  .input-area {
+    background:rgba(20,16,10,0.8);
+    border:1px solid rgba(201,168,76,0.2);
+    border-radius:6px; padding:24px; margin-bottom:24px;
+  }
+  .input-row {
+    display:flex; gap:16px; margin-bottom:16px; flex-wrap:wrap;
+  }
+  .input-group { flex:1; min-width:200px; }
+  label {
+    display:block; font-size:13px; color:#a09080;
+    margin-bottom:6px; letter-spacing:1px;
+  }
+  input, select {
+    width:100%; padding:10px 14px;
+    background:rgba(10,8,5,0.8);
+    border:1px solid rgba(201,168,76,0.25);
+    border-radius:4px; color:#e0d8c8;
+    font-size:15px; font-family:inherit;
+    outline:none; transition:border-color 0.3s;
+  }
+  input:focus, select:focus { border-color:#c9a84c; }
+  button {
+    width:100%; padding:14px;
+    background:linear-gradient(135deg, rgba(201,168,76,0.15), rgba(201,168,76,0.05));
+    border:1px solid rgba(201,168,76,0.4);
+    border-radius:4px; color:#c9a84c;
+    font-size:16px; font-family:inherit;
+    letter-spacing:4px; cursor:pointer;
+    transition:all 0.3s;
+  }
+  button:hover {
+    background:linear-gradient(135deg, rgba(201,168,76,0.3), rgba(201,168,76,0.1));
+    border-color:#c9a84c;
+  }
+  .result-area { display:none; }
+  .result-area.show { display:block; }
+  .result-title {
+    font-size:18px; color:#c9a84c; margin-bottom:16px;
+    letter-spacing:2px; text-align:center;
+  }
+  .path-steps { list-style:none; }
+  .path-step {
+    display:flex; gap:14px; margin-bottom:0;
+    position:relative;
+  }
+  .path-step:not(:last-child)::after {
+    content:''; position:absolute;
+    left:19px; top:40px; bottom:-8px;
+    width:2px; background:rgba(201,168,76,0.3);
+  }
+  .step-num {
+    flex:none; width:40px; height:40px;
+    border-radius:50%;
+    background:rgba(201,168,76,0.1);
+    border:2px solid rgba(201,168,76,0.5);
+    display:flex; align-items:center; justify-content:center;
+    font-size:14px; color:#c9a84c; font-weight:bold;
+    z-index:1;
+  }
+  .step-content {
+    flex:1; padding-bottom:20px;
+  }
+  .step-level {
+    font-size:16px; font-weight:bold; color:#e0d8c8;
+    margin-bottom:4px;
+  }
+  .step-name { font-size:13px; color:#a09080; margin-bottom:6px; }
+  .step-method {
+    font-size:13px; color:#8a8070; line-height:1.6;
+    padding:8px 12px;
+    background:rgba(201,168,76,0.05);
+    border-left:2px solid rgba(201,168,76,0.3);
+    border-radius:0 4px 4px 0;
+  }
+  .step-method .arrow { color:#c9a84c; margin-right:6px; }
+  .no-path {
+    text-align:center; padding:30px;
+    color:#a06060; font-size:15px;
+  }
+  .info-box {
+    margin-top:24px; padding:16px;
+    background:rgba(20,16,10,0.6);
+    border:1px solid rgba(201,168,76,0.15);
+    border-radius:4px;
+    font-size:12px; color:#7a7060; line-height:1.8;
+  }
+  .info-box strong { color:#a09080; }
+  .level-badge {
+    display:inline-block; padding:2px 8px;
+    background:rgba(201,168,76,0.15);
+    border-radius:3px; font-size:12px;
+    color:#c9a84c; margin-right:6px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>後室路徑查詢</h1>
+  <div class="subtitle">BACKROOMS PATHFINDER · 依據 Wikidot 中文維基</div>
+
+  <div class="input-area">
+    <div class="input-row">
+      <div class="input-group">
+        <label>當前層級</label>
+        <input type="text" id="from-level" placeholder="例如：0" list="level-list">
+      </div>
+      <div class="input-group">
+        <label>目標層級</label>
+        <input type="text" id="to-level" placeholder="例如：5" list="level-list">
+      </div>
+    </div>
+    <datalist id="level-list"></datalist>
+    <button onclick="findPath()">查詢最短路徑</button>
+  </div>
+
+  <div class="result-area" id="result-area">
+    <div class="result-title" id="result-title"></div>
+    <ol class="path-steps" id="path-steps"></ol>
+  </div>
+
+  <div class="info-box">
+    <strong>目前收錄層級：</strong>0、1、2、3、4、5（主要出入口）<br>
+    <strong>路徑計算：</strong>以最少層級跳轉為最優（BFS 最短路徑）<br>
+    <strong>資料來源：</strong>The Backrooms 中文維基（Wikidot）<br>
+    <strong>注意：</strong>後室的入口/出口具有隨機性，此工具僅提供已知最可能的路線，實際情況可能因時空變動而異。
+  </div>
+</div>
+
+<script>
+// ============================================================
+//  後室層級連接圖 — 依據 Wikidot 中文維基
+//  每個連接包含：from, to, method（到達方式）
+// ============================================================
+const LEVEL_INFO = {
+  '0':  { name:'教學關卡',       class:1 },
+  '1':  { name:'宜居地帶',       class:1 },
+  '2':  { name:'廢棄公共帶',     class:3 },
+  '3':  { name:'發電站',         class:4 },
+  '4':  { name:'廢棄辦公室',     class:1 },
+  '5':  { name:'恐怖旅館',       class:2 },
+  '6':  { name:'燈火闌珊處',     class:4 },
+  '9':  { name:'郊區',           class:2 },
+  '10': { name:'隔間地板',       class:2 },
+  '11': { name:'恆定城市',       class:1 },
+  '13': { name:'無限公寓',       class:3 },
+  '19': { name:'誘人閣樓',       class:3 },
+  '31': { name:'廚師的廚房',     class:3 },
+  '40': { name:'電子遊戲機',     class:2 },
+  '63': { name:'森林之母',       class:2 },
+  '64': { name:'圖書館',         class:1 },
+  '69': { name:'噁心嘔吐之處',   class:3 },
+  '71': { name:'活動假人',       class:3 },
+  '78': { name:'燃燒的天空',     class:4 },
+  '84': { name:'割草機',         class:2 },
+  '98': { name:'沉默',           class:3 },
+  '101':{ name:'風雨交加',       class:3 },
+  '126':{ name:'內爾之屋',       class:3 },
+  '127':{ name:'燃燒的廢墟',     class:4 },
+  '137':{ name:'紅色田園',       class:2 },
+  '141':{ name:'辦公地獄',       class:2 },
+  '171':{ name:'地鐵站',         class:2 },
+  '175':{ name:'出口',           class:0 },
+  '283':{ name:'夢之海洋',       class:1 },
+  '427':{ name:'遊戲廳',         class:2 },
+  '997':{ name:'扭曲的世界',     class:3 },
+  '998':{ name:'虛假的終點',     class:4 },
+  'hub':{ name:'樞紐',           class:1 },
+};
+
+// 連接圖（雙向，method 描述從 from 到 to 的方式）
+const CONNECTIONS = [
+  // Level 0
+  { from:'0', to:'1', method:'找到一面不斷閃爍的牆，穿過即可到達 Level 1。這是 Level 0 唯一已知的出口。' },
+
+  // Level 1
+  { from:'1', to:'2', method:'找到一條看起來比其他廊道更長的過道，深入其中即可到達 Level 2。' },
+  { from:'1', to:'3', method:'找到未上鎖的門，可能通向 Level 3。' },
+  { from:'1', to:'4', method:'找到未上鎖的門，可能通向 Level 4。' },
+  { from:'1', to:'hub', method:'在特定地點按特定方式切入，可到達樞紐（Hub）。' },
+
+  // Level 2
+  { from:'2', to:'1', method:'找到未上鎖的門，可返回 Level 1。' },
+  { from:'2', to:'3', method:'找到未上鎖的鋼製門，通常通向 Level 3。' },
+  { from:'2', to:'4', method:'找到未上鎖的門，可能通向 Level 4。' },
+  { from:'2', to:'31', method:'找到膠合板製的門，可切入 Level 31。' },
+  { from:'2', to:'127', method:'找到膠合板製的門，可切入 Level 127。' },
+  { from:'2', to:'137', method:'找到老化的木質門，可通往 Level 137。' },
+  { from:'2', to:'70', method:'找到刻有「70」字樣的大門，通向 Level 70。' },
+  { from:'2', to:'283', method:'找到被漆成彩虹色的大門，通向 Level 283。' },
+  { from:'2', to:'101', method:'找到未上鎖的門，可能通向 Level 101。' },
+  { from:'2', to:'126', method:'找到未上鎖且另一端有回聲鋼琴的門，通向 Level 126。' },
+  { from:'2', to:'141', method:'打開金屬門並步入，到達 Level 141。' },
+  { from:'2', to:'175', method:'找到藍色門，通向 Level 175。' },
+  { from:'2', to:'997', method:'找到粉色門，通向 Level 997。' },
+  { from:'2', to:'998', method:'找到電梯門外觀的門徑，通向 Level 998。' },
+  { from:'2', to:'64', method:'找到未上鎖的門，進入幾近裝修完成的房間，到達 Level 64。' },
+  { from:'2', to:'hub', method:'按與 Level 1 相同的切入方法，可到達樞紐。' },
+
+  // Level 3
+  { from:'3', to:'4', method:'搭乘 Level 3 的電梯，可前往 Level 4。' },
+  { from:'3', to:'5', method:'搭乘 Level 3 的電梯，可前往 Level 5。' },
+  { from:'3', to:'31', method:'找到木門，通向 Level 31。' },
+  { from:'3', to:'69', method:'坐在電力房中發現的汽車前座上，會失去知覺並在 Level 69 醒來。' },
+
+  // Level 4
+  { from:'4', to:'3', method:'找到辦公室風格的電梯，可返回 Level 3。' },
+  { from:'4', to:'5', method:'找到老舊的樓梯，可到達 Level 5。' },
+  { from:'4', to:'6', method:'找到辦公室風格的樓梯，可能通向 Level 6。' },
+  { from:'4', to:'71', method:'找到通往地下室的樓梯，到達 Level 71。' },
+  { from:'4', to:'hub', method:'從樞紐的牆上躍進，可到達 Level 4（反向同理）。' },
+
+  // Level 5
+  { from:'5', to:'3', method:'回到電梯，可返回 Level 3。' },
+  { from:'5', to:'4', method:'轉身回到進入 Level 5 的樓梯，可返回 Level 4。' },
+  { from:'5', to:'6', method:'深入鍋爐房，可到達 Level 6（不建議，高溫危險）。' },
+  { from:'5', to:'9', method:'打開深色木門，進入 Level 9。' },
+  { from:'5', to:'63', method:'找到顯現森林景象的門，到達 Level 63。' },
+  { from:'5', to:'98', method:'進入主廳找到的金屬門，到達 Level 98。' },
+  { from:'5', to:'427', method:'當燈光同時閃爍時，會出現木製門，打開到達 Level 427。' },
+  { from:'5', to:'40', method:'在鍋爐房玩街機遊戲機，被帶到 Level 40。' },
+  { from:'5', to:'78', method:'進入鍋爐房類似氣閘門的大門，到達 Level 78。' },
+  { from:'5', to:'84', method:'在貝弗莉室有很低概率見到巨大木製大門，通向 Level 84。' },
+  { from:'5', to:'171', method:'酒店 M.E.G. 看護一側有通向 Level 171 的入口。' },
+];
+
+// 構建鄰接表
+function buildGraph() {
+  const graph = {};
+  for (const c of CONNECTIONS) {
+    if (!graph[c.from]) graph[c.from] = [];
+    if (!graph[c.to]) graph[c.to] = [];
+    graph[c.from].push({ to:c.to, method:c.method });
+    // 雙向（反向方法描述可能不同，但這裡用同一描述的反向）
+    graph[c.to].push({ to:c.from, method:'（反向）' + c.method });
+  }
+  return graph;
+}
+
+const GRAPH = buildGraph();
+
+// 填充 datalist
+function initLevelList() {
+  const dl = document.getElementById('level-list');
+  const levels = Object.keys(GRAPH).sort((a,b) => {
+    if (a === 'hub') return 1;
+    if (b === 'hub') return -1;
+    return parseInt(a) - parseInt(b);
+  });
+  dl.innerHTML = levels.map(l => `<option value="${l}">Level ${l}${LEVEL_INFO[l]?' — '+LEVEL_INFO[l].name:''}</option>`).join('');
+}
+initLevelList();
+
+// BFS 最短路徑
+function bfs(from, to) {
+  if (!GRAPH[from] || !GRAPH[to]) return null;
+  if (from === to) return [{ level:from, method:null }];
+
+  const visited = { [from]:true };
+  const queue = [{ level:from, path:[{ level:from, method:null }] }];
+
+  while (queue.length > 0) {
+    const { level, path } = queue.shift();
+    for (const edge of GRAPH[level]) {
+      if (visited[edge.to]) continue;
+      visited[edge.to] = true;
+      const newPath = [...path, { level:edge.to, method:edge.method }];
+      if (edge.to === to) return newPath;
+      queue.push({ level:edge.to, path:newPath });
+    }
+  }
+  return null;
+}
+
+function findPath() {
+  const from = document.getElementById('from-level').value.trim();
+  const to = document.getElementById('to-level').value.trim();
+  const resultArea = document.getElementById('result-area');
+  const resultTitle = document.getElementById('result-title');
+  const pathSteps = document.getElementById('path-steps');
+
+  if (!from || !to) {
+    alert('請輸入當前層級和目標層級');
+    return;
+  }
+  if (!GRAPH[from]) {
+    alert(`Level ${from} 尚未收錄或不存在`);
+    return;
+  }
+  if (!GRAPH[to]) {
+    alert(`Level ${to} 尚未收錄或不存在`);
+    return;
+  }
+
+  const path = bfs(from, to);
+  pathSteps.innerHTML = '';
+
+  if (!path) {
+    resultTitle.textContent = '找不到路徑';
+    pathSteps.innerHTML = '<div class="no-path">目前資料中沒有從 Level ' + from + ' 到 Level ' + to + ' 的已知路徑。</div>';
+    resultArea.classList.add('show');
+    return;
+  }
+
+  const jumps = path.length - 1;
+  resultTitle.textContent = `Level ${from} → Level ${to}（${jumps} 次跳轉）`;
+
+  path.forEach((step, i) => {
+    const info = LEVEL_INFO[step.level] || { name:'未知', class:'?' };
+    const li = document.createElement('li');
+    li.className = 'path-step';
+
+    let methodHtml = '';
+    if (step.method && i > 0) {
+      methodHtml = `<div class="step-method"><span class="arrow">▶</span>${step.method}</div>`;
+    } else if (i === 0) {
+      methodHtml = '<div class="step-method"><span class="arrow">▶</span>起點</div>';
+    }
+
+    li.innerHTML = `
+      <div class="step-num">${i + 1}</div>
+      <div class="step-content">
+        <div class="step-level">
+          <span class="level-badge">Level ${step.level}</span>
+          生存難度等級 ${info.class}
+        </div>
+        <div class="step-name">${info.name}</div>
+        ${methodHtml}
+      </div>
+    `;
+    pathSteps.appendChild(li);
+  });
+
+  resultArea.classList.add('show');
+  resultArea.scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+// 回車鍵查詢
+document.getElementById('to-level').addEventListener('keydown', e => {
+  if (e.key === 'Enter') findPath();
+});
+document.getElementById('from-level').addEventListener('keydown', e => {
+  if (e.key === 'Enter') findPath();
+});
+</script>
+</body>
+</html>
