@@ -100,25 +100,18 @@
     margin-bottom:2px;
   }
   .step-name { font-size:12px; color:#a09080; }
-  .step-expand-icon {
-    color:#7a7060; font-size:18px; transition:transform 0.3s;
-  }
-  .path-card.open .step-expand-icon { transform:rotate(180deg); }
-  .path-card-body {
-    max-height:0; overflow:hidden;
-    transition:max-height 0.4s ease;
-  }
-  .path-card.open .path-card-body { max-height:500px; }
-  .step-detail {
-    padding:0 16px 16px 64px;
-  }
-  .step-class-row {
-    font-size:12px; color:#8a8070; margin-bottom:10px;
-  }
+  
+  
+  
+  
+  
+  
   .step-wiki-link {
-    font-size:12px; color:#7a9ac0; text-decoration:none;
-    margin-bottom:10px; display:inline-block;
+    font-size:11px; color:#7a9ac0; text-decoration:none;
+    padding:4px 10px; border:1px solid rgba(122,154,192,0.3);
+    border-radius:3px; white-space:nowrap;
   }
+  .step-wiki-link:hover { background:rgba(122,154,192,0.1); }
   .step-wiki-link:hover { text-decoration:underline; }
   .transition-box {
     background:rgba(201,168,76,0.06);
@@ -137,6 +130,20 @@
   .transition-arrow {
     text-align:center; padding:6px 0;
     color:rgba(201,168,76,0.4); font-size:14px;
+  }
+  .transition-connector {
+    padding: 4px 0 4px 50px;
+  }
+  .transition-arrow {
+    text-align:center; color:rgba(201,168,76,0.5);
+    font-size:16px; padding:2px 0;
+  }
+  .transition-end {
+    text-align:center; padding:12px;
+    color:#7ab87a; font-size:14px;
+    background:rgba(122,184,122,0.06);
+    border:1px solid rgba(122,184,122,0.2);
+    border-radius:4px; margin-top:4px;
   }
   .no-path {
     text-align:center; padding:30px;
@@ -1265,11 +1272,7 @@ function findPath() {
   if (!path) {
     resultTitle.textContent = '找不到路徑';
     pathSteps.innerHTML = '<div class="no-path">目前資料中沒有從 Level ' + from + ' 到 Level ' + to + ' 的已知路徑。</div>';
-    // Add expand/collapse listeners
-  pathSteps.querySelectorAll('.path-card-header').forEach(h => {
-    h.addEventListener('click', () => h.parentElement.classList.toggle('open'));
-  });
-  resultArea.classList.add('show');
+    resultArea.classList.add('show');
     return;
   }
 
@@ -1281,51 +1284,38 @@ function findPath() {
     const isLast = (i === path.length - 1);
     const nextLevel = isLast ? null : path[i + 1].level;
     const nextInfo = nextLevel ? (LEVEL_INFO[nextLevel] || { name:'未知' }) : null;
-
-    const card = document.createElement('div');
-    card.className = 'path-card' + (i === 0 ? ' open' : '');
-
-    // Transition method for this step (how to get to next level)
-    let transitionHtml = '';
-    if (!isLast && step.method) {
-      transitionHtml = '<div class="transition-box">' +
-        '<div class="transition-label">前往 Level ' + nextLevel + ' — ' + (nextInfo ? nextInfo.name : '') + '</div>' +
-        '<div class="transition-method">' + step.method + '</div>' +
-        '</div>';
-    } else if (isLast) {
-      transitionHtml = '<div class="transition-box">' +
-        '<div class="transition-label">已到達目標</div>' +
-        '<div class="transition-method">你已到達 Level ' + step.level + '。</div>' +
-        '</div>';
-    }
-
     const wikiUrl = 'https://backrooms-wiki-cn.wikidot.com/level-' + step.level;
 
+    // === Level card (always visible) ===
+    const card = document.createElement('div');
+    card.className = 'path-card';
     card.innerHTML =
       '<div class="path-card-header">' +
         '<div class="step-num">' + (i + 1) + '</div>' +
         '<div class="step-header-info">' +
           '<div class="step-level"><span class="level-badge">Level ' + step.level + '</span>' + info.name + '</div>' +
-          '<div class="step-name">生存難度等級 ' + info.class + (isLast ? ' · 終點' : (nextLevel ? ' → Level ' + nextLevel : '')) + '</div>' +
+          '<div class="step-name">生存難度等級 ' + info.class + (isLast ? ' · 終點' : '') + '</div>' +
         '</div>' +
-        '<div class="step-expand-icon">▼</div>' +
-      '</div>' +
-      '<div class="path-card-body">' +
-        '<div class="step-detail">' +
-          '<div class="step-class-row">生存難度：等級 ' + info.class + '　|　層級名稱：' + info.name + '</div>' +
-          '<a class="step-wiki-link" href="' + wikiUrl + '" target="_blank">📖 查看 Wikidot 完整頁面</a>' +
-          transitionHtml +
-        '</div>' +
+        '<a class="step-wiki-link" href="' + wikiUrl + '" target="_blank" onclick="event.stopPropagation()">維基頁面</a>' +
       '</div>';
-
     pathSteps.appendChild(card);
 
-    // Add arrow connector between cards
-    if (!isLast) {
-      const arrow = document.createElement('div');
-      arrow.className = 'transition-arrow';
-      arrow.textContent = '↓';
-      pathSteps.appendChild(arrow);
+    // === Transition box (always visible between steps) ===
+    if (!isLast && step.method) {
+      const trans = document.createElement('div');
+      trans.className = 'transition-connector';
+      trans.innerHTML =
+        '<div class="transition-arrow">↓</div>' +
+        '<div class="transition-box">' +
+          '<div class="transition-label">從 Level ' + step.level + ' 前往 Level ' + nextLevel + '（' + (nextInfo ? nextInfo.name : '') + '）</div>' +
+          '<div class="transition-method">' + step.method + '</div>' +
+        '</div>';
+      pathSteps.appendChild(trans);
+    } else if (isLast) {
+      const end = document.createElement('div');
+      end.className = 'transition-connector';
+      end.innerHTML = '<div class="transition-end">✓ 已到達目標 Level ' + step.level + '</div>';
+      pathSteps.appendChild(end);
     }
   });
 
