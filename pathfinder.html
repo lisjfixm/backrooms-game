@@ -197,7 +197,7 @@
     <div class="input-row">
       <div class="input-group">
         <label>當前層級</label>
-        <input type="text" id="from-level" placeholder="例如：0" list="level-list">
+        <input type="text" id="from-level" value="0" list="level-list">
       </div>
       <div class="input-group">
         <label>目標層級</label>
@@ -205,7 +205,7 @@
       </div>
     </div>
     <datalist id="level-list"></datalist>
-    <button onclick="findPath()">查詢最短路徑</button>
+    <div style="display:flex;gap:10px;margin-bottom:12px;"><label style="flex:1;display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:#a09080;"><input type="radio" name="route-type" value="fastest" checked style="width:auto;"> 最快路線（最少跳轉）</label><label style="flex:1;display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:#a09080;"><input type="radio" name="route-type" value="safest" style="width:auto;"> 最安全路線（避開危險層級）</label></div><button onclick="findPath()">查詢路徑</button>
   </div>
 
   <div class="result-area" id="result-area">
@@ -1331,7 +1331,8 @@ function dijkstra(from, to) {
 function findPath() {
   const from = document.getElementById('from-level').value.trim();
   const to = document.getElementById('to-level').value.trim();
-  const routeType = document.querySelector('input[name="route-type"]:checked').value;
+  const routeEl = document.querySelector('input[name="route-type"]:checked');
+  const routeType = routeEl ? routeEl.value : 'fastest';
   const resultArea = document.getElementById('result-area');
   const resultTitle = document.getElementById('result-title');
   const pathSteps = document.getElementById('path-steps');
