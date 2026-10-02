@@ -479,15 +479,13 @@ const CONNECTIONS = [
   // Level -5
   { from:'-5', to:'56', method:'在 Level -5 中走入洞穴可進入本層' },
   // Level 0
-  { from:'0', to:'1', method:'找到一面不斷閃爍的牆，穿過即可到達 Level 1。這是 Level 0 唯一已知的出口。' },
+  { from:'0', to:'1', method:'在 Level 0 的黃色房間中不斷行走，留意外觀詭異、不斷閃爍的牆壁；發現後穿過那面牆（切出），即可進入 Level 1。這是 Level 0 唯一已知的出口。' },
   { from:'0', to:'44', method:'打開其中一扇金屬門' },
   { from:'0', to:'46', method:'找到一扇生鏽的門' },
   { from:'0', to:'58', method:'據稱在 Level 0 內乘坐多色水滑梯可到達（未經確認）' },
   { from:'0', to:'72', method:'從 Level 0 的某處落阱中墜落極長時間會進入 Level 72' },
   // Level 1
-  { from:'1', to:'2', method:'找到一條看起來比其他廊道更長的過道，深入其中即可到達 Level 2。' },
-  { from:'1', to:'3', method:'找到未上鎖的門，可能通向 Level 3。' },
-  { from:'1', to:'4', method:'找到未上鎖的門，可能通向 Level 4。' },
+  { from:'1', to:'2', method:'在 Level 1 中沿著管道與儀表盤逐漸顯現的方向移動，持續行走足夠遠的距離，周圍環境會逐步變為工業風格，即可進入 Level 2「廢棄公共帶」。這是 Level 1 最常見且最穩定的出口。' },
   { from:'1', to:'hub', method:'在特定地點按特定方式切入，可到達樞紐（Hub）。' },
   { from:'1', to:'19', method:'爬過牆上隨機分佈的洞口' },
   { from:'1', to:'22', method:'找到玻璃門' },
@@ -496,9 +494,9 @@ const CONNECTIONS = [
   // Level 1.5
   { from:'1.5', to:'21', method:'隨機穿牆進入' },
   // Level 2
-  { from:'2', to:'1', method:'找到未上鎖的門，可返回 Level 1。' },
-  { from:'2', to:'3', method:'找到未上鎖的鋼製門，通常通向 Level 3。' },
-  { from:'2', to:'4', method:'找到未上鎖的門，可能通向 Level 4。' },
+  { from:'2', to:'1', method:'在 Level 2 中找到未上鎖的門並打開，或返回到顏色較白的走廊區域，即可回到 Level 1「宜居地帶」。' },
+  { from:'2', to:'3', method:'在 Level 2 的隧道中尋找一扇未上鎖的鋼製門，打開門並跨過門檻，通常會通向 Level 3「發電站」。' },
+  { from:'2', to:'4', method:'在 Level 2 中找到一扇未上鎖的門，打開並進入，有機會通向 Level 4「廢棄辦公室」。' },
   { from:'2', to:'31', method:'找到膠合板製的門，可切入 Level 31。' },
   { from:'2', to:'127', method:'找到膠合板製的門，可切入 Level 127。' },
   { from:'2', to:'137', method:'找到老化的木質門，可通往 Level 137。' },
@@ -518,16 +516,16 @@ const CONNECTIONS = [
   { from:'2.1', to:'8', method:'在深邃黑暗的混凝土洞穴中遊盪' },
   { from:'2.1', to:'52', method:'從Level 2.1切出' },
   // Level 3
-  { from:'3', to:'4', method:'搭乘 Level 3 的電梯，可前往 Level 4。' },
-  { from:'3', to:'5', method:'搭乘 Level 3 的電梯，可前往 Level 5。' },
+  { from:'3', to:'4', method:'在 Level 3 的走廊中尋找電梯（較罕見），進入電梯後按下按鈕，可前往 Level 4「廢棄辦公室」。電梯是往返 3、4、5 層的快速工具。' },
+  { from:'3', to:'5', method:'在 Level 3 的走廊中尋找電梯（較罕見），進入電梯後按下按鈕，可前往 Level 5「恐怖旅館」。' },
   { from:'3', to:'31', method:'找到木門，通向 Level 31。' },
   { from:'3', to:'69', method:'坐在電力房中發現的汽車前座上，會失去知覺並在 Level 69 醒來。' },
   { from:'3', to:'55', method:'在危急狀況下衝過一扇門' },
   { from:'3', to:'70', method:'在 Level 3 找到一扇白門進入，可以到達 Level 70' },
   // Level 4
-  { from:'4', to:'3', method:'找到辦公室風格的電梯，可返回 Level 3。' },
-  { from:'4', to:'5', method:'找到老舊的樓梯，可到達 Level 5。' },
-  { from:'4', to:'6', method:'找到辦公室風格的樓梯，可能通向 Level 6。' },
+  { from:'4', to:'3', method:'在 Level 4 的辦公室中找到電梯，進入並按下按鈕，可返回 Level 3「發電站」。' },
+  { from:'4', to:'5', method:'在 Level 4 中尋找一處老舊的樓梯間，沿樓梯下行，即可到達 Level 5「恐怖旅館」。' },
+  { from:'4', to:'6', method:'在 Level 4 中找到辦公室風格的樓梯，沿樓梯繼續深入，偶爾會通向 Level 6「熄燈之時」。' },
   { from:'4', to:'71', method:'找到通往地下室的樓梯，到達 Level 71。' },
   { from:'4', to:'hub', method:'從樞紐的牆上躍進，可到達 Level 4（反向同理）。' },
   { from:'4', to:'25', method:'在小屋中找到類似保安室櫃櫥的門' },
@@ -535,9 +533,9 @@ const CONNECTIONS = [
   // Level 4.1
   { from:'4.1', to:'8', method:'內部小型隧道盡頭' },
   // Level 5
-  { from:'5', to:'3', method:'回到電梯，可返回 Level 3。' },
-  { from:'5', to:'4', method:'轉身回到進入 Level 5 的樓梯，可返回 Level 4。' },
-  { from:'5', to:'6', method:'深入鍋爐房，可到達 Level 6（不建議，高溫危險）。' },
+  { from:'5', to:'3', method:'在 Level 5 的主廳中找到電梯，進入並按下按鈕，可返回 Level 3「發電站」。' },
+  { from:'5', to:'4', method:'轉身回到帶你進入 Level 5 的那道樓梯，沿樓梯上行，即可返回 Level 4「廢棄辦公室」。' },
+  { from:'5', to:'6', method:'在 Level 5 中深入鍋爐房區域，忍受極端高溫和機器噪音，繼續往深處前進，可到達 Level 6「熄燈之時」。極度不建議使用此方法，鍋爐房溫度極高。' },
   { from:'5', to:'9', method:'打開深色木門，進入 Level 9。' },
   { from:'5', to:'63', method:'找到顯現森林景象的門，到達 Level 63。' },
   { from:'5', to:'98', method:'進入主廳找到的金屬門，到達 Level 98。' },
@@ -550,7 +548,7 @@ const CONNECTIONS = [
   { from:'5', to:'41', method:'站在鍋爐房滴落焦油的管道下方' },
   { from:'5', to:'55', method:'在危急狀況下衝過一扇門' },
   // Level 6
-  { from:'6', to:'7', method:'在黑暗中留意海浪聲，沿樓梯井下行' },
+  { from:'6', to:'7', method:'在 Level 6 的完全黑暗中摸索前進，留意遠處傳來的微弱海浪聲；順著聲音方向找到向下的樓梯井，沿樓梯下行即可到達 Level 7。注意：在某個點轉錯彎可能會阻斷去路。' },
   { from:'6', to:'129', method:'找到一扇極冷的巨大鐵門' },
   { from:'6', to:'6.1', method:'被電線意外絆倒' },
   { from:'6', to:'41', method:'手上沾染過多黏稠牆壁的物質' },
