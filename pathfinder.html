@@ -134,14 +134,35 @@
     color:rgba(201,168,76,0.4); font-size:14px;
   }
   .transition-connector {
-    padding: 4px 0 4px 50px;
+    padding: 6px 0 6px 50px;
   }
   .transition-arrow {
-    text-align:center; color:rgba(201,168,76,0.5);
-    font-size:16px; padding:2px 0;
+    text-align:center; color:rgba(201,168,76,0.6);
+    font-size:22px; padding:4px 0;
+    letter-spacing:4px;
+  }
+  .transition-box {
+    background:rgba(201,168,76,0.06);
+    border:1px solid rgba(201,168,76,0.15);
+    border-radius:4px;
+    padding:14px 16px;
+  }
+  .transition-label {
+    font-size:13px; color:#c9a84c; letter-spacing:1px;
+    margin-bottom:6px; font-weight:bold;
+  }
+  .transition-intro {
+    font-size:12px; color:#8a8070; line-height:1.6;
+    margin-bottom:10px; padding-bottom:10px;
+    border-bottom:1px dashed rgba(201,168,76,0.15);
+  }
+  .method-list { margin:0; padding-left:18px; }
+  .method-list li { font-size:13px; color:#c0b8a8; line-height:1.7; margin-bottom:4px; }
+  .transition-method {
+    font-size:13px; color:#c0b8a8; line-height:1.7;
   }
   .transition-end {
-    text-align:center; padding:12px;
+    text-align:center; padding:14px;
     color:#7ab87a; font-size:14px;
     background:rgba(122,184,122,0.06);
     border:1px solid rgba(122,184,122,0.2);
@@ -1367,12 +1388,18 @@ function findPath() {
         methodsHtml = '<div class="transition-method">' + (step.method || '未知方式') + '</div>';
       }
 
+      // Build intro text
+      const fromName = info.name;
+      const toName = nextInfo ? nextInfo.name : '';
+      const intro = '從「' + fromName + '」前往「' + toName + '」，共有 ' + allMethods.length + ' 種已知方式：';
+
       const trans = document.createElement('div');
       trans.className = 'transition-connector';
       trans.innerHTML =
-        '<div class="transition-arrow">↓</div>' +
+        '<div class="transition-arrow">▼ ▼</div>' +
         '<div class="transition-box">' +
-          '<div class="transition-label">從 Level ' + step.level + ' 前往 Level ' + nextLevel + '（' + (nextInfo ? nextInfo.name : '') + '）— 共 ' + allMethods.length + ' 種方式</div>' +
+          '<div class="transition-label">Level ' + step.level + ' → Level ' + nextLevel + '</div>' +
+          '<div class="transition-intro">' + intro + '</div>' +
           methodsHtml +
         '</div>';
       pathSteps.appendChild(trans);
