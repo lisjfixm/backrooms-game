@@ -91,6 +91,11 @@
   .method-header.rare .method-tag {
     background:rgba(180,80,80,0.2);
   }
+  .hub-badge {
+    display:inline-block; padding:1px 6px;
+    background:rgba(100,160,200,0.2); color:#80b0d0;
+    border-radius:3px; font-size:10px; margin-left:6px;
+  }
   .rare-badge {
     display:inline-block; padding:1px 6px;
     background:rgba(180,80,80,0.2); color:#d49090;
@@ -576,7 +581,7 @@ const CONNECTIONS = [
   { from:'4', to:'6', method:'在 Level 4 中找到辦公室風格的樓梯，沿樓梯繼續深入，偶爾會通向 Level 6「熄燈之時」。' },
   { from:'4', to:'71', method:'找到通往地下室的樓梯，到達 Level 71。' },
   { from:'4', to:'hub', method:'從樞紐的牆上躍進，可到達 Level 4（反向同理）。' },
-  { from:'4', to:'25', method:'在 Level 4「廢棄辦公室」的小屋子中，偶爾可以看到一扇類似保安室櫥櫃的門；打開這扇門即可進入 Level 25「四分之一樞紐」。這是 Level 25 唯一已知的特殊入口。' },
+  { from:'4', to:'25', method:'在 Level 4「廢棄辦公室」中探索，進入一間小屋子；在屋子中偶爾可以看到一扇類似保安室櫥櫃的門（外觀像辦公樓的保安亭）。打開這扇門並跨過門檻，即可進入 Level 25「四分之一樞紐」。這是 Level 25 唯一已知的特殊入口，不需要硬幣或特殊物品。' },
   { from:'4', to:'55', method:'在危急狀況下衝過一扇門' },
   // Level 4.1
   { from:'4.1', to:'8', method:'內部小型隧道盡頭' },
@@ -1426,8 +1431,8 @@ function findPath() {
         '<div class="path-card-header">' +
           '<div class="step-num">' + (i + 1) + '</div>' +
           '<div class="step-header-info">' +
-            '<div class="step-level"><span class="level-badge">Level ' + step.level + '</span>' + info.name + (step.rare ? ' <span class="rare-badge">稀有</span>' : '') + '</div>' +
-            '<div class="step-name">生存難度等級 ' + info.class + (isLast ? ' · 終點' : '') + '</div>' +
+            '<div class="step-level"><span class="level-badge">Level ' + step.level + '</span>' + info.name + (isHub ? ' <span class="hub-badge">樞紐</span>' : '') + (step.rare ? ' <span class="rare-badge">稀有</span>' : '') + '</div>' +
+            '<div class="step-name">生存難度等級 ' + info.class + (isLast ? ' · 終點' : '') + (isHub ? ' · 街機可通往 20+ 層級' : '') + '</div>' +
           '</div>' +
           '<a class="step-wiki-link" href="' + wikiUrl + '" target="_blank">維基頁面</a>' +
         '</div>';
