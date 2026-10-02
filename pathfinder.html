@@ -1265,7 +1265,11 @@ function findPath() {
   if (!path) {
     resultTitle.textContent = '找不到路徑';
     pathSteps.innerHTML = '<div class="no-path">目前資料中沒有從 Level ' + from + ' 到 Level ' + to + ' 的已知路徑。</div>';
-    resultArea.classList.add('show');
+    // Add expand/collapse listeners
+  pathSteps.querySelectorAll('.path-card-header').forEach(h => {
+    h.addEventListener('click', () => h.parentElement.classList.toggle('open'));
+  });
+  resultArea.classList.add('show');
     return;
   }
 
@@ -1298,7 +1302,7 @@ function findPath() {
     const wikiUrl = 'https://backrooms-wiki-cn.wikidot.com/level-' + step.level;
 
     card.innerHTML =
-      '<div class="path-card-header" onclick="this.parentElement.classList.toggle('open')">' +
+      '<div class="path-card-header">' +
         '<div class="step-num">' + (i + 1) + '</div>' +
         '<div class="step-header-info">' +
           '<div class="step-level"><span class="level-badge">Level ' + step.level + '</span>' + info.name + '</div>' +
