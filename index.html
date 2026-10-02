@@ -49,6 +49,15 @@
     filter: brightness(0.55) contrast(1.05) saturate(0.9);
   }
 
+  #bg.level2 {
+    background: linear-gradient(135deg, #1a1510 0%, #2a2015 30%, #1f1a12 60%, #15100a 100%);
+  }
+  #bg.level2::before {
+    content: "";
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(90deg, transparent, transparent 80px, rgba(60,45,30,0.15) 80px, rgba(60,45,30,0.15) 82px);
+  }
+
   /* === OVERLAYS === */
   #vignette {
     position:absolute; inset:0;
@@ -678,6 +687,7 @@
     <div id="nav-buttons">
       <button class="nav-btn" id="btn-l0">Level 0</button>
       <button class="nav-btn" id="btn-l1">Level 1</button>
+      <button class="nav-btn" id="btn-l2">Level 2</button>
     </div>
     <div id="walk-area">
       <button id="walk-btn">繼續行走</button>
@@ -775,6 +785,7 @@ function updateHUD() {
 const LEVELS = {
   0: { title:'Level 0', subtitle:'教學關卡', badge:'LEVEL 0' },
   1: { title:'Level 1', subtitle:'宜居地帶', badge:'LEVEL 1' },
+  2: { title:'Level 2', subtitle:'廢棄公共帶', badge:'LEVEL 2' },
 };
 
 function switchLevel(n) {
@@ -799,6 +810,7 @@ function switchLevel(n) {
     // Update button states
     document.getElementById('btn-l0').disabled = (n === 0);
     document.getElementById('btn-l1').disabled = (n === 1);
+    document.getElementById('btn-l2').disabled = (n === 2);
 
     // Fade in
     setTimeout(() => {
@@ -810,13 +822,14 @@ function switchLevel(n) {
     }, 300);
   }, 600);
 
-  playTone(n === 0 ? 220 : 180, 0.4, 'sine', 0.06);
+  playTone(n === 0 ? 220 : (n === 1 ? 180 : 140), 0.4, 'sine', 0.06);
 }
 
 // === SURVIVAL DIFFICULTY ===
 const SD_DATA = {
   0: { class:1, bullets:['安全','穩定','極少量實體'] },
   1: { class:1, bullets:['安全穩定','存在異常資源','極少量實體'] },
+  2: { class:3, bullets:['不安全','不穩定','中量實體'] },
 };
 
 function updateSDBox(level) {
@@ -883,7 +896,64 @@ const LOCATIONS = {
       ] },
   ],
   1: [
-    // Level 1 special locations will be added here
+    { id:'meg_cache', name:'M.E.G. 物資箱',
+      img:'',
+      desc:'Level 1 中常見的 M.E.G. 補給箱，內有杏仁水、罐頭和基本醫療用品。箱體上印有 M.E.G. 標誌。',
+      choices:[
+        { text:'搜刮物資', result:'你找到了一些杏仁水和罐頭。' },
+        { text:'離開', result:'你沒有動這個箱子，繼續前行。' },
+      ] },
+    { id:'long_corridor', name:'異常長廊',
+      img:'',
+      desc:'一條看起來比其他廊道都要長得多的過道，深處隱約傳來機器運轉的聲音。這可能是通往 Level 2 的入口。',
+      choices:[
+        { text:'深入長廊', result:'你沿著長廊不斷前行，周圍的牆壁開始變得佈滿管線…', action:'to_level2' },
+        { text:'退回', result:'你覺得不安，決定先退回。' },
+      ] },
+    { id:'alpha_base', name:'Alpha 基地遺址',
+      img:'',
+      desc:'M.E.G. 曾經的 Alpha 基地，現在已部分廢棄。牆上留有前人的筆記和物資痕跡。',
+      choices:[
+        { text:'搜索遺址', result:'你在廢墟中找到了一些有用的物品。' },
+        { text:'繼續行走', result:'你離開了基地遺址。' },
+      ] },
+  ],
+  2: [
+    { id:'narrow_pipe', name:'狹窄管道區',
+      img:'',
+      desc:'Level 2 中極度狹窄的區域，兩側佈滿粗大的工業管道，只能側身通過。牆壁是骯髒的混凝土。',
+      choices:[
+        { text:'側身通過', result:'你小心地穿過了管道區，衣服上沾滿了灰塵。' },
+        { text:'繞路', result:'你決定找另一條路。' },
+      ] },
+    { id:'machine_room', name:'機器房',
+      img:'',
+      desc:'一個擺滿巨大廢棄機器的房間，機器內部發出幾乎無聲的運轉噪音，仿佛壞掉了一樣。',
+      choices:[
+        { text:'檢查機器', result:'你發現這些機器型號真實存在，但串聯後完全無法工作。' },
+        { text:'離開', result:'你離開了機器房。' },
+      ] },
+    { id:'blackout_zone', name:'停電區',
+      img:'',
+      desc:'Level 2 中燈具完全損毀的區域，一片漆黑。根據記錄，3x3 至 6x6 燈具網格內的區域都會停擺。',
+      choices:[
+        { text:'摸黑前進', result:'你在黑暗中摸索，聽到了奇怪的聲音…' },
+        { text:'退回有燈區', result:'你決定不冒險，退回了光亮處。' },
+      ] },
+    { id:'abnormal_door', name:'異常出口門',
+      img:'',
+      desc:'一扇未上鎖的鋼製門，與周圍的門不同。門上刻有奇怪的記號，據說通向更深的層級。',
+      choices:[
+        { text:'打開門', result:'你打開了門，另一邊是未知的區域…（更多層級開發中）' },
+        { text:'離開', result:'你關上了門，繼續在 Level 2 探索。' },
+      ] },
+    { id:'el3a', name:'辦公區 EL3A',
+      img:'',
+      desc:'B.N.T.G. 的行動主基地，由廢棄的工業區改造而成。外圍有鐵軌殘骸，這裡曾是 Level 2 的貿易樞紐。',
+      choices:[
+        { text:'靠近查看', result:'你看到了荒廢的軌道和辦公設施，B.N.T.G. 似乎已不在此活動。' },
+        { text:'繞開', result:'你不想招惹可能的勢力，繞開了這個區域。' },
+      ] },
   ],
 };
 
@@ -919,11 +989,13 @@ function walk() {
     btn.disabled = false;
     btn.textContent = '繼續行走';
     
-    // 100% encounter - 10% flickering wall, 90% normal
-    const normalLocs = locations.filter(l => l.id !== 'flickering_wall');
+    // 100% encounter - 10% portal location, 90% normal
+    const portalIds = { 0:'flickering_wall', 1:'long_corridor' };
+    const portalId = portalIds[state.level];
+    const normalLocs = locations.filter(l => l.id !== portalId);
     let loc;
-    if (normalLocs.length > 0 && Math.random() < 0.1 && locations.some(l => l.id === 'flickering_wall')) {
-      loc = locations.find(l => l.id === 'flickering_wall');
+    if (normalLocs.length > 0 && Math.random() < 0.1 && portalId && locations.some(l => l.id === portalId)) {
+      loc = locations.find(l => l.id === portalId);
     } else if (normalLocs.length > 0) {
       loc = normalLocs[Math.floor(Math.random() * normalLocs.length)];
     } else {
@@ -955,6 +1027,9 @@ function showEncounter(loc) {
       playTone(330, 0.3, 'sine', 0.05);
       if (c.action === 'to_level1') {
         setTimeout(() => switchLevel(1), 1200);
+      }
+      if (c.action === 'to_level2') {
+        setTimeout(() => switchLevel(2), 1200);
       }
     };
     cc.appendChild(btn);
@@ -1017,6 +1092,7 @@ function startGame() {
 document.getElementById('start-btn').addEventListener('click', startGame);
 document.getElementById('btn-l0').addEventListener('click', () => switchLevel(0));
 document.getElementById('btn-l1').addEventListener('click', () => switchLevel(1));
+document.getElementById('btn-l2').addEventListener('click', () => switchLevel(2));
 document.getElementById('walk-btn').addEventListener('click', walk);
 document.getElementById('viewer-close').addEventListener('click', closeViewer);
 document.getElementById('image-viewer').addEventListener('click', (e) => {
