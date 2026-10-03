@@ -81,6 +81,11 @@
   .mini-name { font-size:12px; color:#a09080; }
   .mini-method { font-size:11px; color:#7a7060; padding:2px 0 6px 10px;
     border-left:2px solid rgba(201,168,76,0.2); margin-left:4px; line-height:1.5; }
+  .open-full-path-btn { margin-top:10px; padding:8px 14px; text-align:center;
+    background:rgba(201,168,76,0.12); border:1px solid rgba(201,168,76,0.3);
+    border-radius:4px; color:#c9a84c; font-size:12px; cursor:pointer;
+    transition:all 0.2s; }
+  .open-full-path-btn:hover { background:rgba(201,168,76,0.22); border-color:rgba(201,168,76,0.6); }
   .path-card { background:rgba(20,16,10,0.7); border:1px solid rgba(201,168,76,0.2);
     border-radius:6px; margin-bottom:0; overflow:hidden;
     transition:border-color 0.3s, box-shadow 0.3s; }
@@ -9055,8 +9060,8 @@ function findPath() {
   if (!LEVEL_INFO[from]) { alert('Level ' + from + ' 尚未收錄'); return; }
   if (!LEVEL_INFO[to]) { alert('Level ' + to + ' 尚未收錄'); return; }
 
-  // 找所有路徑（最多15跳，最多200條）
-  allFoundPaths = findAllPaths(from, to, 15, 200);
+  // 找所有路徑（最多15跳，最多1000條）
+  allFoundPaths = findAllPaths(from, to, 15, 1000);
   currentSort = routeType === 'safest' ? 'danger' : 'time';
 
   pathSteps.innerHTML = '';
@@ -9080,7 +9085,7 @@ function findPath() {
     var btn = document.createElement('div');
     btn.className = 'view-all-btn';
     btn.id = 'view-all-btn';
-    btn.innerHTML = '▼ 查看全部 ' + allFoundPaths.length + ' 條路徑';
+    btn.innerHTML = '▼ 查看全部 ' + allFoundPaths.length + ' 條路徑' + (allFoundPaths.length >= 1000 ? '（已達上限）' : '');
     btn.onclick = function() { toggleAllPaths(); };
     pathSteps.appendChild(btn);
 
@@ -9154,7 +9159,6 @@ function expandPathItem(el) {
   if (detail.style.display === 'none') {
     detail.style.display = 'block';
     toggle.textContent = '▼';
-    // 渲染詳細路徑
     var idx = parseInt(el.querySelector('.all-path-num').textContent.replace('#','')) - 1;
     var sorted = sortPaths(allFoundPaths, currentSort);
     var path = sorted[idx];
@@ -9177,6 +9181,8 @@ function expandPathItem(el) {
         }
       }
     }
+    // 加入「查看完整路徑」按鈕
+    html += '<div class="open-full-path-btn" onclick="event.stopPropagation(); openPathModal(' + idx + ')">🔍 查看完整路徑</div>';
     detail.innerHTML = html;
   } else {
     detail.style.display = 'none';
@@ -9184,14 +9190,39 @@ function expandPathItem(el) {
   }
 }
 
+function openPathModal(idx) {
+  var sorted = sortPaths(allFoundPaths, currentSort);
+  var path = sorted[idx];
+  var m = pathMetrics(path);
+  var overlay = document.getElementById('modal-overlay');
+  var content = document.getElementById('modal-content');
+  var levels = path.map(function(p){return p.level;}).join(' → ');
+
+  var html = '<span class="modal-close" onclick="closeModal()">&times;</span>';
+  html += '<h2>路徑 #' + (idx+1) + '</h2>';
+  html += '<div class="modal-sub">' + levels + '</div>';
+  html += '<div class="class-row"><span class="class-dot" style="background:#c9a84c;"></span>';
+  html += m.jumps + ' 次跳轉 · 危險度 ' + m.danger + (m.rare > 0 ? ' · 含 ' + m.rare + ' 條稀有通道' : '') + '</div>';
+  html += '<div id="modal-path-body" style="margin-top:16px;max-height:60vh;overflow-y:auto;"></div>';
+  content.innerHTML = html;
+  overlay.classList.add('show');
+
+  // 渲染完整路徑到彈窗中
+  var body = document.getElementById('modal-path-body');
+  renderPathInto(path, body, '完整路徑', m.rare > 0);
+}
+
 function renderSinglePath(path, label, isRare) {
-  var pathSteps = document.getElementById('path-steps');
+  renderPathInto(path, document.getElementById('path-steps'), label, isRare);
+}
+
+function renderPathInto(path, container, label, isRare) {
   var header = document.createElement('div');
   header.className = 'method-header' + (isRare ? ' rare' : '');
   var jumps = path.length - 1;
   var totalDanger = path.reduce(function(s,p){ return s + getDanger(p.level); }, 0);
   header.innerHTML = '<span class="method-tag">' + label + '</span> ' + jumps + ' 次跳轉，危險度 ' + totalDanger.toFixed(1) + (isRare ? '（含稀有通道）' : '');
-  pathSteps.appendChild(header);
+  container.appendChild(header);
 
   path.forEach(function(step, i) {
     var info = LEVEL_INFO[step.level] || {name:'未知', class:'?'};
@@ -9217,7 +9248,7 @@ function renderSinglePath(path, label, isRare) {
         '</div>' +
         '<a class="step-wiki-link" href="' + wikiUrl + '" target="_blank" onclick="event.stopPropagation()">維基</a>' +
       '</div>';
-    pathSteps.appendChild(card);
+    container.appendChild(card);
 
     if (!isLast) {
       var allMethods = getAllMethods(step.level, nextLevel);
@@ -9237,12 +9268,12 @@ function renderSinglePath(path, label, isRare) {
           '<div class="transition-intro">' + intro + '</div>' +
           methodsHtml +
         '</div>';
-      pathSteps.appendChild(trans);
+      container.appendChild(trans);
     } else {
       var end = document.createElement('div');
       end.className = 'transition-connector';
       end.innerHTML = '<div class="transition-end">✓ 已到達目標 Level ' + step.level + '</div>';
-      pathSteps.appendChild(end);
+      container.appendChild(end);
     }
   });
 }
