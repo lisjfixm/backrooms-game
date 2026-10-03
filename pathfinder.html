@@ -618,6 +618,32 @@
   .sd-container .sd-bottom-box { margin-left: 0; }
 }
 
+
+  /* Level Image Gallery */
+  .level-gallery { margin-bottom:16px; border-radius:6px; overflow:hidden;
+    background:rgba(0,0,0,0.3); border:1px solid rgba(201,168,76,0.15); }
+  .gallery-viewport { position:relative; width:100%; max-height:280px;
+    display:flex; align-items:center; justify-content:center; overflow:hidden;
+    background:#0d0a08; }
+  .gallery-img { max-width:100%; max-height:280px; object-fit:contain;
+    display:block; user-select:none; -webkit-user-drag:none; }
+  .gallery-img-placeholder { width:100%; height:160px; display:flex;
+    align-items:center; justify-content:center; color:#5a5040; font-size:13px; }
+  .gallery-caption { padding:8px 12px; font-size:12px; color:#a09080;
+    line-height:1.6; text-align:center; font-style:italic;
+    background:rgba(0,0,0,0.4); min-height:20px; }
+  .gallery-nav { display:flex; align-items:center; justify-content:space-between;
+    padding:6px 12px; background:rgba(201,168,76,0.05); }
+  .gallery-arrow { cursor:pointer; color:#c9a84c; font-size:20px; padding:4px 12px;
+    user-select:none; -webkit-user-select:none; transition:opacity 0.2s; }
+  .gallery-arrow:hover { opacity:0.7; }
+  .gallery-arrow.disabled { color:#5a5040; cursor:default; opacity:0.4; }
+  .gallery-counter { font-size:12px; color:#8a8070; letter-spacing:1px; }
+  .gallery-dots { display:flex; gap:6px; justify-content:center; padding:4px 0; }
+  .gallery-dot { width:6px; height:6px; border-radius:50%;
+    background:rgba(201,168,76,0.3); cursor:pointer; transition:background 0.2s; }
+  .gallery-dot.active { background:#c9a84c; }
+
 </style>
 </head>
 <body>
@@ -783,6 +809,24 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "找到金屬門可通往 Level 4 或其他層級"
+    ],
+    "images": [
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-3/y39beu.jpg",
+        "caption": "Level 3的一个走廊（经过加亮处理以便更好的观感）。"
+      },
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-3/ri3tgd.png",
+        "caption": "另一个带有锈迹斑斑的监狱栅栏的走廊，此时处于封闭状态。"
+      },
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-3/bb7idb.jpg",
+        "caption": "其中一个电力房的入口，仅被发电机的光芒照亮。"
+      },
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-3/gu366t.jpg",
+        "caption": "Level 3中一个更黑暗的走廊，被一个不寻常的荧光灯照亮。"
+      }
     ]
   },
   "4": {
@@ -795,6 +839,12 @@ const LEVEL_INFO = {
     "exits": [
       "走出辦公大樓可抵達 Level 11",
       "找到特定門可通往其他層級"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/2676072152cde0fc0d620ff15d7fbb11~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806564714&x-signature=CBbSzUsGY%2FCz4sqgTRwpH70UR5s%3D",
+        "caption": "一张 Level 4 中窗户的照片。"
+      }
     ]
   },
   "5": {
@@ -828,6 +878,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "下潛到特定深度可抵達 Level 8 或 Level 83"
+    ],
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/isp-i18n-media/image/7c2e4d4f90c9d35082e4e175593d7e12~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806564838&x-signature=k0F3fb9BHctejhhc9t8Gvx735Pw%3D",
+        "caption": "一张Level 7入口房间的照片，经过了加亮处理。"
+      }
     ]
   },
   "8": {
@@ -851,6 +907,16 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "探索城鎮可找到通往 Level 10 或其他層級的門"
+    ],
+    "images": [
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/labis/image/d67fbdff479fb2991ce99c26de0f3829~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806564840&x-signature=Pvy8uaBmLw4KPPNNubDoYDORSW0%3D",
+        "caption": "Level 9 中空旷的街道。"
+      },
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/isp-i18n-media/image/b647191f6dd6076d194f528f6d764452~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806564840&x-signature=OoRnyppxVclQn7afvhlZYuq0Dsg%3D",
+        "caption": "Level 9 中房屋的图片。"
+      }
     ]
   },
   "10": {
@@ -885,6 +951,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "找到出口門可抵達其他層級"
+    ],
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/isp-i18n-media/image/508f53a2aacefe0c7ea5ebd0ed2e8bcd~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806564842&x-signature=h0%2B2%2Bsub9xfKMZxa014GnsKrCEc%3D",
+        "caption": "Level 12 的电视雪花屏。"
+      }
     ]
   },
   "13": {
@@ -907,6 +979,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "主動離開可抵達各種安全層級"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/isp-i18n-media/image/ec4c36c2ee916454b8eb029afaadb3d5~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806565195&x-signature=4gEPdV20nIwTOx%2B2VIP2H8E3CW8%3D",
+        "caption": "Level 14 的照片。"
+      }
     ]
   },
   "15": {
@@ -984,6 +1062,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "用鑰匙打開特定門可抵達其他層級"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/isp-i18n-media/image/ec4c36c2ee916454b8eb029afaadb3d5~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806565195&x-signature=4gEPdV20nIwTOx%2B2VIP2H8E3CW8%3D",
+        "caption": "Level 21 的中间。"
+      }
     ]
   },
   "22": {
@@ -1105,6 +1189,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "找到森林出口可抵達其他層級"
+    ],
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/isp-i18n-media/image/508f53a2aacefe0c7ea5ebd0ed2e8bcd~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806564842&x-signature=h0%2B2%2Bsub9xfKMZxa014GnsKrCEc%3D",
+        "caption": "Level 32内的森林。"
+      }
     ]
   },
   "33": {
@@ -1116,6 +1206,16 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "找到腐敗較輕的出口可抵達其他層級"
+    ],
+    "images": [
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/labis/image/f99d9d0a29ca76e12c2733ebd1025f0a~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806565197&x-signature=N348aJinCwh42HDHFGLI4ix%2BJsE%3D",
+        "caption": "Level 33 初始状态。"
+      },
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/labis/image/f99d9d0a29ca76e12c2733ebd1025f0a~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806565197&x-signature=N348aJinCwh42HDHFGLI4ix%2BJsE%3D",
+        "caption": "处在腐化状态的 Level 33。"
+      }
     ]
   },
   "34": {
@@ -1127,6 +1227,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "找到下水道出口可抵達其他層級"
+    ],
+    "images": [
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/labis/image/f99d9d0a29ca76e12c2733ebd1025f0a~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806565197&x-signature=N348aJinCwh42HDHFGLI4ix%2BJsE%3D",
+        "caption": "Level 34 隧道的图象。"
+      }
     ]
   },
   "35": {
@@ -1138,6 +1244,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "找到公路出口可抵達其他層級"
+    ],
+    "images": [
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/labis/image/f99d9d0a29ca76e12c2733ebd1025f0a~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806565197&x-signature=N348aJinCwh42HDHFGLI4ix%2BJsE%3D",
+        "caption": "Level 35入口处的照片。"
+      }
     ]
   },
   "36": {
@@ -1194,6 +1306,12 @@ const LEVEL_INFO = {
       "路徑通向 Level 448",
       "掉進水坑抵達 Level 466",
       "邊界橋樑通往 Level 63.3"
+    ],
+    "images": [
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/labis/image/f99d9d0a29ca76e12c2733ebd1025f0a~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806565197&x-signature=N348aJinCwh42HDHFGLI4ix%2BJsE%3D",
+        "caption": "Level 39 主要区域。"
+      }
     ]
   },
   "40": {
@@ -1267,6 +1385,12 @@ const LEVEL_INFO = {
       "穿過員工大廳進入 Level 2 或 Level 4",
       "找到船上出口抵達 Level 85",
       "穿過艙門進入 Level 34"
+    ],
+    "images": [
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-43/m8X9I5q6HbxvJFy.jpg",
+        "caption": "Level 43 主楼的众多房间之一。"
+      }
     ]
   },
   "44": {
@@ -1290,6 +1414,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "從帝國大廈正門離開回到樞紐"
+    ],
+    "images": [
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-45/FC_render2.jpg",
+        "caption": "从BRC隔间拍摄的虚空的照片。"
+      }
     ]
   },
   "46": {
@@ -1305,6 +1435,12 @@ const LEVEL_INFO = {
       "跳進綠洲抵達 Level α",
       "廢墟中的辦公室門通往 Level 4",
       "低重力區域進入 Level 149"
+    ],
+    "images": [
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-46/jUoZlvdga1fHMxE.jpg",
+        "caption": "Level 46 的其中一个废墟。"
+      }
     ]
   },
   "47": {
@@ -1316,6 +1452,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "通過切入切出離開，抵達隨機層級"
+    ],
+    "images": [
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/labis/image/f99d9d0a29ca76e12c2733ebd1025f0a~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806565197&x-signature=N348aJinCwh42HDHFGLI4ix%2BJsE%3D",
+        "caption": "Level 47。"
+      }
     ]
   },
   "48": {
@@ -1385,7 +1527,13 @@ const LEVEL_INFO = {
       "在 Level 445 切入大石頭進入",
       "從 Level 2.1 切出進入"
     ],
-    "exits": "通過標記的小隧道離開，可抵達 Level 11 等隨機層級"
+    "exits": "通過標記的小隧道離開，可抵達 Level 11 等隨機層級",
+    "images": [
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/labis/image/f99d9d0a29ca76e12c2733ebd1025f0a~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806565197&x-signature=N348aJinCwh42HDHFGLI4ix%2BJsE%3D",
+        "caption": "Level 52的照片。"
+      }
+    ]
   },
   "53": {
     "name": "孤獨",
@@ -1404,7 +1552,13 @@ const LEVEL_INFO = {
       "在 Level 42 找到樓梯入口進入",
       "在 Level 17 找到相似走廊進入"
     ],
-    "exits": "通過未上鎖的門可抵達 Level 1、4、5、9、17、21、34、43、53 等層級，觸摸商店標誌進入 Level 33，進入火車抵達 Level 61"
+    "exits": "通過未上鎖的門可抵達 Level 1、4、5、9、17、21、34、43、53 等層級，觸摸商店標誌進入 Level 33，進入火車抵達 Level 61",
+    "images": [
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/labis/image/f99d9d0a29ca76e12c2733ebd1025f0a~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806565197&x-signature=N348aJinCwh42HDHFGLI4ix%2BJsE%3D",
+        "caption": "一张 Level 54 的图片。"
+      }
+    ]
   },
   "55": {
     "name": "休憩驛站",
@@ -1425,7 +1579,13 @@ const LEVEL_INFO = {
       "走進 Level 93、Level -5、Level 420 或 Level 135 的洞穴",
       "在 Level 55 冰櫃中找到洞穴"
     ],
-    "exits": "通過加寬的洞穴出口抵達 Level 57"
+    "exits": "通過加寬的洞穴出口抵達 Level 57",
+    "images": [
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-56/16706655215_1bc4553429_b.jpg",
+        "caption": "一名未知流浪者在 Level 56 零下区域拍摄的照片。"
+      }
+    ]
   },
   "57": {
     "name": "白日美術館",
@@ -1494,7 +1654,13 @@ const LEVEL_INFO = {
       "切入 Level 39 的山丘抵達",
       "在 Level 11 穿過灌木叢偶爾抵達"
     ],
-    "exits": "掉入虛空會被傳送到安全層級如 Level 797、Level 39 等自然層級"
+    "exits": "掉入虛空會被傳送到安全層級如 Level 797、Level 39 等自然層級",
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/isp-i18n-media/img/b2af77466743aef3288dbba9c89b125f~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806565221&x-signature=PhwSyL5MD0bKcMiN74DT5%2FWAVrY%3D",
+        "caption": "从冥想点拍摄的 Level 63 天空的照片。"
+      }
+    ]
   },
   "64": {
     "name": "潛伏的黑暗",
@@ -1506,7 +1672,13 @@ const LEVEL_INFO = {
       "在 Level 6 坐沙發上暈倒醒來",
       "在 Level 2 找到裝潢房間"
     ],
-    "exits": "安全階段找到玻璃門抵達 Level 9，走出前門可回家，找到光亮房間抵達 Level 0，切入油畫抵達 Level 57，牆上的洞通往 Level 8"
+    "exits": "安全階段找到玻璃門抵達 Level 9，走出前門可回家，找到光亮房間抵達 Level 0，切入油畫抵達 Level 57，牆上的洞通往 Level 8",
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/isp-i18n-media/img/b2af77466743aef3288dbba9c89b125f~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806565221&x-signature=PhwSyL5MD0bKcMiN74DT5%2FWAVrY%3D",
+        "caption": "包裹在黑暗中的 Level 64 的照片。"
+      }
+    ]
   },
   "65": {
     "name": "血跡花園",
@@ -1531,7 +1703,13 @@ const LEVEL_INFO = {
       "在 Level 122 遊蕩找到入口",
       "在 Level 226 把食物放在義大利麵盤裡食用"
     ],
-    "exits": "食用最不喜歡的甜點抵達 Level 11、31、57 或 98，直接離開店面回到 Level 11 或 122，向傑里問出口抵達 Level 98，帶著《起源》書走出抵達 Level 153"
+    "exits": "食用最不喜歡的甜點抵達 Level 11、31、57 或 98，直接離開店面回到 Level 11 或 122，向傑里問出口抵達 Level 98，帶著《起源》書走出抵達 Level 153",
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/isp-i18n-media/img/b2af77466743aef3288dbba9c89b125f~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806565221&x-signature=PhwSyL5MD0bKcMiN74DT5%2FWAVrY%3D",
+        "caption": "一张摆放在柜台旁展示长柜里的面点的照片。"
+      }
+    ]
   },
   "68": {
     "name": "電影院 啖你院",
@@ -1540,7 +1718,13 @@ const LEVEL_INFO = {
     "entrances": [
       "在 Level 11 找到電影院進入"
     ],
-    "exits": "切入銀幕抵達 Level 94，拐角處的紅色門通往 Level 74"
+    "exits": "切入銀幕抵達 Level 94，拐角處的紅色門通往 Level 74",
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/isp-i18n-media/img/b2af77466743aef3288dbba9c89b125f~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806565221&x-signature=PhwSyL5MD0bKcMiN74DT5%2FWAVrY%3D",
+        "caption": "Level 68其中一间房间的照片。"
+      }
+    ]
   },
   "69": {
     "name": "苦難之路",
@@ -1602,7 +1786,13 @@ const LEVEL_INFO = {
       "在 Level 117 找到紅門進入",
       "在 Level 68 走廊找到相似紅門"
     ],
-    "exits": "在本層停留2小時後使用舞台活板門抵達絕緣層"
+    "exits": "在本層停留2小時後使用舞台活板門抵達絕緣層",
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/isp-i18n-media/image/22eec29d76d5200227005bb70a0ba15f~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806565223&x-signature=%2FWrQg1r0yu20zcDNybwh9bzLm1o%3D",
+        "caption": "在没有身影出现时Level 74的舞台。"
+      }
+    ]
   },
   "75": {
     "name": "閾限",
@@ -1636,7 +1826,13 @@ const LEVEL_INFO = {
       "在 Level 56 找到氣閘門進入",
       "在 Level 5 鍋爐房找到相似門"
     ],
-    "exits": "低概率氣閘舷窗顯示 Level 11 街道景象，通過後抵達"
+    "exits": "低概率氣閘舷窗顯示 Level 11 街道景象，通過後抵達",
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/isp-i18n-media/image/22eec29d76d5200227005bb70a0ba15f~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806565223&x-signature=%2FWrQg1r0yu20zcDNybwh9bzLm1o%3D",
+        "caption": "舷窗外的景象。"
+      }
+    ]
   },
   "79": {
     "name": "機中幽冥",
@@ -1661,7 +1857,13 @@ const LEVEL_INFO = {
     "entrances": [
       "從多個層級隨機切入抵達"
     ],
-    "exits": "休息滿足後自然離開抵達其他層級"
+    "exits": "休息滿足後自然離開抵達其他層級",
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/isp-i18n-media/image/22eec29d76d5200227005bb70a0ba15f~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806565223&x-signature=%2FWrQg1r0yu20zcDNybwh9bzLm1o%3D",
+        "caption": "赋闲结局。"
+      }
+    ]
   },
   "82": {
     "name": "自選交易集市",
@@ -1760,7 +1962,13 @@ const LEVEL_INFO = {
     "class": 4,
     "summary": "Level 93 是一座類似珠穆朗瑪峰的無底大山，極度嚴寒，最低溫可達 -186.94°C。空氣稀薄缺氧。山頂可能爆發。沒有已知出口。首批探索隊全體遇難。",
     "entrances": "從 Level 8 角落切出，或離開 Level 8 時隨機抵達，在 Level 47、135 把自己埋進雪中，卡入 Level 115 牆壁",
-    "exits": "沒有已知離開方式，據說下山可抵達 Level 135 但未再重現"
+    "exits": "沒有已知離開方式，據說下山可抵達 Level 135 但未再重現",
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/isp-i18n-media/image/0ff8150c0e688e1f7389f8d9a037e7c2~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806565218&x-signature=o0efRRAJDGUGtYikQfEtt5lQ2u0%3D",
+        "caption": "Level 93的第一张图片。"
+      }
+    ]
   },
   "94": {
     "name": "動畫",
@@ -1776,7 +1984,13 @@ const LEVEL_INFO = {
     "entrances": [
       "從 Level 94 深入抵達"
     ],
-    "exits": "層級仍在建設中，出口未知"
+    "exits": "層級仍在建設中，出口未知",
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/isp-i18n-media/image/0ff8150c0e688e1f7389f8d9a037e7c2~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806565218&x-signature=o0efRRAJDGUGtYikQfEtt5lQ2u0%3D",
+        "caption": "以机械神之名。"
+      }
+    ]
   },
   "96": {
     "name": "慰藉",
@@ -1793,7 +2007,17 @@ const LEVEL_INFO = {
       "在 Level 17 隨機門進入",
       "穿過 Level 532 走廊"
     ],
-    "exits": "穿過帆船牆壁抵達 Level 100，船上門通往 Level 372，燈塔廢墟艙門通往 Level 522"
+    "exits": "穿過帆船牆壁抵達 Level 100，船上門通往 Level 372，燈塔廢墟艙門通往 Level 522",
+    "images": [
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-97/0ezwux.jpg",
+        "caption": "Level 97 的照片 1。"
+      },
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-97/4v9ln9.jpg",
+        "caption": "Level 97 的照片 2。"
+      }
+    ]
   },
   "98": {
     "name": "城中小館",
@@ -1804,7 +2028,13 @@ const LEVEL_INFO = {
       "在 Level 6 長久徘徊從巷子走出",
       "從樞紐通過相同門進入"
     ],
-    "exits": "街道盡頭巷道抵達 Level 6，從來時的門離開，餐館洗手間通往 Level 103"
+    "exits": "街道盡頭巷道抵達 Level 6，從來時的門離開，餐館洗手間通往 Level 103",
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/isp-i18n-media/image/0ff8150c0e688e1f7389f8d9a037e7c2~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806565218&x-signature=o0efRRAJDGUGtYikQfEtt5lQ2u0%3D",
+        "caption": "Level 98 的照片。"
+      }
+    ]
   },
   "99": {
     "name": "食屍鬼鎮",
@@ -1825,6 +2055,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "擺弄海灘上的物品或墓碑會吸引影子出現，將人送到 Level 0"
+    ],
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/isp-i18n-media/image/0ff8150c0e688e1f7389f8d9a037e7c2~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806565218&x-signature=o0efRRAJDGUGtYikQfEtt5lQ2u0%3D",
+        "caption": "Level 100 的照片。"
+      }
     ]
   },
   "101": {
@@ -1858,6 +2094,16 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "找到入口門立即離開（強烈建議）"
+    ],
+    "images": [
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-103/wnl394.jpg",
+        "caption": "Level 103 的照片 1。"
+      },
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-103/hmg11v.jpg",
+        "caption": "Level 103 的照片 2。"
+      }
     ]
   },
   "104": {
@@ -1872,6 +2118,12 @@ const LEVEL_INFO = {
       "在避世所內穿過帶有「🜛」標誌的門到達 Level 73 的銀色城堡",
       "穿過避世所較清潔處到達 Level 183",
       "沉入沼澤有小概率隨機到達另一個濕地層級"
+    ],
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/isp-i18n-media/image/0ff8150c0e688e1f7389f8d9a037e7c2~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806565218&x-signature=o0efRRAJDGUGtYikQfEtt5lQ2u0%3D",
+        "caption": "夜间的堡垒。"
+      }
     ]
   },
   "105": {
@@ -1936,6 +2188,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "進入走廊中任意一間標有出口記號的門到達 Level 114"
+    ],
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/isp-i18n-media/image/0ff8150c0e688e1f7389f8d9a037e7c2~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806565218&x-signature=o0efRRAJDGUGtYikQfEtt5lQ2u0%3D",
+        "caption": "Level 109 的照片。"
+      }
     ]
   },
   "110": {
@@ -1954,6 +2212,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "要离开层级，你可以找到通往Level 52的门，或者切出至绝缘层。另一种离开的方式是找到通往 Level 9 的大型门。"
+    ],
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/isp-i18n-media/image/0ff8150c0e688e1f7389f8d9a037e7c2~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806565218&x-signature=o0efRRAJDGUGtYikQfEtt5lQ2u0%3D",
+        "caption": "Level 111 的照片。"
+      }
     ]
   },
   "112": {
@@ -1979,6 +2243,20 @@ const LEVEL_INFO = {
       "原 Level 110 - “奇点之后” 当前，自 区域 ב 的边缘处跳下可以抵达原 Level 110 。在原 110 被破坏前，自 Level 113 某幢建筑的屋顶层经一扇门离开便可抵达原 Level 110 。类似于通向 Level 11 的出口，该门也会在有人通过其离开后自动锁死。",
       "Level 11 - “无限城市” 欲进入 Level 11 ，须在 区域 א 内找到一扇出口门，该门通往 Level 11 中一扇随机的出口门。一旦离开，该门将自动锁死，无法返回。",
       "目前为止，已知 Level 113 的出口只能通往 Level 11 、 [已编辑] 和原 Level 110 。"
+    ],
+    "images": [
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-113/level113.a",
+        "caption": "自区域 ב 观测到的区域 א。"
+      },
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-113/level113.b",
+        "caption": "Level 113 中 Entity 35 的一般行为模式。"
+      },
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-113/level113.c",
+        "caption": "Level 113 的高分辨率照片，由 Kara H. Thanatos 拍摄。"
+      }
     ]
   },
   "114": {
@@ -2009,6 +2287,12 @@ const LEVEL_INFO = {
       "在层级内大部分区域切出通常会抵达 Level 162 。",
       "层级内可以找到消防通道，它们通向各种不同的层级。",
       "更多授权相关信息，请查阅 授权指导 。"
+    ],
+    "images": [
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-115/WikiXDC_National_Archives_Tour_Hall_-_Stierch.jpg",
+        "caption": "Level 115中M.E.G.档案基地的一条过道。"
+      }
     ]
   },
   "116": {
@@ -2030,7 +2314,17 @@ const LEVEL_INFO = {
     "class": 2,
     "summary": "由 owl4513 、 jiaoyanerlan2 、 KkKkK_1234 翻译 部分灵感源自 Bonnie Quinn 所著的 How To Survive Camping 系列作品。 深夜时分，我们走在回家的路上。周遭为何如此漆黑？街边的路灯尽数熄灭。我们抬头望向漆黑一片的夜空。她轻声呢喃：“我都忘了夜色能这般暗沉。”纵然高楼林立，人造太阳遍布，可我们依旧如同老鼠，在亲手搭建的迷宫中急匆匆地跑，慌忙寻找遮蔽以躲避头顶那片永恒的虚空。 闭上眼，暂失视觉——你理所当然地以为，外面的世界依然存在，稳定如常，待你重新睁开眼皮那一刻，它便会如期回返你的感官。可当你关掉灯，陷入一片浓稠得与虚空无异的黑暗时，那份信心或许会动摇，但你仍然知道，并且确信：现实并未因光的缺失而消逝。 ——在这里，事物并非简单地藏匿。它们被带走、被吞噬、被吞没。现实被熔解为虚无，那份优雅与流畅，如同海浪抹平岸边的沙堡。光照不到的地方，便不只是黑暗——它简直像从未存在过。 这片黑暗对它所笼罩的一切，持续施加着无处不在的压迫感。阴影从光线微弱的边缘悄然逼近，耐心地一寸寸蚕食，直到光线渐渐萎靡、暗淡，最终彻底溃散。当它靠得",
     "entrances": [],
-    "exits": []
+    "exits": [],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/isp-i18n-media/image/ec4c36c2ee916454b8eb029afaadb3d5~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806565195&x-signature=4gEPdV20nIwTOx%2B2VIP2H8E3CW8%3D",
+        "caption": "帐篷内部。"
+      },
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/isp-i18n-media/image/d71304cad2365d95e506a5f0ee8c2faf~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806565195&x-signature=HiRXn7whmWtsfpMbm%2BzS2A%2FcW9E%3D",
+        "caption": "夜晚露营地的帐篷。"
+      }
+    ]
   },
   "119": {
     "name": "普通的水上樂園…？",
@@ -2048,6 +2342,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "若要离开，你可以在服务器机房或漆黑走廊中发现可以把你带回 Level 4.3 的门径，或者从服务器机房的墙壁切出，即可达到 Level 70 。"
+    ],
+    "images": [
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/labis/image/f99d9d0a29ca76e12c2733ebd1025f0a~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806565197&x-signature=N348aJinCwh42HDHFGLI4ix%2BJsE%3D",
+        "caption": "其中一个服务器机房中的计算机显示块的图片。"
+      }
     ]
   },
   "121": {
@@ -2069,7 +2369,25 @@ const LEVEL_INFO = {
     "class": "unknown",
     "summary": "一座商场能承载很多：人、物、记忆。我们很少会停下来去想，商场本身就是一种共同的体验。 但他脸上那副体谅与共情的微笑，却完全看不出这一点。这表情他练过几百次了：眼睛睁大，眉头紧蹙，腮帮微鼓，再加上最点睛的一笔：一个了然于心却点到即止的微笑。 那位中年的母亲继续冲他大吼。她气得涨红的脸几乎贴到凯尔脸上，近到他大概都能猜出她昨晚吃了什么。而与此同时，她的孩子一直在店中央大发脾气。 “这太荒唐了！既然不卖，你们干吗还要把它摆出来？”她说着，在他面前使劲晃了晃那袋 Reese’s 糖果。 凯尔真想朝她吼回去，告诉她那些东西就是莫名其妙切入到货架里的。但他不可能真这么做，除非他想被开除，连住的地方也一块儿丢掉。 “哼，我们不会再来了！走吧，山姆。”说完，那女人带着孩子气冲冲地走出了商店。这一切都不意外，和往常没什么两样：有人发现一件来路不明的商品，抱怨一通，闹上一阵，然后就走人了。 凯尔很快就可以回家了。所以眼下，他得继续上班。加班无所谓，压力也无所谓。只要女儿能有个安稳的家。 明里几乎不敢相信自己的眼睛。Level 122，她终于成功了！她会是第一个成功完成 tgochi.exe 的“商店扒手”",
     "entrances": [],
-    "exits": []
+    "exits": [],
+    "images": [
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-122/gqrz7m.jpg",
+        "caption": "继续上班。"
+      },
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-122/zp4ca0.jpg",
+        "caption": "为了她。"
+      },
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-122/lfkede.jpg",
+        "caption": "看见了吧？不必担心。"
+      },
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-122/j00f44.jpg",
+        "caption": "今天人不算多。正好。"
+      }
+    ]
   },
   "123": {
     "name": "回溯",
@@ -2088,7 +2406,13 @@ const LEVEL_INFO = {
     "class": "unknown",
     "summary": "“那我们的小孩就起个傻气的名字，比如——” “木兰……要不就埃斯梅拉达” “笑死？？？谁会给孩子起名叫埃斯梅拉达啊” “那你可得给世上成千上万个埃斯梅拉达挨个道歉了，阿雅……” 神游遗墟。我之所以如此称呼此地，是因为它正在蚕食我的自我。我正用尽最后的气息，试图与某个并不存在的人对话，隐约期盼这能让我分心，暂时忘却 我终将死去 这无可避免的事实。操，在这里，战争的硝烟刺鼻，草木的气息却分秒滋长。战火曾如野燎原一样，而所有人拼杀的名义，竟是为了某个你甚至不知是否真实存在的人。你大概能由此想见，所有的偏见与恶毒究竟从何而来。此地呈现为一座黎凡特风格建筑林立的城镇，就像我父母相遇的那座城。我们相遇的那座城。屋宇温馨，街道空荡。它仿佛停滞在二十世纪。看来尚未重建。真是 沉闷 。 这地方在侵蚀你。我不会久留，越是前行，便越是迷失。它将那些使你为“人”的部分，从你身上剥离。我确信，待到终点，我将一无所剩。我的听觉已经失常。天知道继续下去还会发生什么，反正我是不会留在这里见证了。你会 被 污染，被吞噬，最终因相信此地灌输给你的病态虚构，相信你属于这里，相信这是你的“家”，而化为乌有。讽刺的是，昔日与你",
     "entrances": [],
-    "exits": []
+    "exits": [],
+    "images": [
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/labis/image/c96778ecc4652354ccc67a6fde0d8a33~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806565216&x-signature=R72M0VQWus8vDg1pUzrpifrrj0I%3D",
+        "caption": "毁得彻底，可真是意外啊。"
+      }
+    ]
   },
   "125": {
     "name": "记忆中的道路",
@@ -2112,7 +2436,13 @@ const LEVEL_INFO = {
       "更多授权相关信息，请查阅 授权指导 。",
       "作者： Entro_P 作者页"
     ],
-    "exits": []
+    "exits": [],
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/isp-i18n-media/image/0ff8150c0e688e1f7389f8d9a037e7c2~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806565218&x-signature=o0efRRAJDGUGtYikQfEtt5lQ2u0%3D",
+        "caption": "Level 126的一个房间，为规避层级特殊效应，图中画作已被隐去。"
+      }
+    ]
   },
   "127": {
     "name": "頭痛",
@@ -2138,6 +2468,16 @@ const LEVEL_INFO = {
       "你脚下的地面很烫。",
       "天空没有月亮。",
       "这是真的。"
+    ],
+    "images": [
+      {
+        "url": "https://backrooms-wiki.wdfiles.com/local--files/level-127/Level127",
+        "caption": "一张由匿名流浪者拍摄的Level 127影像，画面中是众多令人视觉疲劳的走廊之一。"
+      },
+      {
+        "url": "https://backrooms-wiki.wdfiles.com/local--files/level-127/RedHallway",
+        "caption": "Level 127中红色走廊唯一已知的影像，拍摄者看似正从吊顶天花板坠落。"
+      }
     ]
   },
   "128": {
@@ -2169,6 +2509,12 @@ const LEVEL_INFO = {
       "找到一扇奇怪的黑门可以通向 Level 130 ，但有风险。",
       "Natedagreat563 作 作者页",
       "Licensing"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/isp-i18n-media/img/b2af77466743aef3288dbba9c89b125f~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806565221&x-signature=PhwSyL5MD0bKcMiN74DT5%2FWAVrY%3D",
+        "caption": "Level 129中较稳定部分的照片。"
+      }
     ]
   },
   "130": {
@@ -2180,6 +2526,16 @@ const LEVEL_INFO = {
       "离开康育医院完全随缘。人们在医院里会停留一段随机的时间，可能是几个小时，也可能长达数月。时间一到，他们要么死亡，要么切出至入院前所处的地点，身上所有疾病或伤痛都将痊愈。他们也会保留进入该层级前所拥有的所有物品。目击者称，当人们从Level 95 4 返回时，仿佛时间从未流逝。",
       "通告： 以下是Parker Hudson Thomas的遗言，在Level 130中以同名文件归档。他有关员工的发现，对于揭开康育医院的内部运作与秘密具有重大意义。",
       "“那是一片模糊，一段混沌，一场永无止境的发烧梦。关于那个地方，我真正能记住的只有缝补过的伤疤和一条写着我名字的腕带。” —— Issac Shore"
+    ],
+    "images": [
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-130/3e5hev.jpg",
+        "caption": "Level 130之廊道。"
+      },
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-130/rjqn4l.jpg",
+        "caption": "典型病室。"
+      }
     ]
   },
   "131": {
@@ -2187,7 +2543,13 @@ const LEVEL_INFO = {
     "class": "unknown",
     "summary": "你来到这个地方，眼前是你从未登过的山，无法倚靠的树，以及再也不能遮住你的天空。窗帘是蓝色的，它令你想起高中时代与老师的一场争论，那场争论与写作的意义有关，与用词的意义有关，也与主旨的意义有关。 有时窗帘确实是蓝色，但那并无特别含义。蓝色是白纸上的黑话。窗帘之所以是蓝色，是因为作者想让它们变成蓝色。 有时窗帘就是蓝色，它寓意万千。窗帘是蓝色的，因为蓝色是伤感，是失败，这颜色如江湖河海一般深远，如千愁万绪一般浩渺。窗帘之所以是蓝色，是因为作者需要它们成为蓝色。 你现在孑然一人，可如果其他人来了，窗帘还会是蓝色的吗？换句话说，难道它们之所以是蓝色，是因为有你在这里，它们实际的样子只不过是黑布上的一片虚无，直到有人看见，它们才成了蓝色？ 窗帘是蓝色的，于是你哭了起来，因为蓝色是伤感，是失败，这颜色如江湖河海一般深远，如千愁万绪一般浩渺。为此而哭真是愚蠢。 随着眼泪落下，除了颤抖的呼吸，肿胀的双眼，和正攥在你拳头里的窗帘，什么都没剩下。一阵浅浅的笑划过你的脸颊。就为这流泪真是太蠢了——就为了蓝色的窗帘。 这地方只是一间空房，它只不过有一扇窗户和蓝色的窗帘。除此之外，就没有特殊之处了。这里只不过又",
     "entrances": [],
-    "exits": []
+    "exits": [],
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/isp-i18n-media/image/22eec29d76d5200227005bb70a0ba15f~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806565223&x-signature=%2FWrQg1r0yu20zcDNybwh9bzLm1o%3D",
+        "caption": "蓝色窗帘的窗户。"
+      }
+    ]
   },
   "132": {
     "name": "莫里貢特公國",
@@ -2234,6 +2596,12 @@ const LEVEL_INFO = {
       "作者还整了张图片 在这 ， 这图片基于CC-BY-SA 2.0协议，虽然不是3.0，但已经够了",
       "据我目前所知，离开这里的唯一方式就是从这扇门出去，我可不想冒险在这里切来切去。",
       "Evereds登出。"
+    ],
+    "images": [
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/isp-i18n-media/image/23a68e00974e3aae65a2f0dd9a637fa1~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806565240&x-signature=iViyETXrkyGxAxkpH2P%2BTQkE4hA%3D",
+        "caption": "一扇嵌在墙板中的木门。"
+      }
     ]
   },
   "137": {
@@ -2244,7 +2612,13 @@ const LEVEL_INFO = {
       "只发现了 Level 137 的一个入口，是位于Level 2的一扇陈旧木门。这扇门没有把手，把手所在的空洞周围划痕遍布。由于Level 2的规模之大，通常很难找到这扇门，但很多流浪者都声称自己是被扇动的声音和风铃吸引而来。",
       "Level 137 中存在各种出口，但目前没有对这些出口的官方描述。据称， Level 137 直通 Level 19 ，但也有至少两位探险者通过 Level 24 抵达了 Level 137 。"
     ],
-    "exits": []
+    "exits": [],
+    "images": [
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/isp-i18n-media/image/b776faf0c59d1309cf4462fb0b5dd898~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806565241&x-signature=5Mbs%2F6LzQzyFDIryheoCA6ZIxMQ%3D",
+        "caption": "一张从桌上取下的海报。上面似乎是蝉的解剖图，而非飞蛾。"
+      }
+    ]
   },
   "139": {
     "name": "勇者的试炼",
@@ -2262,7 +2636,13 @@ const LEVEL_INFO = {
     "class": "unknown",
     "summary": "在我和老伴眼中，这个层级堪称小小天堂，尤其适合我们这样的老太太。广袤田野向着天际延展，昼夜更迭自有韵律。每天下午六点前后，总有瑰丽晚霞染红天际；清晨五点左右，又见动人心魄的朝阳跃出地平线。晚上基本都在酣眠，倒是我这不争气的尿意偶尔作祟——起夜时驻足片刻，反倒有幸仰望星空。 知你此刻应是远行在外，但蜜已酿成，需你归来将蜂蜡滤净，分装入那些搁在门厅的空瓶里。 - 对是对，亲爱的。可这么写是不是太不专业了？毕竟这稿子得交给…呃…那些搞科研的专家… - 放心吧，他们不会计较的。不专业又何妨？再严肃的人也该偶尔轻松片刻——尤其是那些成天连轴转的工作狂。” 在这妙不可言的层级中，乔治娅与我于首片向日葵田外不远处觅得蜂巢。此地生态自成天地，若这般形容也算妥帖。而我最在意的，终究是自此可亲手酿蜜的欢欣——蜜糖的醇香将我们与此境紧紧相系。毕竟“蜜”字最得我心，而她即我的寰宇。 今天我去向日葵田左边第二片野地散步，发现一朵奇怪的花旁边长着一株细弱的小苗。刚开始以为是绣球花，却听到它发出嗡嗡声——不是我们熟悉的蜜蜂声音，倒像是机器在低鸣。 希望不是有人在监视我们。要真是这样，他们肯定早看腻了我每天重复的浇花",
     "entrances": [],
-    "exits": []
+    "exits": [],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/isp-i18n-media/image/79f3c62e6e999079284a2391f857269e~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806565244&x-signature=aW48afaVCg2OgVL%2FT1PobGJ3io4%3D",
+        "caption": "向日葵花田与远山。"
+      }
+    ]
   },
   "141": {
     "name": "锅炉房",
@@ -2296,6 +2676,16 @@ const LEVEL_INFO = {
       "By Kitty Rika",
       "游戏结构 工作室",
       "该醒来了。"
+    ],
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/isp-i18n-media/image/d9a0f8cc861e312e4a663c90864b51a8~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806565246&x-signature=n8N8al4hAhSGSNT6EJ4zA71UMJI%3D",
+        "caption": "你与此地永别前的最后一荡。"
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/isp-i18n-media/img/8f5e75b82d4b06e99eacb2f5ee510fce~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806565246&x-signature=uqEEDpHxnVUM48hdVswxEMf0Ubw%3D",
+        "caption": "这便是其全部的残馀。"
+      }
     ]
   },
   "144": {
@@ -2306,6 +2696,16 @@ const LEVEL_INFO = {
     "exits": [
       "幸运的是，所有出口也能作为入口使用，并且看上去很稳定。这促使了M.E.G.尝试通过其中一个已知途径来建立基地。在开始，最大的困难是真菌。但Effulgentine很快就意识到了M.E.G.的存在，并围攻了这座前哨站。这毁坏了出入口，并阻挠了对该层级的进一步探索和对其他流浪者的援助行动。最终，由于在 Level 144 的驻扎尝试困难重重，并且无法证明在此地建立纯观察哨站的合理性，该前哨站被放弃了。",
       "我们认为， Level 144 中被毁坏的前哨站都曾拥有出口。但不幸的是，目前只有不到百分之十的前哨站废墟中仍然拥有可用的出口。这意味着，普通流浪者切入 Level 144 的话，为了找到出口，必须探索大约十几个前哨站废墟。由于晴朗天气的少见，这段旅程往往需要数周时间，如果人员准备不足，饥饿和暴露己身都会成为像是Effulgentine一样的生存威胁。"
+    ],
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/labis/image/0ba913a7d6f713522567ee8c47d19add~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806565248&x-signature=sI93qtBxDmDa4GancjeCn3t9%2BgE%3D",
+        "caption": "最佳天气情况下，一座典型的Level 144的前哨站废墟。"
+      },
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/labis/image/4e7f63aee4410594826160e9e8423aae~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806565248&x-signature=QrHHBaANZKg5dmMr%2BfFh2I6XZPc%3D",
+        "caption": "一幅关于Effulgentine的艺术创作，由一位逃离Level 144的流浪者所绘。"
+      }
     ]
   },
   "145": {
@@ -2327,7 +2727,25 @@ const LEVEL_INFO = {
     "class": 0,
     "summary": "你好，流浪者朋友！我叫Johannes Copely，应 M.E.G. 的要求来记录我在Level 146，也就是在所谓的感激旅馆的经历。 他们给了我一种格式和特定的口吻来填这个表，但遗憾的是，我没有能力来写得那么闷。不管怎么说，我更喜欢个人化的口吻。希望他们不介意，但我仍会告诉你你想知道的一切。 来想象一下，一个寒冷的、永恒的冬天，一件破旧皮夹克和上面覆满的冰与浮雪一并被烤化。想象一下老式木桌木椅的嘎吱声和趿拉声，以及温暖的哈气在你面前打旋，与手中热汤上升的蒸汽相混合的景象。我给你讲我如何遇到感激旅馆的故事时，请用舌尖去感受汤汁的风味。 当时是 Level 129 一个大风天。我是无意间切出 Level 39 的边界后到达那里的。这是个意想不到的波折，本来我只想花点时间探索魔法森林以及冥想。更倒霉的是，我没有穿应季的衣服，只有一件简单的风衣外套，里面一件薄T恤，下身是卡其色裤子。 当我在这一层级徘徊时，我发现自己的处境因远处传来的滚滚雷声和天上飘落的雪花而愈发糟糕。掏出手机，却发现Level 129没有任何信号。因此，当雪花演变成冰雹时，我毫无准备，它们在我四周坠落，猛烈地撞碎在地上",
     "entrances": [],
-    "exits": []
+    "exits": [],
+    "images": [
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-146/joIyemHMLSpW93X.png",
+        "caption": "温暖的壁炉和热汤供给所有人。"
+      },
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-146/lKQ86CmL4Rw3DfW.png",
+        "caption": "我瞥见了一个木制的轮廓，它在黑暗中从一处剪影中升起。"
+      },
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-146/VcIMuTNpEYWmwq4.png",
+        "caption": "地板和墙壁是由暖和的鹅卵石砌成的。"
+      },
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-146/MjnKEecRguPYSGw.png",
+        "caption": "里面有两片小香菜叶。"
+      }
+    ]
   },
   "147": {
     "name": "多麼熟悉的路啊",
@@ -2341,6 +2759,12 @@ const LEVEL_INFO = {
       "昵称：Foggy City 作者：Psyberartist 授权协议：CC-BY 2.0 来源链接： https://i.ibb.co/pzFTkCT/unknown.jpg",
       "乘坐公交车时，有机会到达一座由玻璃板建成的摩天大楼。进入它，并穿越内部的过道迷宫，将会使你到达 Level 4 或 Level 0 。",
       "更多授权相关信息，请查阅 授权指导 。"
+    ],
+    "images": [
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-147/vttru9.jpg",
+        "caption": "描绘 **Level 147** 中城市的图片。"
+      }
     ]
   },
   "148": {
@@ -2359,6 +2783,12 @@ const LEVEL_INFO = {
       "抓住一包爆米花后可能会进入 Level 68 。",
       "某条血肉构成的走廊可以通往 蜂巢 。",
       "作者： Iamalemon 。"
+    ],
+    "images": [
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/labis/image/3d88f673cfd10dbb93e091846fbb9674~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "在本层级未知地点拍摄的一张照片。"
+      }
     ]
   },
   "149": {
@@ -2381,6 +2811,12 @@ const LEVEL_INFO = {
     "entrances": [],
     "exits": [
       "通過鑄造廠內標有「緊急出口」的門可通往 Level 3 或 Level 901 的工廠區域。"
+    ],
+    "images": [
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-150/g490k6.png",
+        "caption": "\"赤瞳\"俯瞰着 Level 150。"
+      }
     ]
   },
   "151": {
@@ -2394,7 +2830,13 @@ const LEVEL_INFO = {
       "在 Level 188 中通過相應窗口進入",
       "在 Level 98 的餐廳裡點「超級娃娃屋」"
     ],
-    "exits": "唯一已知出口是位於密道盡頭的隱藏活板門，可在書房與第二、三間臥室中找到，通往隨機層級。"
+    "exits": "唯一已知出口是位於密道盡頭的隱藏活板門，可在書房與第二、三間臥室中找到，通往隨機層級。",
+    "images": [
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-151/greathall.jpg",
+        "caption": "这是Level 151的一个房间，我们用它放玩具。"
+      }
+    ]
   },
   "152": {
     "name": "監視遊戲",
@@ -2405,6 +2847,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "未知，頁面未記載已知出口"
+    ],
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/labis/image/010857259295da02dadae2847f3569da~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "其中一个监控桩的照片。"
+      }
     ]
   },
   "153": {
@@ -2423,6 +2871,20 @@ const LEVEL_INFO = {
       "從 level-75 切入的同一位置再次切出可返回",
       "在桌上飲品旁發現金盤子裡的果馅饼，咬一口前往 level-89",
       "從面對玩偶店的窗戶切出前往 Level 520"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/f5ab03981da2aac54f1059cf428b2ae3~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "一张书店入口的照片。"
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/isp-i18n-media/img/164af34b00180138703f0d33a9238a6a~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "一张虚实期内发现的书籍的照片，由M.E.G成员Adeline McCaffery拍摄。"
+      },
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/labis/image/5ea8abf87dd40228ad649d7d11c38bd5~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "\"噢？这些书变得更加散乱了，还有我的摄影学位可不是白来的！\" - Adeline McCaffery"
+      }
     ]
   },
   "154": {
@@ -2434,6 +2896,20 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "在五個房間變體的任何一個中觸碰並取下掛旗離開，會回到 Level 1 中對應的門前"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/f45f125e7e58ccc4be8b606ebbc4e9d0~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "一扇圆圈的门。"
+      },
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/labis/image/dce5d9f1e0f631046534029026fe0817~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "两个正在直线房间尝试激光游戏的流浪者。"
+      },
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/labis/image/36271a647061a1704a6d70ce17d26cfd~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "圆圈房间"
+      }
     ]
   },
   "155": {
@@ -2443,7 +2919,13 @@ const LEVEL_INFO = {
     "entrances": [
       "從 Level 1、2、11 的大型石英門進入，最受歡迎的入口來自 Level 11 新時代廣場"
     ],
-    "exits": "從入口門返回便可離開，每扇出口門上都貼有告示注明會回到哪個層級。"
+    "exits": "從入口門返回便可離開，每扇出口門上都貼有告示注明會回到哪個層級。",
+    "images": [
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-155/pdyo68.jpg",
+        "caption": "一条通往矿场的隧道。"
+      }
+    ]
   },
   "156": {
     "name": "后臺",
@@ -2454,6 +2936,16 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "通過建築物出口（更衣室對面帶出口標誌的黑色門）離開，一般到 Level 52，小機率到 Level 117"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/isp-i18n-media/image/23c34dc848389c4f0f262fbbfd27494e~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "一张后台的照片。出口通向茉尔小姐的办公室。"
+      },
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/isp-i18n-media/image/f0e0e3ebd83276246255044aed518410~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "一张在后台的三个道具椅的照片。"
+      }
     ]
   },
   "157": {
@@ -2467,6 +2959,16 @@ const LEVEL_INFO = {
     "exits": [
       "初等挑戰落敗會立即被傳送出本層級",
       "完成初等挑戰後，打開黑色封皮書離開，回到之前所在層級"
+    ],
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/isp-i18n-media/image/5874dd175ce1a05cd86dbc6fea8595dc~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "一张无边无际的方格地面的照片。"
+      },
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/isp-i18n-media/img/dbfb923aae589918acf7571ae0bc3121~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "新手玩家最为常见的棋子排列。"
+      }
     ]
   },
   "158": {
@@ -2486,6 +2988,12 @@ const LEVEL_INFO = {
       "列車離開後進入白羊站地鐵隧道通往 level-59",
       "衛生間鏡子上畫鑽石來到 Level 317",
       "使用信息亭的「聲音測試」訪問 Level 714"
+    ],
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/isp-i18n-media/img/59538aa0ecfeccea9ad45adea1fb2e0f~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "散落在层级中许多海报的一张。"
+      }
     ]
   },
   "159": {
@@ -2502,6 +3010,16 @@ const LEVEL_INFO = {
       "進入「Roller Rockin' Pizza!」拱廊建築去往 Level 40",
       "10秒內返回進入的門原路返回",
       "進入沙井進入 Level 34"
+    ],
+    "images": [
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/isp-i18n-media/image/87531c25c179c9c86e0d8912a55ee8c5~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "Level 159，郊外几条小路之一。"
+      },
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/isp-i18n-media/image/5d1680541917d73ef845b341efc6ae88~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "在 Level 159 更为空旷地点找到的加油站。"
+      }
     ]
   },
   "160": {
@@ -2513,6 +3031,20 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "未知，頁面未明確記載出口方式"
+    ],
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/labis/image/30d2e1ce1b5de3e6940e1218f1d66e2b~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "你不记得了吗？你怎能忘记呢？"
+      },
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/labis/image/fe9c8fe08f39a0f268a91f427427a4cc~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "你超喜欢这个，不是吗？你会花很长时间在上面荡秋千，或者只是坐着凝视开阔的天空。"
+      },
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/labis/image/279f4cae2597898082260849683b225b~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "这本不应发生。你还这么年轻，没必要看到所有人都这样离开"
+      }
     ]
   },
   "161": {
@@ -2524,6 +3056,20 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "找到黑暗洗衣房，進入其中一台洗衣機，可能來到 Level 41"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/0994846262737f37bf6c7fc37ce31076~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "1 号尸体。"
+      },
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/labis/image/c31640b6006feed2e4297e46de837f69~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "2 号尸体。"
+      },
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/labis/image/91cc018dae302eebf72c17327d3d6b03~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "3 号尸体。"
+      }
     ]
   },
   "162": {
@@ -2547,6 +3093,20 @@ const LEVEL_INFO = {
       "穿過打開的門可能進入 Level 277",
       "郊外房間平台門出去可能到 Level 111、level-409 或 Level 566",
       "有霓虹出口標誌的門通向終點"
+    ],
+    "images": [
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/isp-i18n-media/image/30ea01f0d4446138c1556700b1b5f8ad~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "一张混凝土墙及其纹理的特写照片。"
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/isp-i18n-media/image/2c5500346fc2adcdca9aaa27af2ea4aa~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "普通的房间平台——注意灰褐色的墙壁和极少的家具。在右方，还可以看到两个M.E.G.的水壶。"
+      },
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/isp-i18n-media/image/8299d23c0bde21174f4feefacc98dbf8~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "一个普通平台上破损的次墙的案例。虽内部钢筋弯曲，但仍极其稳固。"
+      }
     ]
   },
   "163": {
@@ -2558,6 +3118,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "未知，頁面未明確記載出口方式"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/4775b19238c2f463daf81cf9a126781e~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "我身俯冲入虚空，此后我不再是我。"
+      }
     ]
   },
   "164": {
@@ -2571,6 +3137,20 @@ const LEVEL_INFO = {
     "exits": [
       "「一個親善的靈魂所繪」展覽廳內的畫作中切出通往 Level 57",
       "從走廊角落切出通往 Level 84"
+    ],
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/isp-i18n-media/image/657b838b613a936d72a67d3408096c11~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "一张 Level 164 中展览厅的图片。"
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/isp-i18n-media/image/03ba5e0fa2448a25774299120d2d2ac2~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "一张走廊的图片，近期铺上了瓷砖。"
+      },
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/isp-i18n-media/image/ea72f086dfd73b4e8426857c3c833945~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "另一张关于展览厅的图片。"
+      }
     ]
   },
   "165": {
@@ -2594,6 +3174,16 @@ const LEVEL_INFO = {
       "檢修孔打開時進入來到 Level 183",
       "進入有運行中電視（雪花屏）的房屋來到 Level 104",
       "點燃任何房屋來到蒙黑天空"
+    ],
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/labis/image/00185fbd8a4969e6aaf702da4baa2177~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "主要道路的图片。"
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/isp-i18n-media/image/bfbc3385831906375987f142f16f197b~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "丹尼尔的日记"
+      }
     ]
   },
   "167": {
@@ -2608,6 +3198,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "離開棒球场足夠遠會前往隨機層級，最常到 Level 98、132、153、220、648"
+    ],
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/isp-i18n-media/image/edc357b79615ca438531837e54c06a87~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "位于 Level 167 中心区域的棒球场，图片拍摄于一场比赛中。"
+      }
     ]
   },
   "170": {
@@ -2627,6 +3223,20 @@ const LEVEL_INFO = {
       "某些二型水泥箱通向 Level 162",
       "某個一型水泥箱通向 Level 181 的B類礦洞",
       "森林中罕見的棕櫚樹，攀爬後到達 Level 204"
+    ],
+    "images": [
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/isp-i18n-media/image/d5a554c536025f121f9a4ca78afc9182~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "关于 Level 170 的首批照片之一，其中有一型和二型水泥箱。"
+      },
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/isp-i18n-media/image/1009266bada464dedea58435d6e4cdf5~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "二型水泥箱，偶见于 Level 170。"
+      },
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/isp-i18n-media/image/4f7ab50069edffc5d00e939363e2c660~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "三型水泥箱，Level 170 中最少见的一类水泥箱。"
+      }
     ]
   },
   "171": {
@@ -2636,7 +3246,17 @@ const LEVEL_INFO = {
     "entrances": [
       "通過 Level 5 中一側廳進入，通常在迷路時出現"
     ],
-    "exits": "未知，目前未找到任何可證實的出口。"
+    "exits": "未知，目前未找到任何可證實的出口。",
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/labis/image/a5b773f71c9a65e8a39e54f216ef86c6~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "从 Level 5 通向 Level 171 的走廊。"
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/b765405e6ecc1c68afaae46944bb2572~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "Level 171 在灯灭前的腐坏状态。"
+      }
+    ]
   },
   "172": {
     "name": "工業區",
@@ -2670,6 +3290,12 @@ const LEVEL_INFO = {
       "瀑布後深坑到 Level 666、899、532、6",
       "瀑布後彩色門參加派對！=)",
       "找到秘密出口來到終點"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/isp-i18n-media/image/c9f73648ff8482fc247f84b12755b96c~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "Level 173 中的一个部分。"
+      }
     ]
   },
   "174": {
@@ -2689,6 +3315,20 @@ const LEVEL_INFO = {
       "Level 170：3型水泥箱可作為出口",
       "Level 420：進入中部有核反應堆冷卻塔的水體",
       "Level 566：進入以枯草為邊界的工廠"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/isp-i18n-media/img/75de59d64865f042cacbb86bfe69989b~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "Level 174内的蘑菇云。"
+      },
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/isp-i18n-media/image/8168b8ba4138849c5f007bc026918ca9~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "蘑菇云顶端，被来自于一个已废弃基地的烟气所遮挡。"
+      },
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/labis/image/ef796142ec30d8ff41e82f64e410a11a~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "另一张核爆照片，取自飞行至极高处的无人机所拍摄的相片素材。"
+      }
     ]
   },
   "175": {
@@ -2713,6 +3353,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "每隔一千行座位有明確標記的出口，通往隨機層級"
+    ],
+    "images": [
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/isp-i18n-media/image/10a5396e43fe1f777fea64fe75f037a9~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "Level 177 中任意座位样式举例。"
+      }
     ]
   },
   "178": {
@@ -2731,6 +3377,16 @@ const LEVEL_INFO = {
       "穿行數週找到標有出口標誌的小房間進入 Level 138",
       "在溫泉中向下遊到 Level 178.1",
       "通過廚房食品儲藏間到反現實保齡球館"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/isp-i18n-media/image/458220c1c94476a3d2ed7290453b9c9b~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "Level 178 中一间开放的道场。"
+      },
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/isp-i18n-media/image/033dcccef5835330b9e15a7e8e9dcb83~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "从室内拍摄的庭院景色。"
+      }
     ]
   },
   "179": {
@@ -2749,6 +3405,20 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "通過半普適出口離開，返回來時層級"
+    ],
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/isp-i18n-media/image/07ea5768b9f6ead0f26a753c8f61b7d4~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "旧物常新。"
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/666c4d0cd3a2b0858e083ec9f2a75d9f~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "Level 179内许多挂有回收利用的衣物的货架。"
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/c3b934bf5a3930d57bf782e15b093cb4~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "一张Level 179的相片，其中展示了层级内可购买商品的一个区域。"
+      }
     ]
   },
   "180": {
@@ -2758,7 +3428,13 @@ const LEVEL_INFO = {
     "entrances": [
       "在浸濕的木牆內找到入口，尤其是橡木或松木材質，通向莫提港城鎮廣場"
     ],
-    "exits": "各島嶼上有通往其他層級的出口，詳見《「旅者之海」海圖及參考地圖》。"
+    "exits": "各島嶼上有通往其他層級的出口，詳見《「旅者之海」海圖及參考地圖》。",
+    "images": [
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/labis/image/e451afadba97cbcce44691425fa97613~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "第一舰队旗舰的照片，摄于兰利港三区。"
+      }
+    ]
   },
   "181": {
     "name": "私人矿洞",
@@ -2771,6 +3447,12 @@ const LEVEL_INFO = {
     "exits": [
       "停留18小時後被傳送至來時層級",
       "找到一個水坑跳入其中前往 Level 43"
+    ],
+    "images": [
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-181/TRhWJiENaS7o5kr.jpg",
+        "caption": "挖掘出的大块宝石。"
+      }
     ]
   },
   "182": {
@@ -2784,6 +3466,12 @@ const LEVEL_INFO = {
     "exits": [
       "在森林內朝任意方向走夠長距離，被傳送至 Level 32",
       "走過溫室穹頂出口門切入至 Level 4"
+    ],
+    "images": [
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-182/oISvqfAQwilsMXW.jpg",
+        "caption": "自户外区块处取景的 Level 182 相片。"
+      }
     ]
   },
   "183": {
@@ -2796,6 +3484,12 @@ const LEVEL_INFO = {
     "exits": [
       "在沒被其他流浪者看到的情況下吃任何垃圾會切出地面進入 Level 183.1",
       "在一樓天花板上切出會帶回原來的地方"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/c106aed8e5e9ddaf43fda55ae4ec8908~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "Level 183 二楼的一条小长廊"
+      }
     ]
   },
   "184": {
@@ -2810,6 +3504,20 @@ const LEVEL_INFO = {
     "exits": [
       "跟著路標順路走最終前往 Level 11",
       "進入廢棄建築後試圖離開可能切出到 Level 11、4、10"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/isp-i18n-media/img/a0cb0d4d1cddf07cf93dcf8b9e7450d3~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "Level 184 的一张图像，展现了锈迹斑斑而杂草丛生的牧场。"
+      },
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/labis/image/ac07f10c4a584173bd1c1150153cb7a7~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "粮田，可见两幢废弃建筑和一个路标。"
+      },
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/labis/image/2ecf11f1c3912c6a9a64ce893797e36d~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "另一幢建筑，旁有油麦田生长。"
+      }
     ]
   },
   "185": {
@@ -2820,7 +3528,21 @@ const LEVEL_INFO = {
       "從 Level 90 跟隨軌道到邊界圍欄的木旋轉門，走向公用小路",
       "從 Level 159 找到內部月台與 Level 185 相似的廢棄火車站"
     ],
-    "exits": "列車可理論上在後室任何層級停靠，旅客需記住常用層級綽號以辨認指路牌。或走出出廳大門/切出層級末端牆壁返回 Level 90 或 Level 159。"
+    "exits": "列車可理論上在後室任何層級停靠，旅客需記住常用層級綽號以辨認指路牌。或走出出廳大門/切出層級末端牆壁返回 Level 90 或 Level 159。",
+    "images": [
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/isp-i18n-media/img/cac6a3de5c09aac195ff72c3ad580da0~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "Level 185内的一些无尽月台"
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/0b1c2adb7249578b3f7413ce85ae6ff3~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "于Level 185内发现的一处无尽轨道的起（止）点。"
+      },
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/isp-i18n-media/image/d9e7a37daf2e3ac5cb1655c7c2ad837b~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "Level 185内的一班无尽列车的前端，在其驶离前几分钟内摄得的照片。"
+      }
+    ]
   },
   "186": {
     "name": "無盡山谷",
@@ -2833,6 +3555,16 @@ const LEVEL_INFO = {
     "exits": [
       "在火車站乘坐「山谷快車」帶至 Level 60 的火車站",
       "在 Level 186 犯下不可饒恕的罪行會被驅逐到隨機危險層級"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/b2638d9b124fd3fe5cc2460b46524c4a~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "多宜人的景色啊！"
+      },
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/labis/image/236922e021ad3dcf89126f78ea692b28~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "你们的人工作很勤劳，不是吗。"
+      }
     ]
   },
   "187": {
@@ -2846,7 +3578,13 @@ const LEVEL_INFO = {
       "在 Level 290 內叩擊紅門不打開",
       "在 Level 480 說出「夏日」一詞"
     ],
-    "exits": "完全吃下層級內任一異常建築，帶至 Level 52 或 level-172。"
+    "exits": "完全吃下層級內任一異常建築，帶至 Level 52 或 level-172。",
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/labis/image/e00f48ee798ff6f5c56cf3fe6a8b65bb~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "Level 187 处在一种永久的夏季状态中。"
+      }
+    ]
   },
   "188": {
     "name": "Level 188(旧)",
@@ -2867,6 +3605,20 @@ const LEVEL_INFO = {
     "exits": [
       "穿過前門雙開門離開回到 Level 11",
       "儲存點的消防出口通向 Level 3 或 Level 141"
+    ],
+    "images": [
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-189/59yez9.png",
+        "caption": "过道的图片。"
+      },
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-189/6zklh9.png",
+        "caption": "一处消防出口旁的储存点的图片。"
+      },
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-189/hc94rz.png",
+        "caption": "服务器机房的唯一已知照片。"
+      }
     ]
   },
   "190": {
@@ -2877,7 +3629,21 @@ const LEVEL_INFO = {
       "從 Level 156 的一面牆切出",
       "從 Level 210 的一扇密門切出"
     ],
-    "exits": "唯一出口是隨機出現的緊急逃生門，越過學校大門後傳送到 Level 807。"
+    "exits": "唯一出口是隨機出現的緊急逃生門，越過學校大門後傳送到 Level 807。",
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/isp-i18n-media/image/9ee4fcbd9c05346285b170c941d09e21~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "Level 190的走廊之一。"
+      },
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/isp-i18n-media/image/52ce6d99da85d00e577b9b9614c6a01c~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "从内侧拍摄的Level 190出口照片。 yJLbZQtW4oSFw8d.jpg Level 11 的一条走廊里发现的危险标志（图片为示例）"
+      },
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-190/yJLbZQtW4oSFw8d.jpg",
+        "caption": "Level 11 的一条走廊里发现的危险标志（图片为示例）"
+      }
+    ]
   },
   "191": {
     "name": "大逃杀.EXE",
@@ -2888,6 +3654,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "用一條命獲得25次擊殺獲得「???鑰匙」，打開任意上鎖的門離開到隨機層級"
+    ],
+    "images": [
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/isp-i18n-media/image/5b9f6ac7dd6924f64a8ec0ac9bc9ca03~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "Level 191的一个Section。注意通往下层区域的竖井。"
+      }
     ]
   },
   "192": {
@@ -2955,6 +3727,20 @@ const LEVEL_INFO = {
       "無圖像無文字的門周圍一定有一扇通往 Level 197 的門",
       "粉筆標誌的門通往 Level 202",
       "火焰、花朵、水滴、雲朵剪影的門分別通往 Level 368、369、37、371"
+    ],
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/labis/image/691d7184c8f168756d104d4fabdf2c1f~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "Level 196 内的主廊道。"
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/isp-i18n-media/image/c18b4bc3a010a44f5b07211c8f862eb1~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "一扇印有垃圾的橙色门后发现的天然垃圾墙。"
+      },
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/isp-i18n-media/image/a52787c987e5de4adf9f8b70eb6d96e2~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "一扇画有一块砖头的黄色门背后的世界，其中都是——正如其名——砖头。"
+      }
     ]
   },
   "197": {
@@ -2970,6 +3756,16 @@ const LEVEL_INFO = {
       "區域2可撤退返回區域1或進入區域3",
       "區域3出口不確定，報告顯示可到 Level 8 或 Level 0",
       "區域4據稱探索足夠長時間後可被送到想去的層級（未證實）"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/afa8c5044d9720f82d15e438d656e0cb~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "在区域1内所发现的水晶的特写图片"
+      },
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/isp-i18n-media/image/d1ee78a84d055897bb5ce9e574787d64~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "由于空气中的病原体干扰而模糊的区域2的图像"
+      }
     ]
   },
   "198": {
@@ -2981,6 +3777,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "未知，頁面未明確記載出口方式"
+    ],
+    "images": [
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/isp-i18n-media/image/4938715df1c3d93ad3918156796d2c98~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "外面是一堵风墙，厚厚地夹着尘土和碎裂的树枝。"
+      }
     ]
   },
   "199": {
@@ -2992,14 +3794,30 @@ const LEVEL_INFO = {
       "保持鎮靜，情緒不穩定會難以連接",
       "商人販賣的助入藥品（效果未確認）"
     ],
-    "exits": "離開只需醒來，但可能很難辦到，不少流浪者感覺自己被「固定」在層級內。"
+    "exits": "離開只需醒來，但可能很難辦到，不少流浪者感覺自己被「固定」在層級內。",
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/labis/image/2a20f50e8cc62b1be0a491091f68238a~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "艺术家绘制的 Level 199 的景象。"
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/8346d1f8a40bfea6dbb262cde18ae320~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "画中描绘了园内横跨中世纪城墙的金字塔。"
+      }
+    ]
   },
   "200": {
     "name": "家園",
     "class": 0,
     "summary": "Level 200 是一座你似曾相識的小鎮，約有4000名居民，如你我一般的普通人，他們都很友善。鎮上有早餐攤、學校、住宅，一切都彷彿是你記憶中童年的家。然而美好的表象之下隱藏著異狀：空氣中有灼熱的鐵鏽味，天空飄落讓皮膚開裂的聲音，鎮上的事物會在你不注意時腐化、一分為二。這個層級會讀取你內心的渴望，企圖說服你永遠留下、不斷回憶。它不斷需要新的血液來對抗腐化，並溫柔地勸說流浪者『和我們留下』。",
     "entrances": [],
-    "exits": []
+    "exits": [],
+    "images": [
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-200/Main_Street_in_Herndon%2C_Pennsylvania.JPG",
+        "caption": "过去有些日子了，不是么？"
+      }
+    ]
   },
   "201": {
     "name": "美 學",
@@ -3026,6 +3844,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "在牆壁上極少見到被粉笔灰覆蓋的木框，透過木框圍出的黑板切出，會隨機出現在另一個有黑板的層級，但因木框覆蓋灰塵，切出相當危險。"
+    ],
+    "images": [
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/labis/image/84e08910bbe4145e06185d2e1ade09c9~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "该层级的一条走廊，可以看到墙上的字迹。"
+      }
     ]
   },
   "203": {
@@ -3049,6 +3873,16 @@ const LEVEL_INFO = {
       "切入蔚觀湖中央的冰山有時會將你傳送至Level 129。",
       "在洞窟內溫度較高處出現液態鎵，切入一灘鎵液會來到Level 75。",
       "從Level 40切入本層者可以同樣方式離開，地形會漸漸重置回Level 40的景致。"
+    ],
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/labis/image/e365f07a1abf7510f7986b4199ffdf8f~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "一张在M.E.G.Alif基地内摄得的Level 204的照片。"
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/485be1cfad038fbddf99572224b78c96~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "突兀冰山之一角，为在勘探途中更好地记录冰山而拍摄。"
+      }
     ]
   },
   "205": {
@@ -3076,6 +3910,20 @@ const LEVEL_INFO = {
     "exits": [
       "跳入本層的井會被傳送至Level 205（Level 205一側的井位於南邊鐵絲網圍牆約400米處）。",
       "位於上端左側低處、完全被水淹沒的房間內的另一口井，游泳穿過可抵達Level XXX（層級不明）。"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/f45925dce6d723f816349ced43ff0eb5~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "抵达Level 9。按照上面规定，要对初次到访进行拍照记录。"
+      },
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/labis/image/6308b524a9a4f77b3672183d3e068918~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "我们一路尾随正在回家的着当地居民，设法去往墓地。"
+      },
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/labis/image/e447627e81ede27c8772c7dd7a8eb82b~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "走了约莫30分钟后，我们到了。引导出了差错，我们中间走错了路。"
+      }
     ]
   },
   "207": {
@@ -3091,6 +3939,28 @@ const LEVEL_INFO = {
       "朝任意方向行進50英里，看到『歡迎來到紐約！』標牌後進入廢墟建築可到達Level 11（僅適用於從未在紐約居住者）。",
       "找到一棟夜間保持完好的房屋進入，會來到Level 9。",
       "極少數情況下發現一棟雜草叢生的建築，進入會來到Level 990。"
+    ],
+    "images": [
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-207/640px-FEMA_-_35405_-_Tornado_damage_in_Iowa.jpg",
+        "caption": "通过电子邮件发送的图片。"
+      },
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-207/640px-FEMA_-_37576_-_Chapman%2C_KS%2C_Tornado_Damage.jpg",
+        "caption": "Level 207 内一片在其断壁残垣旁的地面。"
+      },
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-207/640px-Joplin_tornado_photo.jpg",
+        "caption": "一张描绘了乔普龙卷风在俄克拉荷马重建部分的照片。"
+      },
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-207/640px-The_Monstrous_Pig_of_Landser_MET_DP815367.jpg",
+        "caption": "一位艺术家对突变猪的复现图。"
+      },
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-207/640px-Welcome_to_New_York_sign_along_NY_74.JPG",
+        "caption": "首个在Level 207内被发现的纽约出口。"
+      }
     ]
   },
   "208": {
@@ -3117,6 +3987,12 @@ const LEVEL_INFO = {
       "在街角盡頭找到檢查井並墜入，可到達Level 34。",
       "在貯藏區爬到貨架頂部，找到通風管道開口順行至末端，會從天花板墜落至Level 20。",
       "迷霧消散時跟隨路面防滑標誌走入迷霧邊際，會在Level 69醒來。"
+    ],
+    "images": [
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/labis/image/65a61e2b4ba1d1b4d5045e94a2ecb082~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "在此层级拐角处发现的一家商铺。"
+      }
     ]
   },
   "210": {
@@ -3132,6 +4008,16 @@ const LEVEL_INFO = {
       "在本層等待，流浪者無法停留超過6小時，到時會陷入沉睡並隨機切入後室任意層級。",
       "與『我們』共餐時兩度表現出敵意（觸碰、傷害、威脅皆算），會被從地面切出至Level 0。",
       "嘗試破壞公寓周圍的隱形屏障，會被切出至Level 11，但極不可靠且可能致死。"
+    ],
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/labis/image/a350f9ddb71f09e83d875226956dcedf~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "Level 210的一些小径。"
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/a78a5884d1558488f89b540b80dfe860~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "Level 210的主要区域。"
+      }
     ]
   },
   "211": {
@@ -3147,6 +4033,12 @@ const LEVEL_INFO = {
     "exits": [
       "環繞本層島嶼繞行有可能進入Level 62。",
       "探索洞穴系統外的森林有可能進入Level 10。"
+    ],
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/isp-i18n-media/image/8ccade18bada55fee8e06595397398f0~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "Level 211中的钟乳石。由Juno Perez拍摄"
+      }
     ]
   },
   "212": {
@@ -3174,6 +4066,16 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "從來時走的同一扇門離開，多半會到達樞紐，極少數情況下回到Level 11。"
+    ],
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/labis/image/90ba4fa5f5f4637b70caae1bfae17a3a~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "由Dr. Kyung拍摄的Level 213的主用餐区的照片。 medium.jpg Ollie餐馆内的点菜主柜台的照片，拍摄者Dr. Kyung。"
+      },
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-213/medium.jpg",
+        "caption": "Ollie餐馆内的点菜主柜台的照片，拍摄者Dr. Kyung。"
+      }
     ]
   },
   "214": {
@@ -3190,6 +4092,12 @@ const LEVEL_INFO = {
     "exits": [
       "從走進來的大門離開會帶至Level 369、165、10或84。",
       "從本層跳下墜入天空盒內會帶至藍色通道或Level 371。"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/351b8ecd63e87eb9eb2f1eefa8ed2280~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "忏悔圣母正在监视着她的花园。"
+      }
     ]
   },
   "215": {
@@ -3220,6 +4128,16 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "參觀結束後原路返回該門，可能來到Level 57、Level 164或卡斯特羅斯的Level 222。"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/f67a194d40e7d8b2a13ad2611adb038d~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "从门外望向 Level 216 主展厅"
+      },
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/labis/image/81e1d95c78397821ee38d4688429aaa9~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "一些正在展出的实体标本"
+      }
     ]
   },
   "217": {
@@ -3235,6 +4153,20 @@ const LEVEL_INFO = {
     "exits": [
       "進入層內的太空站部件有時可無縫銜接至Level 78。",
       "極少數情況下時空異常會將流浪者傳送至後室其他層級。"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/b108c258048bf99625c22cbd52a2e25c~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "幽空静谧，怪诞之安宁自此而生。"
+      },
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/labis/image/e94969102af9299610bad646eab1efcc~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "Level 217 内一个空间站的各个部件。"
+      },
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/labis/image/fbd555c31b6455185e10b176c6ffac58~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "自窗户透射进的阳光。"
+      }
     ]
   },
   "218": {
@@ -3258,7 +4190,17 @@ const LEVEL_INFO = {
     "entrances": [
       "多為完全偶然地意外切入，開啟學校、公路或家居層級的門，或在Level 11與Level 9中游蕩時觸發意外切行；切勿主動嘗試到達。"
     ],
-    "exits": []
+    "exits": [],
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/labis/image/e11bf1489c0d5f7ed014ffef7a3bed1e~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "该房屋即为流浪者在进入本层级后首次苏醒的地点。"
+      },
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/labis/image/044c7fe241888bf28207b52ff0589b44~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "在离开房屋后，流浪者将会被支使行走于一条空寂的城区公路上。"
+      }
+    ]
   },
   "220": {
     "name": "泥土實驗室",
@@ -3269,6 +4211,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "層內某些固定位置設有活板門，進入會將流浪者傳送到隨機層級，但風險較大。"
+    ],
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/labis/image/77ba20c5390a7475005abe6854ba05d9~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "被寻回的Level 220唯一照片。"
+      }
     ]
   },
   "221": {
@@ -3307,6 +4255,16 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "一路下沉到凝膠立方體底部，會被傳送到特定層級（同一特定點離開者大概率傳送到同一層），但需在窒息前穿過凝膠底部，且休眠實體可能甦醒攻擊。"
+    ],
+    "images": [
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/labis/image/ab56332ad2c9a5a7f4e516ccf69e36b8~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "凝胶立方体，构成 Level 223 的事物。"
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/04665e9e98f5bb1e4fd5d6e9d46e0b63~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "从远处拍摄 Level 223 所得的图像，图像因其在从层级中切出的过程中拍摄而变得模糊。"
+      }
     ]
   },
   "224": {
@@ -3319,6 +4277,16 @@ const LEVEL_INFO = {
     "exits": [
       "乘坐電梯離開會回到電梯原本所在的樓層。",
       "走正門離開會被丟到多種隨機層級，包括但不限於Level 35、Level -155、Level 102。"
+    ],
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/isp-i18n-media/image/1e92c31b3ef6fb057544ede1106ab165~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "处于服务时间的主广场。 fish.png 一只生产杏仁水的充气鱼。"
+      },
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-224/fish.png",
+        "caption": "一只生产杏仁水的充气鱼。"
+      }
     ]
   },
   "225": {
@@ -3333,6 +4301,16 @@ const LEVEL_INFO = {
       "從你進入時的門出去是最可靠的離開方式。",
       "沿分散的『出口』標誌走，最後見到貼綠色寬標籤的門，進入可到達Level 4。",
       "第7循環期間可能找到一扇與眾不同的米色門，進入可到達Level 60。"
+    ],
+    "images": [
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/isp-i18n-media/image/5b22ad846eb55d12d7761d13d4bbdde2~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "Level 225 的起点。"
+      },
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/labis/image/1dd5a6e70bb3d9a505acb0b1b1caa722~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "处于第4循环的 Level 225。"
+      }
     ]
   },
   "226": {
@@ -3370,6 +4348,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "迷宮有多個已標記出口，分別通往特定層級；想快而安全可去Level 11，想找補給可去Level 196。"
+    ],
+    "images": [
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/isp-i18n-media/image/d2fd70304889a4b81a2ae554605948f2~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "这些镜子上不会留下手印状的污渍。"
+      }
     ]
   },
   "229": {
@@ -3394,6 +4378,20 @@ const LEVEL_INFO = {
     "exits": [
       "穿過一扇寫有『鹹味Sal的洞穴探險』的門會切入Level 8。",
       "穿過一扇寫有『生鏽Rick的房間改造』的門會切入Level 90。"
+    ],
+    "images": [
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-230/qQTS6lsNxEuLW7M.png",
+        "caption": "Level 230内的码头，拍摄者未知。"
+      },
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-230/U2MOPrTHnY1AIky.jpg",
+        "caption": "工作时间的交易区。"
+      },
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-230/rUsyFLzIieX1gxw.jpg",
+        "caption": "陋滩。拍摄者未知。"
+      }
     ]
   },
   "231": {
@@ -3403,7 +4401,21 @@ const LEVEL_INFO = {
     "entrances": [
       "切點原由商人發現後賣給B.N.T.G.並完全封鎖保護，現已無已知可進入方式（層級據信已毀滅）。"
     ],
-    "exits": []
+    "exits": [],
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/labis/image/8805cae698249bcf5daea1d6fbdd672d~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "Level 231 在最初被发现并被殖民时的照片。"
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/10b4e790434e521102660963a833f6dd~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "B.N.T.G.安装的第一批帐篷。"
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/c6345cf1a1da7b8fee89fbafbd4fce68~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "Level 231 中一张已完工的黄区的照片。"
+      }
+    ]
   },
   "232": {
     "name": "古董店",
@@ -3419,6 +4431,20 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "穿過層級盡頭保險庫的門口總會將流浪者帶至Level 5，此後永遠不能再進入本層。"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/isp-i18n-media/image/9e39aabfbc5b4a5ba07d602d328157e9~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "Level 232 内无边的古董店"
+      },
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/isp-i18n-media/image/41f32afd33370160472df96889fc14d7~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "一个形似相机的记忆圈套"
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/572922236124ad14bd674c091f96bb18~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "Level 232 中的最终考验"
+      }
     ]
   },
   "233": {
@@ -3430,6 +4456,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "走向接待前台桌，有概率發現一扇某種程度上『化掉了』的門，穿過即可離開。"
+    ],
+    "images": [
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-233/b8p0ig.png",
+        "caption": "我发觉自己正在一个自己认为是池房的层级中"
+      }
     ]
   },
   "234": {
@@ -3444,6 +4476,20 @@ const LEVEL_INFO = {
       "自長繩梯爬下跳入可到Level 710。",
       "隨繩橋穿越濃霧可到Level 414。",
       "使用繩結渡口拉過水面可到Level 422的浮動平台。"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/isp-i18n-media/image/17470211c8c6ab64fcc9df2f01e95ec1~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "Level 234的逃生传送门"
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/isp-i18n-media/image/0003a6f024f5db901485fa40c745ccdc~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "上级穴室 M.E.G.档案"
+      },
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/isp-i18n-media/image/08cbf94a0ef11b433a888b9dcb1868a7~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "中坚穴室 M.E.G.档案"
+      }
     ]
   },
   "235": {
@@ -3459,6 +4505,20 @@ const LEVEL_INFO = {
       "蹦一張沒有彈簧的蹦床會送你到Level 34。",
       "切入一臺自動販賣機會送你到Level 6.1。",
       "找到一扇出口門會送你到Level 236。"
+    ],
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/labis/image/c1ff8e7b56fa9804da832ae994bc94c5~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "首张被证实的安全区 照片"
+      },
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/labis/image/d8054fb37019b9b5cceac5dd8b72d0ca~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "火灾报警器"
+      },
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/labis/image/8f1d2b2a387605cf7f646da186f99592~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "回忆态。"
+      }
     ]
   },
   "236": {
@@ -3481,6 +4541,16 @@ const LEVEL_INFO = {
     "exits": [
       "當列車到來而你的形體仍可見時，司機會停車讓你登上列車離開。",
       "極少數情況下，於列車靠站時站在車前並想像渴望前往的層級，可被列車撞送至該層。"
+    ],
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/isp-i18n-media/image/2ce45f97dd2472325204c7533a22332e~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "一些存在于坎贝尔维勒内的风雨板"
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/77188c74845a46ecad75ed8006f5af28~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "坎贝尔维勒股息券"
+      }
     ]
   },
   "238": {
@@ -3501,7 +4571,13 @@ const LEVEL_INFO = {
     "entrances": [
       "傳言存在某種『房中之房』、無人返回之處，但具體進入方式未公開，以避免他人按圖索驥前來。"
     ],
-    "exits": []
+    "exits": [],
+    "images": [
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/labis/image/c2510fe5fa00439be020c3203358e683~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "察觉到的自由"
+      }
+    ]
   },
   "240": {
     "name": "洛特卡湖的悲劇",
@@ -3513,6 +4589,12 @@ const LEVEL_INFO = {
     "exits": [
       "被逐出湖泊的成年人多半落在Level 11或Level 4的前哨附近。",
       "洛特卡臨終前將倖存的永生孩童送至Level 4中的Omega基地。"
+    ],
+    "images": [
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/labis/image/320b27f6e375257bcf3b639c81d57fc6~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "我们报道那些无人愿意承认的残酷真相"
+      }
     ]
   },
   "241": {
@@ -3525,6 +4607,24 @@ const LEVEL_INFO = {
     "exits": [
       "走出領養中心門廳標有『出口』的門，通常會置身Level 726或M.E.G.位於Level 1的前哨。",
       "停留超過12小時會被自動驅出至來時所在層級的安全地點，若不存在則傳送至Level 1的M.E.G.前哨。"
+    ],
+    "images": [
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-241/9b96uj.jpg",
+        "caption": "Level 241 中更为明亮的区域的照片。"
+      },
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-241/l1agsp.jpg",
+        "caption": "一张被收养了的伙伴的照片。"
+      },
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-241/tuoet7.jpg",
+        "caption": "Level 241 坟场区域内一座墓碑的照片。"
+      },
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-241/ca6a0p.jpg",
+        "caption": "纵使我们会被仿若整个世界所分隔，但宇宙中的每颗星球皆同在一片天空下"
+      }
     ]
   },
   "242": {
@@ -3536,6 +4636,20 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "離開方法未知，生還者推測出口藏在城堡（血肉之王的宮殿）某處。"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/0e7c0b66f7f039a6790750cff3ec3dfe~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "图片 L242-00 - 已着色。"
+      },
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/labis/image/80b08808fbbc6973b19066bcf27c795c~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "图片 L242-01 - 已着色。"
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/1fa7cd47d635febe50fb92a6e4cca46f~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "图片 L242-02 - 已着色。"
+      }
     ]
   },
   "243": {
@@ -3545,7 +4659,17 @@ const LEVEL_INFO = {
     "entrances": [
       "據稱依便條指示（遮眼走7步、上下樓梯、喊出1到1572之間某個會變動的數字）行事可進入，但極難成功。"
     ],
-    "exits": []
+    "exits": [],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/82dda420440412c394598c4ac1e71e6e~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "写有前往空无层指示的便条。"
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/d2103aec18d219b5673f70887131a3f0~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "Level-中一张便条出现的位置。"
+      }
+    ]
   },
   "244": {
     "name": "Monsignor之幻象",
@@ -3558,6 +4682,12 @@ const LEVEL_INFO = {
       "離開全憑運氣，建議頭三小時內離開，此後層級會決定你是否配走。",
       "出口通常把流浪者送回來到此層前的位置。",
       "在空無間內的出口會把人送到想去的層級。"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/d5b94bb535c3126377f8848a82c830f4~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "一张板排的图片。"
+      }
     ]
   },
   "245": {
@@ -3631,6 +4761,20 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "想離開時跳向那兩顆星即可，會回到以前所在的位置；這是你的回憶，可以控制。"
+    ],
+    "images": [
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/labis/image/b22af8f605c5f7984ecc1931ee562b1f~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "小憩之地"
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/715f7cf872ce235df53d0ba4d0d09a8b~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "感谢"
+      },
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/isp-i18n-media/img/ed27daa20eac2e9251007488866007f4~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "从远处看会小一些"
+      }
     ]
   },
   "251": {
@@ -3646,6 +4790,16 @@ const LEVEL_INFO = {
       "進入門廳處隨機出現的出口門會切入Level 890。",
       "觸摸一根植株狀支柱會切入Level 58。",
       "切出地面會來到Level 33。"
+    ],
+    "images": [
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/labis/image/67a21833c7f6120ed17aefc9981c2c89~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "Level 251内的一条空置隧道。"
+      },
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/isp-i18n-media/image/c56a75fe4deb605a5d63f595504a74d8~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "Level 251内的另一条隧道，远处可见一只游船。"
+      }
     ]
   },
   "252": {
@@ -3657,6 +4811,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "離開方式未知，因層級對人有異常影響，離開者無法解釋自己是如何出去的。"
+    ],
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/labis/image/78c6f7972c903e761e8669dc6d939499~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "该照片由探险者总署的一名雇员拍摄，此人目前处于昏迷状态。"
+      }
     ]
   },
   "253": {
@@ -3717,6 +4877,16 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "頁面未記載明確離開方式。"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/a12e9aefa91278d2f3497404de0bdadf~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "紫罗兰与丁香花的柔和气息笼罩着你的心。你在此并不孤独"
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/c4aa3d07b026ac9062f058a7d42baf51~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "你早就知道我恨紫罗兰，不是吗？"
+      }
     ]
   },
   "258": {
@@ -3731,6 +4901,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "目前無已知出口。"
+    ],
+    "images": [
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/isp-i18n-media/image/0366d354f8c882e1882f6e3606fbed1c~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "Level 258唯一可辨识的照片。该照片已被调亮以保证清晰度。"
+      }
     ]
   },
   "259": {
@@ -3758,6 +4934,16 @@ const LEVEL_INFO = {
     "exits": [
       "從高原邊緣跳下可抵達Level 93或Level 198。",
       "從原點步行30分鐘穿過一片密林，天空由極光漸變成正午，即進入Level 135（斯卡茲卡）。"
+    ],
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/labis/image/3f64de855b3c47dd1ffc83eb111d1fcc~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "图 1 - Level 260 与阈限极光"
+      },
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/labis/image/4cc6a2438224382e3464384bb6e4842a~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "图 2 - Level 260 的第一张照片"
+      }
     ]
   },
   "261": {
@@ -3769,6 +4955,20 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "離開平台即回到其所身處的海洋層級。"
+    ],
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/labis/image/1100b363221c8eeff310c8d0a3d93ca0~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "对于平台的内部结构，我们所知甚少。"
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/13bb08620cc52de3174abda7c643c1fd~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "平台已在多个海洋层级中现身，例如Level 134。"
+      },
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-261/2MOblKuCr834eFs.jpg",
+        "caption": "平台使得阿尔戈斯之眼可以在诸如Level 48的海洋层级内穿梭自如。"
+      }
     ]
   },
   "262": {
@@ -3781,6 +4981,16 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "在不同精確概念區入睡/失去知覺即被傳送到不同層級：『懲罰』區→Level 52（極小概率Level 448）；『隱私』區→Level 12；『空間』區→Level 78（偶爾Level 20）；『和平』區→Level 63；切勿在『享樂』區入睡。"
+    ],
+    "images": [
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/labis/image/7c94eeee7064756b962f8a7123f7c897~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "巴德在精确概念静止死亡内部拍摄的照片。"
+      },
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-262/C1NBpgFT5rWjyeG.jpg",
+        "caption": "探险家约翰·卡西迪声称在层级中看到的3D渲染图。"
+      }
     ]
   },
   "263": {
@@ -3803,6 +5013,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "乘來時的電梯可返回入口；若電梯不開門，則去門衛室等待，或耐心等電梯恢復運行。"
+    ],
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/labis/image/f072fe151904bc7f0d773ae5b0d4d7b4~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "如果您或所爱之人有任何关于Hauss Danager下落的信息, 请立即联系M.E.G.当局。"
+      }
     ]
   },
   "265": {
@@ -3826,6 +5042,20 @@ const LEVEL_INFO = {
     "exits": [
       "找到一部向下運行的電梯進入，會從Level 11某棟公寓樓內出現。",
       "在層級中心附近找到一面骯髒壁鏡切出，會帶至Level 148。"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/5df8ff74f44c1b3ffb4155b46425f35d~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "Level 266树林的照片。"
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/2b3bd2cec0b4b57c57464971d5c73305~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "一张层级外围的照片。"
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/559d73241cca700f91b844ad9d3def98~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "一个金质吊坠。"
+      }
     ]
   },
   "267": {
@@ -3837,6 +5067,16 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "頁面未記載明確離開方式。"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/44ecd2a6977bc4879b7dc7948398b379~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "20/4/2 - 是湖！！想你"
+      },
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/labis/image/20d8a1515a10de4fe24348e550e875a7~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "20/8/2 - 依旧是这里，晴天"
+      }
     ]
   },
   "268": {
@@ -3848,6 +5088,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "無法進入，亦無已知離開方式。"
+    ],
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/isp-i18n-media/image/b9c40f9c4771cbcd8ffce48e1936e3fe~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "卫生间。"
+      }
     ]
   },
   "269": {
@@ -3859,6 +5105,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "穿過周圍的森林可到達大多數其他層級（不含無智慧生物居住的層級）。"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/9e03e4376e2f79c5871ba6fa2cc27128~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "易位"
+      }
     ]
   },
   "270": {
@@ -3870,6 +5122,16 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "唯一已知出口每隔一段時間變換位置，藏在河流下，是個鋼鐵小缺口，需在限時內用固定電腦解簡單密碼，成功後即刻傳送至終點。"
+    ],
+    "images": [
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/isp-i18n-media/image/dabf783a51ef4c194bf3ba21ce55f53b~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "Level 270的景观"
+      },
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/labis/image/66070b0485a445ea429565cd0fc2a9e0~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "血色的夕阳"
+      }
     ]
   },
   "271": {
@@ -3910,6 +5172,20 @@ const LEVEL_INFO = {
     "exits": [
       "跳入水坑切出可通往Level 7。",
       "按『0,1,7,9,5,4,9,7,4,2,6,5,7,2,0,1,8,3』路線行進可去往Level -9。"
+    ],
+    "images": [
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-273/6NI43FdtlOxzDwX.jpg",
+        "caption": "进入层级几分钟后所摄照片。"
+      },
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-273/cIQ82WFPo3tnBAq.jpg",
+        "caption": "第一张被确认的高影的照片。"
+      },
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-273/8IQlfUdeKnzH5si.jpg",
+        "caption": "在袭击前几秒所摄高影的照片。"
+      }
     ]
   },
   "274": {
@@ -3935,6 +5211,16 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "沒有任何已知方法可自主離開；經過一段不確定時間後，會被切入電梯地板，傳送到後室一個隨機層級。"
+    ],
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/labis/image/3a53fbf61d62ec2a5fb00fce27bfa0b0~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "电梯轿厢的图像，拍摄自不知名的流浪者，后被一名B.N.T.G的成员寻获。"
+      },
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/labis/image/6bf6c47b77290c87ba6115379af3ecd0~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "电梯井的图像。拍摄该照片的流浪者表示，他设法切入天花板，赶在被强制送回电梯之前，拍下了这张照片。"
+      }
     ]
   },
   "276": {
@@ -3958,6 +5244,16 @@ const LEVEL_INFO = {
     "exits": [
       "完成一系列『安巡捷』APP值班路線後跟從指引到出口，可能帶回切入前的原地址。",
       "被APP分配到『全新設備』執行多餘路線時，出口會隨機出現；切勿摧毀設備，否則無法離開。"
+    ],
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/labis/image/3f1d1435930d01acb8051e303d26943d~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "在 Level 277 内找到的办公区域。"
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/8d6d3ac6b7bc642857c535c5d1b9d85d~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "工业设施区域。代表着277层级。"
+      }
     ]
   },
   "278": {
@@ -3969,6 +5265,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "經歷本層效應後，流浪者會被傳回切入前所在地；此層能力不能延長自然壽命，否則會被撤換出軀體。"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/isp-i18n-media/image/49d4444a3e240ef0457c70a9769f1b0e~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "上列图片为经数字复现的，基于一位罹害者所受层级效应而创建的Level 278之外观；非直接摄影照片。"
+      }
     ]
   },
   "279": {
@@ -3988,6 +5290,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "底部平台靠近M.E.G.哨站處有一個小山洞，進入即通向Level 8，是目前唯一已知出口。"
+    ],
+    "images": [
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-280/darkstairs.png",
+        "caption": "一位艺术家复刻的 Level 280 。"
+      }
     ]
   },
   "281": {
@@ -4026,6 +5334,16 @@ const LEVEL_INFO = {
       "在管道中爬到地形變成鋸齒狀岩石洞穴即到Level 8。",
       "掉入海洋球池後有小概率從Level 4天花板掉出。",
       "在休息區地板直接切出到Level 1。"
+    ],
+    "images": [
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-283/l7Ve9suaKWETUkh.png",
+        "caption": "由B.N.T.G.的白堡进入管道的入口之一。"
+      },
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-283/auKUd9E7H6Ovgho.png",
+        "caption": "从白堡前往Epsilon基地途中的迷宫走廊。"
+      }
     ]
   },
   "284": {
@@ -4037,6 +5355,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "唯一已知離開法是在此安眠一夜，隨夜色深沉入睡；多數人在進入前的層級醒來，從高危層級進入者常被轉移到更安全的層級。"
+    ],
+    "images": [
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/isp-i18n-media/image/9f191597d1f1b86af98a96ecb8d3136d~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "一张由一个自诩为摄影师、作者与探险者 J 的人拍摄的照片。这个人当时刚进入 Level 284 。"
+      }
     ]
   },
   "285": {
@@ -4087,6 +5411,12 @@ const LEVEL_INFO = {
       "找到紅色的門通往Level 74。",
       "當螢幕正在播放與Level 104相關的影片時，穿過螢幕到達該層級。",
       "放映廳中的門偶爾通向Level 142。"
+    ],
+    "images": [
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/isp-i18n-media/image/0885aa196005a7bafb76f1b4f16a36c0~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "Level 290中发现的一个大厅。"
+      }
     ]
   },
   "291": {
@@ -4101,6 +5431,12 @@ const LEVEL_INFO = {
       "在地板找到艙門進入來到Level 17。",
       "切入無法打開的集裝箱可傳送至Level 37。",
       "停留夠久遇到貼五彩紙屑的集裝箱，切入會來到派對。"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/37d69d085d46eefdfe0921db8d36e889~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "通过无人机拍摄的货船的一张照片。"
+      }
     ]
   },
   "292": {
@@ -4133,6 +5469,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "找到一扇嵌入樹幹的門，進入會瞬間傳送至後室隨機一個層級。"
+    ],
+    "images": [
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/isp-i18n-media/image/fead4da764616611ad225a4292640638~tplv-be4g95zd3a-896x896.jpeg",
+        "caption": "一条在层级内蜿蜒不息的长河。"
+      }
     ]
   },
   "296": {
@@ -4162,6 +5504,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "以『跑回家去』的意象呈現——擊退孩子後離開，回到溫暖壁爐與毛毯般的安穩之處。"
+    ],
+    "images": [
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/isp-i18n-media/image/c974d354218472abcafb6621e6ea45f5~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": ""
+      }
     ]
   },
   "299": {
@@ -4173,6 +5521,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "透過鐘樓底部約200扇已開通的活板門離開，通往其他層級。"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/540f847f842dafd0c102389250c3d849~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "Level 299 的 43201 座钟楼中的一座。这一座钟楼几乎是英国伦敦伊丽莎白钟楼的复制品。"
+      }
     ]
   },
   "300": {
@@ -4210,6 +5564,12 @@ const LEVEL_INFO = {
       "在入口處攀入同一座隧道返回 Level 8。",
       "爬上層級的山頂抵達 Level 93。",
       "進入電梯狀金屬雙開門進入 Level 998。"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/e6c76d5d~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "Level 302边缘活跃的间歇泉。"
+      }
     ]
   },
   "303": {
@@ -4271,7 +5631,13 @@ const LEVEL_INFO = {
     "entrances": [
       "在 Level 46 內進入一座牆上生長著植被的廢墟。"
     ],
-    "exits": []
+    "exits": [],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/d22db697~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "绿洲之一角。"
+      }
+    ]
   },
   "309": {
     "name": "霧與行途",
@@ -4305,6 +5671,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "準確地以 10mph（16.09km/h）的速度衝向巨型標誌會送至 Level 1，幾乎沒有容錯空間。"
+    ],
+    "images": [
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-311/Level0butonepercentmoreyellow.jpg",
+        "caption": "尝试拍摄Level 311时所产生的照片。"
+      }
     ]
   },
   "312": {
@@ -4344,7 +5716,13 @@ const LEVEL_INFO = {
     "class": "其他",
     "summary": "Level 317 是一個怪異的實驗室設施，家具和建築物以黑色為主色，外框為亮藍色霓虹燈。分為控制室和大廳。控制室有 D-pad 操作「霓虹沙壺球」遊戲，需完成 10 個教程關卡。大廳像自助餐廳，有各種湯、三明治和薯片，自動售貨機可出售任何能想像的液體。有電視牆和觸摸屏亭，居民自稱「沙壺球隊」。完成關卡可獲得道具獎勵，包括杏仁水和該層獨有史詩級物品。",
     "entrances": [],
-    "exits": []
+    "exits": [],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/271dc9cd~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "Level 317中众多\"沙壶球游戏\"之一，由一业余玩家上传。"
+      }
+    ]
   },
   "320": {
     "name": "娛樂天地，全新升級！",
@@ -4492,6 +5870,12 @@ const LEVEL_INFO = {
       "覆沒於流沙裡最後會橫屍於 Level 440（2345年）。",
       "注視層級中的太陽再回頭，有微小機率被迅速傳送至巨植群落（2571年）。",
       "從一數到十會使一座大型學校出現，進入其中來到 Level 117（4096年）。"
+    ],
+    "images": [
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-350/y7IxsVoC6A4fpqB.jpg",
+        "caption": "第一张摄于Level 350的照片，展示着一些植物，大概率为一名流浪者所栽。拍摄者不明。"
+      }
     ]
   },
   "352": {
@@ -4587,6 +5971,12 @@ const LEVEL_INFO = {
       "穿過看起來像窗簾的牆壁進入 Level 165。",
       "走入漆黑的死胡同會進入 Level 194、Level 260 或 Level 302。",
       "葡萄藤和花朵組成的巨大拱門通向 Level 414。"
+    ],
+    "images": [
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-369/gfiTvCbNkhOyS41.jpg",
+        "caption": "Level 369 典型的外观。"
+      }
     ]
   },
   "370": {
@@ -4609,6 +5999,12 @@ const LEVEL_INFO = {
       "沿牆壁踢腳線進入空氣管道到 Level 96。",
       "任何向上的樓梯到 Level 280。",
       "在孔洞中找到草島橋樑可進入 Level 149 或 Level 756。"
+    ],
+    "images": [
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-371/tDhFmZ9qpcBGUAW.png",
+        "caption": "Level 371 内的一个空房间与一个通向虚空的孔洞。"
+      }
     ]
   },
   "372": {
@@ -4634,6 +6030,12 @@ const LEVEL_INFO = {
       "切入一棵罕見的烏黑色樹木到 Level 39。",
       "從擺渡人的渡船縱身躍入水中到 Level 230 的碼頭。",
       "走進森林深處的一間茅房到 Level 118。"
+    ],
+    "images": [
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-373/gt4qof.jpg",
+        "caption": "Level 373内首张河流的图片"
+      }
     ]
   },
   "374": {
@@ -4720,6 +6122,20 @@ const LEVEL_INFO = {
     "exits": [
       "在任意一場遊戲中戰勝遊戲大師會被送回原先所處層級。",
       "從遊戲大師手中取得豁免資格（通常只給兒童）可無需參與遊戲離開。"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/ff3fd475~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "Level 389的地板。"
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/89bf8f4b~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "Level 389的厨房。"
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/f561fe37~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "画家对这六扇门的描绘。"
+      }
     ]
   },
   "395": {
@@ -4750,6 +6166,16 @@ const LEVEL_INFO = {
     "exits": [
       "在層級中再次進入睡眠就會在目的地醒來。",
       "從客車車門切出可到達 Level 50、Level 69 和 Level 80（非常不推薦）。"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/95ae0c6a~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "Level 399 的座位。"
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/86c4ca17~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "Level 399 窗口外的景象。"
+      }
     ]
   },
   "400": {
@@ -4761,6 +6187,20 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "透過特定的程式化操作或數位介面可離開此層級"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/a1d1d8af~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "主区域的照片。"
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/e2b6d0ef~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "充满了科技产品的房间。"
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/ef777dcb~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "艺术家对进入金字塔后所见的描绘。"
+      }
     ]
   },
   "401": {
@@ -4779,6 +6219,16 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "穿過城市中特定顏色的塑膠門可返回其他層級"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/a5e372d5~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "Level 402村庄区域的一张图片。"
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/588b54f0~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "Level 402村庄区域的一张图片。"
+      }
     ]
   },
   "403": {
@@ -4797,6 +6247,16 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "找到層級中隱藏的門窗可離開"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/7c6fdc37~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "你已经忘了你在这儿的那些时光了吗？"
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/cc87d5e9~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "你在数据中迷失自我"
+      }
     ]
   },
   "405": {
@@ -4804,7 +6264,13 @@ const LEVEL_INFO = {
     "class": "其他",
     "summary": "Level 405是一個充滿壓抑氛圍的層級，以海浪、荒漠和荒蕪景觀為主。層級名稱極長，反映了其令人絕望的環境特徵。海浪不斷拍打著荒涼的海岸，空氣中瀰漫著鹹澀與絕望的氣息。流浪者在此會感受到強烈的無力感和孤獨感。",
     "entrances": [],
-    "exits": []
+    "exits": [],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/fd084038~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "即将袭来的海啸"
+      }
+    ]
   },
   "406": {
     "name": "独'目'女皇之地",
@@ -4818,14 +6284,26 @@ const LEVEL_INFO = {
     "class": "其他",
     "summary": "Level 407是一片死寂的草地平原，雜草叢生但毫無生氣。層級名稱暗示這是迷失靈魂的棲息之地。環境陰沉，天空永遠是灰色的，沒有任何聲音。流浪者在此會感到一種深沉的平靜，但也伴隨著與世隔絕的孤寂。草地上偶爾可見古老的遺跡或石碑。",
     "entrances": [],
-    "exits": []
+    "exits": [],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/bfa7cccb~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "沙峦起伏"
+      }
+    ]
   },
   "408": {
     "name": "問訊間",
     "class": "其他",
     "summary": "Level 408是一個以幽默諷刺風格呈現的層級，描述流浪者被帶入一個類似警察局問訊室的場景接受審問。頁面以對話形式展開，充滿荒誕的問答。環境是一間陰暗的房間，有桌子、椅子和一盞強光檯燈。層級沒有實體威脅，但整體氣氛詭異而滑稽。",
     "entrances": [],
-    "exits": []
+    "exits": [],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/ae33b1f2~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "问讯间"
+      }
+    ]
   },
   "409": {
     "name": "纸屋",
@@ -4843,21 +6321,59 @@ const LEVEL_INFO = {
     "class": "其他",
     "summary": "Level 410是一座看似普通的莊園宅邸，外觀與傳統歐式莊園別無二致。名稱中的「平平無奇」是一種反諷——莊園內部實際上充滿了各種奇異的現象和空間錯位。宅邸內佈滿了古老的家具、畫作和裝飾，流浪者在此探索時會發現房間之間的空間邏輯並不一致。",
     "entrances": [],
-    "exits": []
+    "exits": [],
+    "images": [
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-410/tmizww.jpg",
+        "caption": "剥夺"
+      },
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-410/3qkkpk.jpg",
+        "caption": "忘却"
+      },
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-410/fhnl1d.jpg",
+        "caption": "超脱"
+      }
+    ]
   },
   "412": {
     "name": "掠鹫野",
     "class": "deadzone",
     "summary": "Level 412是一片開闊的荒野，被大型猛禽（禿鷲）所盤踞。環境乾燥荒涼，幾乎沒有水源和遮蔽。生存難度標記為死區，意味著在此長期待留極度危險。禿鷹群會攻擊流浪漢，將其視為食物。層級中偶爾可見動物屍骸和骨骸。",
     "entrances": [],
-    "exits": []
+    "exits": [],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/e47e2b9c~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "旷野"
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/798fc28a~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "龟裂"
+      }
+    ]
   },
   "414": {
     "name": "永恒花園",
     "class": "宜居",
     "summary": "Level 414是一片永恆盛開的花園，四季如春，花朵永不凋零。生存難度標記為宜居，是後室中少數安全舒適的層級之一。花園中佈滿了各種花卉、噴泉和長椅，空氣中彌漫著花香。流浪者可以在此安心休息、收集植物資源。花園中沒有實體威脅。",
     "entrances": [],
-    "exits": []
+    "exits": [],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/0d4ed476~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "花神之触贯穿时空"
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/3816f43c~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": ""
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/e353aac5~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "欢迎来到我们的庇佑之地。"
+      }
+    ]
   },
   "415": {
     "name": "森林步道",
@@ -4879,6 +6395,16 @@ const LEVEL_INFO = {
       "進入巨植群落區域",
       "到達Level 75",
       "到達Level 515"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/19c4fb95~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "在基地区域的一栋木屋旁通过无人机拍摄下的湖面照片。"
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/5239b5da~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "暴风雪时的一张照片, 由一位流浪者在木屋中拍下。"
+      }
     ]
   },
   "421": {
@@ -4912,6 +6438,20 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "沿公路行駛可到達其他層級"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/cea3139e~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "Level 423 入口处的一张照片。"
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/94dafcfc~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "另一张 Level 423 的照片，于亮灯时拍摄。"
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/32f29d12~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "Level 423 的一张照片，展示了一些商品。"
+      }
     ]
   },
   "427": {
@@ -4923,6 +6463,16 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "找到迷宮出口可離開"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/f3d1af33~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "一条狭窄而短的走廊，充斥着通往其他难以分辨的房间的出口。"
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/265e9812~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "诸门框之一，通向诸房间之一。"
+      }
     ]
   },
   "429": {
@@ -4941,6 +6491,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "找到打破循環的異常節點可離開"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/cdf9097c~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "Level 432 的图片"
+      }
     ]
   },
   "434": {
@@ -4959,6 +6515,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "沿海岸線前行或乘船可到達其他層級"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/9bbc338e~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "图片摄于Level 436，图中码头是区别于\"船长码头\"的另一码头。"
+      }
     ]
   },
   "440": {
@@ -4970,6 +6532,16 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "到達綠洲或找到特定通道可離開"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/a4f6531a~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "此层级的一张图片，由未知流浪者摄下。此时沙温似乎较低。"
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/43fc5e6b~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "一张树木和植物的特写。在此张照片中，树木并未展现出其独特性质。"
+      }
     ]
   },
   "442": {
@@ -4981,6 +6553,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "找到特定的花卉叢或通道可離開"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/23d0d954~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "由匿名流浪者拍摄的一张照片，拍摄者目前下落不明。"
+      }
     ]
   },
   "444": {
@@ -4992,6 +6570,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "在層級穩定的短暫窗口中找到出口"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/29cbdeb0~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "目前处于一次\"后变换事件\"中的Level 444，时间为07:18:0.05。"
+      }
     ]
   },
   "445": {
@@ -5003,6 +6587,16 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "從建設區域的特定通道離開"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/eb28beb6~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "Level 445中重复的森林。"
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/3e1c7558~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "Level 445中漆黑一团，暗无星光的天空。"
+      }
     ]
   },
   "448": {
@@ -5010,7 +6604,13 @@ const LEVEL_INFO = {
     "class": 0,
     "summary": "Level 448是一個生存難度0的安全層級，環境平靜無威脅。層級的具體名稱和詳細描述較為簡略，但可以確認其安全性。流浪者可以在此安心休息和補給。",
     "entrances": [],
-    "exits": []
+    "exits": [],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/5c86e83c~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "牢中走廊"
+      }
+    ]
   },
   "450": {
     "name": "无常",
@@ -5035,7 +6635,21 @@ const LEVEL_INFO = {
     "class": "4G",
     "summary": "Level 456使用特殊的4G生存難度分類，結合了等級4的危險性和G（環境危害）的特徵。層級的具體環境特徵涉及電磁波、訊號或數位干擾相關的危害。流浪者在此會經歷電子設備異常、感官干擾等現象。",
     "entrances": [],
-    "exits": []
+    "exits": [],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/57da4881~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "第一张Level 456的照片"
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/d5130b9e~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "于冰雹天气中摄制的 Level 456 照片"
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/dd3231c5~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "使用热成像仪拍摄的波动脉冲星的图像"
+      }
+    ]
   },
   "458": {
     "name": "佩德罗帕帕披排铺",
@@ -5053,6 +6667,20 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "穿過廢墟中的特定通道可離開"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/31d2fd04~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "Level 463内的典型景观。"
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/54fe898a~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "一个砼墟内独特建筑。"
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/8ba1e232~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "无线电塔位于砼墟的中心。"
+      }
     ]
   },
   "466": {
@@ -5064,6 +6692,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "穿過火焰或找到火源背後的通道"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/e3449516~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "平原生物群系与森林的交界处"
+      }
     ]
   },
   "469": {
@@ -5077,6 +6711,12 @@ const LEVEL_INFO = {
     "exits": [
       "穿過矢車菊田或道路離開",
       "可到達Level 10、Level 125、Level 237或Level 369"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/55d101bc~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "一张矢车菊田的照片，田间散布着印第安画笔花。"
+      }
     ]
   },
   "470": {
@@ -5089,6 +6729,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "穿過房屋內寫有「是時候回去了」的門可到達Level 11"
+    ],
+    "images": [
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-470/5w5usl.jpeg",
+        "caption": "我们会铭记你的"
+      }
     ]
   },
   "471": {
@@ -5114,6 +6760,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "截至撰寫時出口未知"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/dbd052c0~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "一张洞穴入口的照片，拍摄于2014年底。"
+      }
     ]
   },
   "479": {
@@ -5125,6 +6777,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "經過一段不確定時間後隨機傳送回之前的層級"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/8d173ab4~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "Entity 479-1唯一已知的图像。图像也成为了该实体实际存在的证明。"
+      }
     ]
   },
   "480": {
@@ -5138,6 +6796,16 @@ const LEVEL_INFO = {
     "exits": [
       "某些門和店鋪可返回Level 122",
       "走廊有時通向Level 2（管道噩夢）"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/2983798a~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "Level 480内一处货摊商场。天花板之上的天空来源未知。"
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/c3029976~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "Level 480内一件杂牌商品的例子。"
+      }
     ]
   },
   "481": {
@@ -5184,6 +6852,20 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "在森林中穿行足夠久可能被領入Ground 10"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/8f357839~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": ""
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/1f8a56e5~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": ""
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/e707bf6b~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "Ground 486的城市。"
+      }
     ]
   },
   "494": {
@@ -5195,6 +6877,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "在鏡湖之底可以找到離開的方法"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/0ba3a4a5~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "镜湖"
+      }
     ]
   },
   "495": {
@@ -5208,6 +6896,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "在黑暗處河岸另一邊可能遇到門洞，通向Level 372、Level 97、Level 28或Level 899"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/54b89fef~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "摆渡人。"
+      }
     ]
   },
   "499": {
@@ -5224,6 +6918,20 @@ const LEVEL_INFO = {
       "一些隧道通向Level 648的大沙漠",
       "森林天花板上的洞通向Level 39的地面",
       "紅棕色泥磚走廊中的門通向Level 499.1"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/54bad372~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "在Level 499内发现的一件雕塑。"
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/b3c60b87~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "来自Level 499的植物样本。"
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/41a741a8~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "来自AI-1样本的细胞。"
+      }
     ]
   },
   "500": {
@@ -5235,6 +6943,20 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "可經由走廊牆壁上任何一扇未上鎖的門（前提是它能夠作為入口）離開；多數出口通向其作為入口時聯通的層級，但不一定是完全一致的位置"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/592ed18d~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "通过层级顶层甲板所见的外部景象。"
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/9a68a237~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "通讯专家Haymes和Mitchell正尝试利用该层级的雷达系统。"
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/b4e41b55~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": ""
+      }
     ]
   },
   "501": {
@@ -5270,6 +6992,16 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "一旦加入，就回不了頭了；無論是朋友還是敵人，都沒法離開群襲"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/9c255316~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "我们的家"
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/8f8730a3~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "群袭袭来"
+      }
     ]
   },
   "505": {
@@ -5281,6 +7013,20 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "層級中心機器正下方地面上的一個小坡道；出口沒有固定目的地，似乎會將人送到各個不同的層級"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/799b1b85~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "1D4C5..1D505 录像_01；当前位于距该地中心中等距离远处。"
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/65479d0f~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "1D4C5..1D505 录像_02；观察入口区域外围。"
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/94fa16f8~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "1D4C5..1D505 录像_EX；视野内是层级中心一名受到智能机械变形伤害的受害者。"
+      }
     ]
   },
   "508": {
@@ -5292,6 +7038,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "（頁面未明確列出出口方式）"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/b58b3417~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": ""
+      }
     ]
   },
   "510": {
@@ -5317,6 +7069,20 @@ const LEVEL_INFO = {
       "在類似 Level 44 空曠的房間中待過久會被無縫傳送至 Level 44",
       "在形似 Level 88 的長廊中閒居過久會被傳送至 Level 88",
       "一些門上標著難以辨識的胡言亂語，隨機進入其中即可去 Level 109"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/461705bf084142602a0887af8db3a32e~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "Level 511的基本区域。"
+      },
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/labis/image/e3cbd724d3a5c09f1140ecdbc3266bd7~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "一个常规医疗房间的典例。"
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/c7802eb6df490dbae0c20b9e8c4b013b~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "Level 511中一处较为独特的空间。"
+      }
     ]
   },
   "512": {
@@ -5328,6 +7094,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "進入房間類型=地下室（接入點=未知）"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/isp-i18n-media/image/09c4cf6cfdfa2ec39ef59f9bc31865d4~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "在房屋里房间类型:厨房的样貌."
+      }
     ]
   },
   "515": {
@@ -5341,6 +7113,16 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "每個 VAB 都配有3至6個電梯，均正常運轉"
+    ],
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/labis/image/0b8d77a50450e0b8152daf3af1ef68ff~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "Level 515"
+      },
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/isp-i18n-media/image/4c6641de1feae393e796492f74296cae~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "地面区域"
+      }
     ]
   },
   "520": {
@@ -5376,6 +7158,12 @@ const LEVEL_INFO = {
       "標有十字圖形的門通向 Level 584",
       "標有橙色明亮火花圖像的門通向 Level 155",
       "一扇沒有標記的門通向 Level 404"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/isp-i18n-media/image/74145f6abaa462e52791e33a19d740c0~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "Level 532 中的第七个门口。"
+      }
     ]
   },
   "540": {
@@ -5427,6 +7215,20 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "（頁面未明確列出出口方式）"
+    ],
+    "images": [
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-555/0puu97.jpg",
+        "caption": "隐去"
+      },
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-555/x4du2c.jpg",
+        "caption": "那条蛇"
+      },
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-555/6qnqj4.jpg",
+        "caption": "星星"
+      }
     ]
   },
   "557": {
@@ -5458,6 +7260,12 @@ const LEVEL_INFO = {
       "行進約25英里後走向左側出現的摩天大樓，即可到達 Level 11。",
       "進入「無盡之地」，行走100英里後到達 Level 10。",
       "有時會在此層遇到一個茅屋，走入其中將到達 Level 280。"
+    ],
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/labis/image/1dc19b868574fb0d7193218eba7514dc~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "Level 563 中一条永无止境的道路的图像。"
+      }
     ]
   },
   "566": {
@@ -5469,6 +7277,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "通過同樣的出入口離開，返回上述對應層級"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/isp-i18n-media/image/bd03de2d9702d5f47e8127218c899b21~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "位于Level 566中心的工厂。"
+      }
     ]
   },
   "571": {
@@ -5481,6 +7295,20 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "五樓一扇異常金屬門是離開 Level 571 的唯一出口"
+    ],
+    "images": [
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-571/8c3b67f31da53c3eb2a385063d838acd.jpg",
+        "caption": "图片展示了最初发现 Level 571 时它走廊的样子。"
+      },
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-571/598ceca0373436023662c74d8a636828.jpg",
+        "caption": "\"黑暗迁移\"后 Level 571 的走廊。"
+      },
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-571/78ee48d42fdd55635e3aa0cbe068a268.jpg",
+        "caption": "Level 571 通往被淹没的地下室的入口。"
+      }
     ]
   },
   "580": {
@@ -5492,6 +7320,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "（頁面未明確列出具體出口方式）"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/4b4317c9d37466427c45bf2d0d86c82d~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "一方没有机械的世界。"
+      }
     ]
   },
   "586": {
@@ -5499,7 +7333,13 @@ const LEVEL_INFO = {
     "class": "?",
     "summary": "暫無資料，待補充。",
     "entrances": "",
-    "exits": ""
+    "exits": "",
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/isp-i18n-media/image/905a1138a5315e5932a1c9bedb47834c~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": ""
+      }
+    ]
   },
   "587": {
     "name": "我們昔日的歡樂之地",
@@ -5510,6 +7350,16 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "（頁面未列出）"
+    ],
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/isp-i18n-media/image/bd1e48fdd6531a819d9d957ebcd71ccb~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "那条老路仍然历历在目。"
+      },
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/isp-i18n-media/image/e4dc3acfcb66468d9394f25d0627025d~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "树屋的本体。从我爸的老古董里发现的照片。"
+      }
     ]
   },
   "588": {
@@ -5542,6 +7392,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "出口還未被記錄，層級探索仍在進行中"
+    ],
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/labis/image/bdfe273c60a6d4325b8dd0fbb19d783b~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "从 Level 78 舷窗透过去看到的 Level 599"
+      }
     ]
   },
   "600": {
@@ -5553,6 +7409,16 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "目前該層級沒有已知的出口。"
+    ],
+    "images": [
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/labis/image/5933acde505b5b5244bcc4f46c97bf69~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "该层级并不存在。"
+      },
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/isp-i18n-media/image/ff98f3402698a69bb9b2685c4306cf22~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "山脉与道路的一处。"
+      }
     ]
   },
   "601": {
@@ -5566,6 +7432,16 @@ const LEVEL_INFO = {
     "exits": [
       "終點的偽現實有時可能包含通往其他更安全層級的出口，但並不總是這樣。",
       "離開終點的可靠方法尚未被發現。"
+    ],
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/labis/image/7bd02ed5e14fc07a49237ddd3c95dc1c~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "终点图书馆的主区域。"
+      },
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/labis/image/81d29c273ee933c3c8ab5b0eb566422b~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "伪现实中\"腐化corruption\"效果的实例。"
+      }
     ]
   },
   "602": {
@@ -5577,6 +7453,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "通過 Level 688 的活板門返回。"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/isp-i18n-media/image/8e6491e5a3f51e1bbf35519e04832c26~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "Level 602的景观。"
+      }
     ]
   },
   "603": {
@@ -5589,6 +7471,20 @@ const LEVEL_INFO = {
     "exits": [
       "跟隨電纜到達中心工廠會被吞噬。",
       "理論上可前往 Level 62、80 或 113，但流浪者往往無法逃脫。"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/isp-i18n-media/image/35023a8fada4e3ba9d3aa671d6401a63~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "一对穿过牧场的电线"
+      },
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/labis/image/1d4deeb30053784f6f80964213dee989~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "一张更久远的Level 603照片，拍摄于一处小型街区的中心位置"
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/isp-i18n-media/image/dd2fb6078963a55d14967b1fa545d41b~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e",
+        "caption": "Level 603中的一个小型建筑群"
+      }
     ]
   },
   "605": {
@@ -5739,6 +7635,20 @@ const LEVEL_INFO = {
       "跳入外島上的懸浮油畫會切出至油畫代表的層級。",
       "打破石英柱子埋入塵土會切出到 Level 48。",
       "掉進島嶼之間的天空盒會傳送到 Level 9。"
+    ],
+    "images": [
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-635/51835348308_07450fb717_o.png",
+        "caption": "Level 635 的图片，摄于初次发现时的 2022 年 1 月 19 日。"
+      },
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-635/51835350578_4b7c5e73ef_o.jpg",
+        "caption": "用于进入 Level 635 的油画的照片。"
+      },
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-635/51834289737_3f98e26ef8_o.jpg",
+        "caption": "照片发现于一台废弃相机内，这是传言中的刻灵师。"
+      }
     ]
   },
   "644": {
@@ -5757,6 +7667,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "沙子中可能有可供一人通過的坑洞，或許通向某處。"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/isp-i18n-media/image/e861da008e10bbb548ad693d9f288861~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806565357&x-signature=aEL%2Ff6AykZacdK8pLqw6MpyaAbU%3D",
+        "caption": "周遭的沙漠。"
+      }
     ]
   },
   "650": {
@@ -5775,6 +7691,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "原路返回即可。"
+    ],
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/isp-i18n-media/image/ee69cb157a3ddec7c160f2a2c6525298~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806565358&x-signature=h2X%2BB0MsvWbi1fB6jGZVZDtu6Ck%3D",
+        "caption": "一张照片，拍摄于Level 654的维护厅。"
+      }
     ]
   },
   "657": {
@@ -5786,6 +7708,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "未知"
+    ],
+    "images": [
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/labis/image/8b43596e9556509f00d462d244740cca~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806565359&x-signature=KplLI9zeESVz%2FWFetRl8%2FLLsWHs%3D",
+        "caption": "购物车望着地平线，沉思着，沉思着，沉思着"
+      }
     ]
   },
   "665": {
@@ -5877,6 +7805,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "穿過進入時的門即可離開，但門會在不注意時改變位置。"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/999f58820249f9e9a309d3baaf6d0baa~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806565563&x-signature=BWQOMx4EStZSiIgkynJRn%2BTXAgA%3D",
+        "caption": "拍摄于Level 683的照片，据拍摄者所说，图片捕获到了一个人形实体（但在图中什么都看不到）。拍摄者目前正在Beta基地治疗衰弱性幻视。"
+      }
     ]
   },
   "684": {
@@ -5955,7 +7889,13 @@ const LEVEL_INFO = {
     "class": "其他",
     "summary": "Level 700 是一個關於跳懸崖後無盡自由落體的層級。流浪者站在峭壁上跳下後，發現自己陷入永無止境的墜落中，而非預期的死亡解脫。眼前始終是金門大橋底部般的風景，永遠不會到達地面。層級探討自殺、絕望與無盡等待的主題，充滿存在主義式的痛苦與悔恨。",
     "entrances": [],
-    "exits": []
+    "exits": [],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/isp-i18n-media/image/1ce8977b25d0c1899d78694869136345~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806565618&x-signature=j%2Fnv6nBlPlZt%2BrH02yKwLTz3Enc%3D",
+        "caption": "好一片旖旎风光，不是吗？"
+      }
+    ]
   },
   "701": {
     "name": "狄乌斯之野",
@@ -6020,6 +7960,20 @@ const LEVEL_INFO = {
     "exits": [
       "基於環戒的意志以切出方式離開。",
       "用左手觸碰朝聖者之路的雕刻可切出至下一個場景。"
+    ],
+    "images": [
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-710/299eb81cef05e9a50499f32e48d1e574.md.jpg",
+        "caption": "高悬天空的异常，又名\"环戒\"（由M.E.G.拍摄）"
+      },
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-710/3631caa58a8b090d96f82fde196e8750.jpg",
+        "caption": "M.E.G.手绘的环戒草图"
+      },
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-710/379bfab915b6d0186daa43a84503f9d9.md.jpg",
+        "caption": "先驱者拱门和周遭矗立的巨石（由M.E.G.提供的相片）"
+      }
     ]
   },
   "711": {
@@ -6136,6 +8090,12 @@ const LEVEL_INFO = {
     "exits": [
       "從相連的其他房間走出回到 Level 1 或 Level 39。",
       "翻出窗戶會切入 Level 39。"
+    ],
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/isp-i18n-media/image/02ebad16c380d6137c172bdca5efa6e5~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806565760&x-signature=m87o8ClkmnRKzyBlSg9HF5to1GI%3D",
+        "caption": "Level 726。"
+      }
     ]
   },
   "729": {
@@ -6148,6 +8108,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "走動時偶爾遇到通往 Level 283 的門。"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/ddcb2de017c55248207bf50e77bf2111~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806565818&x-signature=yWIVt7emqx10FvhpN7vs5Gc3gj8%3D",
+        "caption": "Jon的纸条"
+      }
     ]
   },
   "730": {
@@ -6213,6 +8179,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "未知。"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/7ca357855f378c772265c8c913d4286e~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806565861&x-signature=puMpCMR6AJpHUwVCujwV6tY9DcU%3D",
+        "caption": "「希望乃万恶之首，因其不断延长人们的痛苦。」"
+      }
     ]
   },
   "750": {
@@ -6245,6 +8217,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "在島上睡著後會在自己床上醒來，感覺休息良好。"
+    ],
+    "images": [
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/labis/image/882c23cb199efaffa55c9ef9db55a705~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806565865&x-signature=Rwo1jwU%2BoIUGqXtL8SEmjfQj0iM%3D",
+        "caption": "在大岛上，只有孤单的牛"
+      }
     ]
   },
   "771": {
@@ -6274,6 +8252,16 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "在階層1連續行走數小時遇到閃爍路燈，站在下方可抵達下一階層。"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/isp-i18n-media/image/189ea3b70c538b3b210942ba41f9a5e3~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806565917&x-signature=JFf2dV4k7DR2F6%2Bz2KCYuAIujR8%3D",
+        "caption": "观察倒计时"
+      },
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/labis/image/b6801287a0ccc7fdbc0b6166cbe5b3df~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806565917&x-signature=PVOTsVqpIhalerb%2F9fTIYz1VrKw%3D",
+        "caption": "南侧平台：一片由浅绿色轮廓的多边形组成的平原，一条圣典河流经此地。"
+      }
     ]
   },
   "777": {
@@ -6316,6 +8304,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "目前未發現任何出口。"
+    ],
+    "images": [
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/labis/image/ae1e5994255fb2555145d32c2bc4ab4a~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806565920&x-signature=y%2FCM17C8AqVSOmgJ2v8HOPAJyCM%3D",
+        "caption": "关于Level 790唯一已知的照片"
+      }
     ]
   },
   "797": {
@@ -6327,6 +8321,24 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "通過牆上眾多石窟離開，可前往 Level 10、Level 39、Level 75、Level 84、Level 134、Level 140、Level 155、Level 170、Level 300、Level 420、Level 480、Level 817 等。"
+    ],
+    "images": [
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-797/z3DAOci9fhpTvZ5.png",
+        "caption": "一张关于 Level 797 林间道路的照片。"
+      },
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-797/Nd2GotAL59Exgrh.jpg",
+        "caption": "一张关于 Level 797 林间道路的照片。"
+      },
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-797/51112911050_0bb3d60922_h.jpg",
+        "caption": "大坝的照片，通过围栏上的某个洞拍摄。"
+      },
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-797/51112041333_6f5c084e10_h.jpg",
+        "caption": "前哨站的唯一照片。"
+      }
     ]
   },
   "799": {
@@ -6421,6 +8433,16 @@ const LEVEL_INFO = {
       "從層級的任意金屬牆切出可能到達 Level 1。",
       "走到高速公路的任意末端可到達 Level 9。",
       "探索龍骷峰洞穴可能到達 Level 797，極少數情況下到達 Level 75。"
+    ],
+    "images": [
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-817/atI3hJvC6Go1iEA.jpg",
+        "caption": "一张描绘露天垃圾场的图片"
+      },
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-817/6257c833239250f7c5bcdc16.jpg",
+        "caption": "一张Frederick Kaiser的装有喷气发动机的冰箱的设计草稿"
+      }
     ]
   },
   "822": {
@@ -6473,6 +8495,20 @@ const LEVEL_INFO = {
     "exits": [
       "從同一衣櫃離開會回到 Level 11。",
       "強行非自主切出從未發生，但若強行嘗試會被傳送到 Level 18 或 Level 63。"
+    ],
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/isp-i18n-media/image/693c1886ccc16b5f91c685156378f4ff~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806566055&x-signature=kmfM8ExnYKWAEIu%2BVznjDEzarMA%3D",
+        "caption": "存有通往Level 828入口的衣柜。"
+      },
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-828/1KzGgDTb9Qetvrc.jpg",
+        "caption": "毛绒玩偶实例。尽管不少人都认为它们的外观\"奇特怪异\"，但大众对其的观感大体上是较为积极正面的。"
+      },
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-828/7MutYSl8U4CLcvR.jpg",
+        "caption": "一份该层级的简易绘图。"
+      }
     ]
   },
   "831": {
@@ -6486,6 +8522,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "唯一已知出口是走廊末端靠近瓦礫堆、帶有出口標誌的門，通向流浪者進入本層的入口。"
+    ],
+    "images": [
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/labis/image/958c008bf714f1a8d7395d4d897aa506~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806566102&x-signature=gXUKqHkFvXDLxjprO8NcUcZQB2Y%3D",
+        "caption": "Level 831 中被摧毁的实验室"
+      }
     ]
   },
   "834": {
@@ -6513,6 +8555,16 @@ const LEVEL_INFO = {
       "關掉開關後可從為黑暗勇士準備的門離開。",
       "幫助其中一個雕塑完成蛻變可能會提前離開。",
       "若已看到哭泣者，則無法逃離，會出現在毗鄰平面 Planum 841.1。"
+    ],
+    "images": [
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/labis/image/13d0e951dc94bc88709d3693d1be7365~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806566103&x-signature=y%2Fn9qdTAP0LpTBXJAuFMfMvFqZs%3D",
+        "caption": "崇高者的低语无法在黑暗中传达给你。"
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/83444322ef1e4768dd8e4061492e1aeb~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806566103&x-signature=kksyBgThQyQ1jvRsyB7HFfzqvYc%3D",
+        "caption": "蜕变前夕"
+      }
     ]
   },
   "848": {
@@ -6561,6 +8613,12 @@ const LEVEL_INFO = {
     "exits": [
       "進入標有「351」的門會即刻送入 Level 854。",
       "在走廊中跟隨一隻微光嚮導可進入 Level 0。"
+    ],
+    "images": [
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/isp-i18n-media/image/c969b7b1b9553029c16b44cfc2b25577~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806566157&x-signature=f3iAMLLVVe%2FJ5lCEb4a%2FvuCGjbs%3D",
+        "caption": "[一张Level 853的照片，背面写有\"Atlas\"一词。]"
+      }
     ]
   },
   "854": {
@@ -6574,6 +8632,20 @@ const LEVEL_INFO = {
       "結構前門指向 Level 855。",
       "從壁爐處切出會去往 Level 902。",
       "「女人」逃離時緊隨其後會去往 Level 217。"
+    ],
+    "images": [
+      {
+        "url": "https://backrooms-wiki.wdfiles.com/local--files/level-854/invitingroom.png",
+        "caption": "白色的家"
+      },
+      {
+        "url": "https://backrooms-wiki.wdfiles.com/local--files/level-854/house.jpg",
+        "caption": "烧毁的家"
+      },
+      {
+        "url": "https://backrooms-wiki.wdfiles.com/local--files/level-854/woman.png",
+        "caption": "\"女人\"实体"
+      }
     ]
   },
   "859": {
@@ -6651,6 +8723,12 @@ const LEVEL_INFO = {
     "exits": [
       "擊殺一隻將你作為獵物的負蚤織工或骸布潛行者，可切入 Level 63（死後五小時內吃掉其身體可提升成功率）。",
       "與天外存在接觸最終會被傳送至 Level 11 或 Level 974。"
+    ],
+    "images": [
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-888/jitQVDPJTIW6eHU.png",
+        "caption": "在温和天气下拍摄的照片。"
+      }
     ]
   },
   "890": {
@@ -6718,6 +8796,20 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "若想退出 Level 901，请在森林中部找到一个宽阔的洞穴。这种洞穴可以轻松地进入 Level 11，任何由此进入的流浪者，连同任何资源或货物，都将切入 Level 11 的特定位置，那里建造了一个终端以处理所有的运输和储存事务。"
+    ],
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/isp-i18n-media/image/784206803e7b2ef5a1076dd8dbcb7f05~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806566246&x-signature=m1dFv5xkKvJYzSKYz%2BtoUgzhauQ%3D",
+        "caption": "一张 Level 901 景象的照片。图中的浓烟清晰可见。"
+      },
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/isp-i18n-media/image/4b97e736b5483aa077ae7d8c03b41745~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806566246&x-signature=rfZg%2BND1rtD9y2moSbI0vWxPEGM%3D",
+        "caption": "\"生命之奥秘\""
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/isp-i18n-media/image/b06d81190c1ac3bbca5e0d58ecb707f5~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806566246&x-signature=15n4Fw5a7ukBLed47zoYjGC%2BQSQ%3D",
+        "caption": "出现于 Level 901 内部的众多工厂之一。"
+      }
     ]
   },
   "902": {
@@ -6790,7 +8882,17 @@ const LEVEL_INFO = {
     "class": 5,
     "summary": "有关本层级的信息会被粗暴地毁灭。观察者上报了眼睛、耳朵、鼻子、舌头的强制切除；这些举动由不可披露的实体实施。受害者在被残害后仍有意识。\n从受害者处接收的讯息：喘息、湿性波动、刮擦。失去感觉前传达的信息表示，闻到了洫和臭氧的味道，尝到了铜味。牙齿生长被认为芣正常。立尅上蕔。",
     "entrances": [],
-    "exits": []
+    "exits": [],
+    "images": [
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/labis/image/9f032418757e621bb2c06c2eb02781d6~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806566251&x-signature=WGJI3jHgZtnERPsM%2FXthl4jAntg%3D",
+        "caption": "Level 909。敌意。为保护读者，文档已被删去部分内容。"
+      },
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/labis/image/0b1b6aa92b1faf4f99c349ecaa3a5bdd~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806566251&x-signature=IrvgyxBI9oB%2BvQDOIPiszaCFDx4%3D",
+        "caption": "哠訴莪浭哆∴)"
+      }
+    ]
   },
   "910": {
     "name": "他X的世界的終點",
@@ -6822,6 +8924,12 @@ const LEVEL_INFO = {
     "exits": [
       "如上所述，通过闭上眼睛并在水泥立柱间穿梭有较小几率可离开本层级，但尚不明确流浪者在离开后会位于何处。这是因为所有成功切出该层级的个体皆有他们自空中坠下，且在数秒之内因不明原因快速失去了联系的报告。",
       "在此！ 遵循CC0 1.0 通用公共领域贡献宣言协议。"
+    ],
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/isp-i18n-media/image/c9c8d37e0703bde68e980cbebe5cc7d2~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806566302&x-signature=D5oG0B41fFC24asJNQPChXFPBvQ%3D",
+        "caption": "一张Level 913的照片。"
+      }
     ]
   },
   "915": {
@@ -6876,14 +8984,26 @@ const LEVEL_INFO = {
     "class": "unknown",
     "summary": "埃舍尔楼梯间仅有一个已知的走向——逐阶而上。该阶梯是一个野兽派式的老旧大型建筑，一簇有头无尾的螺旋阶梯。意志坚定亦可说顽固无比的流浪者都曾尝试拾级而上以抵达一个出现于传言之中的目的地，皆以失败告终，只好折返他们最初的出发点。天顶之处为致盲的亮光所笼盖，但无论流浪者走了多远，其相对天顶的距离却从未缩短。如此匪夷所思的无限在物理学不再适用的地方是司空见惯的。然而在漫无目的的流浪者于此楼梯井中寻路，对黑白相成的单调色彩漠不关心之时，他们可能会觉察到周边环境所弥漫着的死寂——最终听见如雷贯耳的心跳阵阵和汽笛鸣响般的一呼一吸。\n这里并没有什么可怕的。大多数流浪者都能够平静地走过这几段楼梯，在意识到这处蔚为壮观的建筑仅是金玉其外之前——实则败絮其里，埃舍尔阶梯便是核心处那单调乏味的幻景。它并非是有意欺诈来者，亦无给人留下印象之意。 既无恶意，亦没善意。楼梯井存在于一个封闭有限的区域之内，此外别无他物。它之存在也许不同寻常，令人厌烦，亦绝无可令人见景追忆之物。没有加于心智之上的折磨。没有需要抵达的令人费解之终点。阶梯之间并未藏匿着任何重要信息。但最为重要的是，这里不存在危险，也无任何回报。有关该楼梯",
     "entrances": [],
-    "exits": []
+    "exits": [],
+    "images": [
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/labis/image/77219c5e2d734f85c784bdb012cb4daf~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806566342&x-signature=JXUsZbTtaM6jE4TqRZVHQK8GRuY%3D",
+        "caption": "埃舍尔楼梯间：仅有一个已知的走向——逐阶而上。"
+      }
+    ]
   },
   "923": {
     "name": "末土",
     "class": "unknown",
     "summary": "“这是我第几次来到这里？”既视感吞没了你的思维。周围的一切都如此熟悉，又如此陌生。你不由得感到自己陷入了一个永无终日的循环。\n空间欺骗着囚徒们，如同玩弄心理实验里走投无路的豚鼠。闪烁的微光先是带来希望与安全的错觉，随后便蓦地从眼前消失不见，只有陌生的边境取代那原本我们已经熟悉的土地。我们永远不会受到生理上的痛苦，然而，我们永世破碎。阴影在远处注视，时刻准备扑杀它们的猎物——但它们究竟是蓄势待发的实体，还是我们脆弱头脑中仅存的幻象？墙壁亦有眼耳。它们漠视着我们的一举一动，倾听我们脆弱的心跳，精心策划着下一场奇景。万物超越现实。\n末土之上，何为真实？可有真实？我们究竟是在等待长梦醒来，还是在清醒地历经这所有梦魇？前方是否真有终点，还是说我们命定要成为实验的对象？\n在一切混沌的中心，漆黑高耸的方尖碑定格于此。周遭的万物扭曲融解之时，这颗幻痛的心脏却完好无损地险恶矗立。那是我们的出路。我们向它伸手。我们向它渴求。我们与它碰触。\n唯一的配图由以下二图拼接而成：Dark forest canopy by Phoebe Strafford, which is licensed under the U",
     "entrances": [],
-    "exits": []
+    "exits": [],
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/labis/image/1538bac98199d1e18295881c3a01f7cc~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806566343&x-signature=NQIIMuG5PQbz5KWJUKhaWH5mUZ4%3D",
+        "caption": "梦魇随之而来。脚步声紧缀踌躇不前之人。低语声迷乱孤身游荡之人。黑影玩弄盲目之人。"
+      }
+    ]
   },
   "924": {
     "name": "核之家",
@@ -7025,7 +9145,13 @@ const LEVEL_INFO = {
     "class": "unknown",
     "summary": "地狱边境。一处死寂的地狱。你发觉自己身在遗忘之境内，光芒碎片的边界中，点点光芒指引着通往至深虚幻的无尽之路。自此你开始了自己真正的坠落，你去往一处为心智、心灵与存在所禁断的彼方。回声之路将赐你以未知的烙印，是否去相信那仅为你而颂唱、由你抉择的歌声。驻留此道，即是抛却所有的念想，并加入它们平静祥和的安息之中，成为那终将转化为他者可闻的回声之歌的无话声语之一。而一往无前，则是要抛却一切过往，并继续着这条流浪之路。断绝往昔，终点可期。\n坠时身为孩童，如今已是成人；于绝望之歌中千锤百炼。入时抱扼腕之憾，绝望萦绕于疲惫不堪的耳畔。于永世纷乱的渊狱中陷得越陷越深，便可在惩戒与自我顿悟中领会刚毅。聆听迷失之言的回音，而不应去细听其永世流浪、永归沉眠的低声呓语。长路漫漫，所致之处并非是对安息的盲信，而是接纳容怀。抹去过往残碎的心灵，而今只需坠落，一而再，再而三地坠落。\n提醒自己：如今你的生活知道已不复往日。别再让回忆折磨你了，此方天地，已再无回头之路。自此你方可领悟这条道路的终结。在此之后，你便发觉自己再也无法听见这绕梁不绝的回声了。\n倘若意志已然因勇气的匮乏而被吞噬，那么仅存的机会便是张大声势，阔步",
     "entrances": [],
-    "exits": []
+    "exits": [],
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/labis/image/e767030b9bf69e0c77b5af7d58d53f64~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806566418&x-signature=D95XmXjJLSARITLiS1HmCISHUDI%3D",
+        "caption": "言语化作游歌，游歌化作回声，记念其曾所为之物。"
+      }
+    ]
   },
   "965": {
     "name": "无彩缤纷",
@@ -7039,7 +9165,17 @@ const LEVEL_INFO = {
     "class": "unknown",
     "summary": "炼狱是后室的玖佰陆拾柒层。一片战火纷飞的土地，从传统及本质而言，炼狱是从金色圣焰所产生的上古余烬熔铸而来的，即其本源之残余，其名万物神光。其状貌为一火球，在本层级曾肥沃丰美的土地上肆虐冲撞，如同铁砧上的落锤，炙烤土地，熔毁千山。是它让土壤变得如此炙热，以致于任何涉足其上的发肤皆会转变为一片深嵌其中的焦炭。但这也让这片土地上充斥着焰火与烟气所为的生灵，举例言之，有热火猎犬、尘烬巨蟒、熔渣蜥怪以及烟霭游鱼。乃至有先前生活于森林中的生物幸存并适应了下来，大多数显然都是蓬蒿之主及他所坐拥的苍植禁军。\n炼狱的居民，寻火者及类似寻火者之种，试图让金色圣焰，或简写作圣焰的残余保持燃烧——而比起使用木材，饲育焰火还会有更好的办法吗？燃木者，炼狱中的猎手，意图将蓬蒿之主及他的古堡还有他的禁军拿下，用以供饲圣焰，但是蓬蒿之主却与燃木者展开了追逐藏匿之戏，相持数百年之久，蔽形于他已青叶不再的王国的残余之中。然而侍奉着圣焰的众人却也并非毫无矛盾，一些寻火者已放弃了老旧的方式，并决了自己将圣焰带走了之，将他们的圣焰所余尊奉为熔渣之主。那些心向圣焰的信众正在减少，而更多的护焰者则宣称要加入到熔渣之主的大业中去，将",
     "entrances": [],
-    "exits": []
+    "exits": [],
+    "images": [
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/labis/image/71772784e5ec1c414d3f902fd751c727~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806566443&x-signature=4xpcCWa6Nx1J3podprsCnkhj23U%3D",
+        "caption": "蓬蒿之主的古堡与家园，骈首石龙正处在火海之中。"
+      },
+      {
+        "url": "https://p11-doubao-search-sign.byteimg.com/labis/image/9c986e8f222f531ef9d64ef3b97edbb6~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806566443&x-signature=7b4nz1Nny9Ta2iwY%2BuWkQBTBbuw%3D",
+        "caption": "燃木者在蓬蒿之主残存的堡垒上纵火。"
+      }
+    ]
   },
   "967": {
     "name": "系統後門",
@@ -7064,6 +9200,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "Level 974 的唯一已知出口，便是给 Kitty 一个在你进入本层前就已获得的“可爱”物件。你可在停留的期间的任何时候将此物件给予 Kitty，你会立即入睡并在一个安全层级中醒来。"
+    ],
+    "images": [
+      {
+        "url": "https://backrooms-wiki-cn.wdfiles.com/local--files/level-974/v8vfb3.jpg",
+        "caption": "一张\"Kitty\"站在Level 974卧室中的图片。"
+      }
     ]
   },
   "977": {
@@ -7071,7 +9213,13 @@ const LEVEL_INFO = {
     "class": "unknown",
     "summary": "切勿踏入，否则你的器官将会沦为供奉神之手的祭礼。除非你已决然做好准备，承受那被人将四肢残忍扯离身体的剧痛，用自己心脏泵出的鲜血去涂抹加害者的双手。一旦迈入，你身上的肌肉便会在肌腱撕裂的咔嚓声中被硬生生扯下，骨头也将被重重捶打，直至化为粉末。你的皮肤会从血肉之躯上径直融化，而那身躯本身亦会冻结，进而崩裂开来。除非你为吾辈中人，否则万不可擅入。\n你竟宣称那些警告不足为惧？还肆意呐喊着 “放马过来！” “有胆便来一试！” “有能耐就来擒我😀！” 如此行径倒也颇为有趣，不是吗？！来吧，众人皆可前来！一同沐浴于吾主与救世主那虔诚的荣光之下！他咧着血红色的嘴放声大笑，齿间满是被他残忍蹂躏之人的残痕余迹，仿若在向我们所有人示威。那便让我们投身于这血海，在这天堂之中尽享狂欢吧！\n我等的天堂仅被那些短浅之人冠以Level 977这等草率之名，然此处实乃神之手及其全体追随者的神圣庇护所。其形似一座19世纪的哥特式城邦，街头遍染我们内心深处如红宝石般璀璨的血汗与热泪，战斗的嘶吼响彻云霄；拳拳相击，混战者们互殴换伤，此等暴力行径无休无止，而这些伤痕恰似一类神圣的通货，其珍贵程度几可与我们觉醒之际承蒙恩赐的神之",
     "entrances": [],
-    "exits": []
+    "exits": [],
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/isp-i18n-media/image/d534f020cccb0086342c40b1b862b77b~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806566445&x-signature=rin%2FL4rC%2FAIN0XMalDMmzceJhac%3D",
+        "caption": "我等的天堂，神之手及其全体追随者的神圣庇护所。其形似一座19世纪的哥特式城邦。"
+      }
+    ]
   },
   "979": {
     "name": "奥克斯旅店",
@@ -7186,6 +9334,16 @@ const LEVEL_INFO = {
       "该环境可能在隔离与威慑中发挥作用。",
       "有理论认为其具有象征性或惩罚性意义，可能与好奇心和傲慢等心理行为相契合。",
       "推测涉及“阈界反响”及其作为警示碑的作用，以铭记人类对我们自己家园所犯下的罪孽。5"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/isp-i18n-media/image/0f3d55fa491c74f0799517c100c240b0~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806566526&x-signature=usQEj1pkYv8wbrlW3i%2B608cmsqY%3D",
+        "caption": "（Fig 1.0）Level 993林区在晴朗天气下的照片"
+      },
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/isp-i18n-media/image/47827428ba765fa8d92edb7ba7dcbebd~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806566526&x-signature=b49XdCDHG0QhuvxNYZV0GarOuzQ%3D",
+        "caption": "（Fig 1.1）一名M.E.G.干员绘制的\"荆棘之地\"速写。由于辐射异常，相机与电子设备均无法运作。"
+      }
     ]
   },
   "994": {
@@ -7204,6 +9362,12 @@ const LEVEL_INFO = {
     ],
     "exits": [
       "若流浪者能找到到一栋蓝色涂装的、构造与Level 995的其他住宅相似的房子，进入后可抵达Level 63。"
+    ],
+    "images": [
+      {
+        "url": "https://p26-doubao-search-sign.byteimg.com/isp-i18n-media/image/930779c4bfb46ae41850afa46cba0ec1~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806566528&x-signature=glXvR3dtZ950Z05AjbbjGCQaaXM%3D",
+        "caption": "道路照片。"
+      }
     ]
   },
   "996": {
@@ -7227,6 +9391,12 @@ const LEVEL_INFO = {
       "P: 我们又找到了一些用品。顺便说一句，我觉得这个地方不是是无限的。在斜坡的左侧，有很长一面墙，都是没有入口的房屋。我不知道如果能去另一边会发生什么，但我们找不到任何东西抵达。",
       "P: 在Level 996的第62天我们还有相当充足的补给。仍在攀登；我们应该就快到观察点C了，但问题在于，有很多谣言说，大部分人到达C观察点后就立马消失了。 悲伤的是我们别无选择。M.E.G.知道这儿能找到什么东西，然后我们就必须这么执行……至少对他们来说正是如此。",
       "P: 我有点担心Evelyn。她好像……完全不在状态。我怕她已经被这个地方的偏僻隔绝影响了……我感觉我们离开Level 11已经有好几百天了。 她就是我的全部啊，我也不想孤身一人呆在这儿……"
+    ],
+    "images": [
+      {
+        "url": "https://p3-doubao-search-sign.byteimg.com/labis/image/f6bf6dac87d05130288ddf6295cbc100~tplv-be4g95zd3a-896x896.jpeg?lk3s=0ed4045e&x-expires=1806566529&x-signature=6bax5h9JAI9LwkSshDU2B9b3MKE%3D",
+        "caption": "Level 996内的一间仓库。"
+      }
     ]
   },
   "997": {
@@ -8942,6 +11112,7 @@ function openModal(level) {
     '<h2>Level ' + level + ' ' + badge + '</h2>' +
     '<div class="modal-sub">' + (info.name || '未知') + '</div>' +
     getSDClassHTML(level) +
+    renderGallery(level) +
     '<div class="section"><div class="section-title">簡介</div>' +
       '<div class="summary-text">' + (summary || '暫無簡介') + '</div></div>' +
     '<div class="section"><div class="section-title">主要入口</div>' +
@@ -8959,8 +11130,10 @@ function openModal(level) {
       '<div class="summary-text" style="color:#7a7060;">暫無數據（為未來擴展預留）</div></div>' +
     '<a class="wiki-link" href="' + wikiUrl + '" target="_blank">前往 Wikidot 維基頁面 →</a>';
   overlay.classList.add('show');
+  galleryAutoStart();
 }
-function closeModal() { document.getElementById('modal-overlay').classList.remove('show'); }
+function closeModal() {
+  galleryAutoStop(); document.getElementById('modal-overlay').classList.remove('show'); }
 function closeModalBg(e) { if (e.target === document.getElementById('modal-overlay')) closeModal(); }
 document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
 
@@ -9862,6 +12035,107 @@ renderFavorites();
 
 document.getElementById('to-level').addEventListener('keydown', function(e){ if (e.key === 'Enter') findPath(); });
 document.getElementById('from-level').addEventListener('keydown', function(e){ if (e.key === 'Enter') findPath(); });
+
+  // === Level Image Gallery ===
+  var _gallery = { images: [], index: 0, timer: null, level: null };
+
+  function renderGallery(level) {
+    var info = LEVEL_INFO[level];
+    if (!info || !info.images || info.images.length === 0) return '';
+    _gallery.images = info.images;
+    _gallery.index = 0;
+    _gallery.level = level;
+    if (_gallery.timer) { clearInterval(_gallery.timer); _gallery.timer = null; }
+    var imgs = info.images;
+    var multi = imgs.length > 1;
+    var dots = '';
+    if (multi) {
+      for (var d = 0; d < imgs.length; d++) {
+        dots += '<span class="gallery-dot' + (d === 0 ? ' active' : '') + '" onclick="galleryGo(' + d + ')"></span>';
+      }
+    }
+    var nav = '';
+    if (multi) {
+      nav = '<div class="gallery-nav">' +
+        '<span class="gallery-arrow" onclick="galleryPrev()">&#8249;</span>' +
+        '<span class="gallery-counter" id="gallery-counter">1 / ' + imgs.length + '</span>' +
+        '<span class="gallery-arrow" onclick="galleryNext()">&#8250;</span>' +
+        '</div><div class="gallery-dots">' + dots + '</div>';
+    }
+    return '<div class="level-gallery" id="level-gallery">' +
+      '<div class="gallery-viewport" id="gallery-viewport">' +
+      '<img class="gallery-img" id="gallery-img" src="' + escapeHtml(imgs[0].url) + '" ' +
+      'onerror="this.style.display='none';document.getElementById('gallery-viewport').innerHTML='<div class=gallery-img-placeholder>圖片加載失敗</div>'" ' +
+      'ontouchstart="_galleryTouchStart(event)" ontouchend="_galleryTouchEnd(event)">' +
+      '</div>' +
+      '<div class="gallery-caption" id="gallery-caption">' + escapeHtml(imgs[0].caption || '') + '</div>' +
+      nav + '</div>';
+  }
+
+  function galleryUpdate() {
+    var img = document.getElementById('gallery-img');
+    var cap = document.getElementById('gallery-caption');
+    var counter = document.getElementById('gallery-counter');
+    if (!img) return;
+    var imgs = _gallery.images;
+    var i = _gallery.index;
+    img.style.display = 'block';
+    img.src = imgs[i].url;
+    if (cap) cap.textContent = imgs[i].caption || '';
+    if (counter) counter.textContent = (i + 1) + ' / ' + imgs.length;
+    var dots = document.querySelectorAll('.gallery-dot');
+    for (var d = 0; d < dots.length; d++) {
+      dots[d].className = 'gallery-dot' + (d === i ? ' active' : '');
+    }
+  }
+
+  function galleryNext() {
+    if (_gallery.images.length <= 1) return;
+    _gallery.index = (_gallery.index + 1) % _gallery.images.length;
+    galleryUpdate();
+  }
+
+  function galleryPrev() {
+    if (_gallery.images.length <= 1) return;
+    _gallery.index = (_gallery.index - 1 + _gallery.images.length) % _gallery.images.length;
+    galleryUpdate();
+  }
+
+  function galleryGo(i) {
+    _gallery.index = i;
+    galleryUpdate();
+  }
+
+  function galleryAutoStart() {
+    if (_gallery.timer) clearInterval(_gallery.timer);
+    if (_gallery.images.length > 1) {
+      _gallery.timer = setInterval(galleryNext, 5000);
+    }
+  }
+
+  function galleryAutoStop() {
+    if (_gallery.timer) { clearInterval(_gallery.timer); _gallery.timer = null; }
+  }
+
+  // Touch swipe support
+  var _touchX = 0;
+  function _galleryTouchStart(e) {
+    _touchX = e.touches[0].clientX;
+    galleryAutoStop();
+  }
+  function _galleryTouchEnd(e) {
+    var dx = e.changedTouches[0].clientX - _touchX;
+    if (Math.abs(dx) > 40) {
+      if (dx < 0) galleryNext(); else galleryPrev();
+    }
+    galleryAutoStart();
+  }
+
+  function escapeHtml(s) {
+    if (!s) return '';
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
 </script>
 </body>
 </html>
