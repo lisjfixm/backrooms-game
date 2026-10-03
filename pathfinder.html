@@ -12065,7 +12065,7 @@ document.getElementById('from-level').addEventListener('keydown', function(e){ i
     return '<div class="level-gallery" id="level-gallery">' +
       '<div class="gallery-viewport" id="gallery-viewport">' +
       '<img class="gallery-img" id="gallery-img" src="' + escapeHtml(imgs[0].url) + '" ' +
-      'onerror="this.style.display='none';document.getElementById('gallery-viewport').innerHTML='<div class=gallery-img-placeholder>圖片加載失敗</div>'" ' +
+      'onerror="galleryImgError(this)" ' +
       'ontouchstart="_galleryTouchStart(event)" ontouchend="_galleryTouchEnd(event)">' +
       '</div>' +
       '<div class="gallery-caption" id="gallery-caption">' + escapeHtml(imgs[0].caption || '') + '</div>' +
@@ -12087,6 +12087,12 @@ document.getElementById('from-level').addEventListener('keydown', function(e){ i
     for (var d = 0; d < dots.length; d++) {
       dots[d].className = 'gallery-dot' + (d === i ? ' active' : '');
     }
+  }
+
+  function galleryImgError(imgEl) {
+    imgEl.style.display = 'none';
+    var vp = document.getElementById('gallery-viewport');
+    if (vp) vp.innerHTML = '<div class="gallery-img-placeholder">圖片加載失敗</div>';
   }
 
   function galleryNext() {
