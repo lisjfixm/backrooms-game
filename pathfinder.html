@@ -429,6 +429,195 @@
     .stats-bar { flex-wrap: wrap; }
   }
 
+
+/* ===== SD-Class Component (Wikidot new version) ===== */
+.sd-container {
+  --hex-shape: polygon(0 25%, 50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%);
+  --sd-font-size: 11px;
+  --sd-background: 30, 28, 24;
+  --sd-border: 74, 55, 40;
+  --sd-border-secondary: 0, 0, 0;
+  --sd-border-deadzone: 20, 0, 0;
+  --sd-text-secondary: 255, 255, 255;
+  --class-0: 247, 227, 117;
+  --class-1: 255, 201, 14;
+  --class-2: 245, 156, 0;
+  --class-3: 249, 90, 0;
+  --class-4: 254, 23, 1;
+  --class-5: 175, 6, 6;
+  --class-unknown: 38, 38, 38;
+  --class-habitable: 26, 128, 111;
+  --class-deadzone: 44, 13, 12;
+  --class-pending: 182, 182, 182;
+  --class-n-a: 38, 38, 38;
+  --class-amended: 185, 135, 212;
+  --class-omega: 25, 46, 255;
+  display: block;
+  padding: 8px 0 12px 0;
+  font-family: "Poppins", "Noto Sans TC", sans-serif;
+  font-size: var(--sd-font-size);
+  line-height: 1;
+  margin: 4px 0;
+}
+.sd-container .sd-top-box {
+  --sd-final-color: var(--class-1);
+  --sd-text: var(--sd-border);
+  display: block;
+  position: relative;
+  background: rgba(var(--sd-background));
+  color: rgba(var(--sd-text));
+  box-sizing: border-box;
+  border: rgba(var(--sd-border)) 0.5em solid;
+  border-left: none;
+  margin-left: 2.5em;
+  margin-right: 6.5em;
+  padding: 0.5em 0;
+  z-index: 1;
+}
+.sd-container .sd-top-box::before {
+  content: "";
+  display: block;
+  position: absolute;
+  background: rgba(var(--sd-border));
+  width: 5em;
+  height: calc(100% + 1em);
+  top: -0.5em;
+  left: -2.5em;
+  clip-path: polygon(100% 0%, 50% 50%, 100% 100%, 50% 100%, 0% 50%, 50% 0%);
+  z-index: 2;
+}
+.sd-container .sd-top-box::after {
+  content: "";
+  display: block;
+  position: absolute;
+  background: rgba(var(--sd-border));
+  width: 3.25em;
+  height: calc(100% + 1em);
+  top: -0.5em;
+  left: 0.75em;
+  clip-path: polygon(100% 0%, 0.75em 50%, 100% 100%, calc(100% - 0.75em) 100%, 0% 50%, calc(100% - 0.75em) 0%);
+  z-index: 2;
+}
+.sd-container .sd-gradient-box {
+  background: rgba(var(--sd-final-color));
+  display: flex;
+  flex-direction: column;
+  gap: 0.125em;
+  padding: 0.125em 0 0.125em 3.5em;
+  position: relative;
+  z-index: 0;
+  line-height: 1.15;
+}
+.sd-container .sd-top-text {
+  font-weight: 400;
+  font-size: 1.375em;
+}
+.sd-container .sd-bottom-text {
+  font-weight: 700;
+  font-size: 2em;
+  font-style: italic;
+}
+.sd-container .sd-hexagon {
+  position: absolute;
+  clip-path: var(--hex-shape);
+  width: 12.7735em;
+  height: 14.75em;
+  top: -1.5em;
+  right: -7em;
+  background: rgba(var(--sd-border));
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.sd-container .sd-hexagon::before {
+  content: "";
+  position: absolute;
+  background: rgba(var(--sd-background));
+  clip-path: var(--hex-shape);
+  width: calc(100% - 1.15em);
+  height: calc(100% - 1.15em);
+  top: 0.577em;
+  left: 0.577em;
+  z-index: 1;
+}
+.sd-container .sd-hexagon::after {
+  content: "";
+  position: absolute;
+  background: rgba(var(--sd-final-color));
+  clip-path: var(--hex-shape);
+  width: calc(100% - 2.3em);
+  height: calc(100% - 2.3em);
+  top: 1.155em;
+  left: 1.155em;
+  z-index: 2;
+}
+.sd-container .sd-hex-symbol {
+  position: relative;
+  z-index: 3;
+  font-size: 3.5em;
+  font-weight: 900;
+  font-style: italic;
+  color: rgba(var(--sd-text));
+  line-height: 1;
+}
+.sd-container .sd-bottom-box {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6em;
+  margin: 0.8em 0 0 2.5em;
+  font-weight: 600;
+  color: rgba(var(--sd-border));
+}
+.sd-container .sd-bottom-box ul {
+  display: contents;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.sd-container .sd-bottom-box li {
+  display: flex;
+  align-items: center;
+  font-size: 1.4em;
+  gap: 0.5em;
+}
+.sd-container .sd-bottom-box li::before {
+  content: "";
+  flex: none;
+  width: 1.0825em;
+  height: 1.25em;
+  background: rgba(var(--sd-border));
+  clip-path: var(--hex-shape);
+}
+/* Class colors */
+.sd-container.sd-cls-0 .sd-top-box { --sd-final-color: var(--class-0); --sd-text: var(--sd-border); }
+.sd-container.sd-cls-1 .sd-top-box { --sd-final-color: var(--class-1); --sd-text: var(--sd-border); }
+.sd-container.sd-cls-2 .sd-top-box { --sd-final-color: var(--class-2); --sd-text: var(--sd-text-secondary); }
+.sd-container.sd-cls-3 .sd-top-box { --sd-final-color: var(--class-3); --sd-text: var(--sd-text-secondary); }
+.sd-container.sd-cls-4 .sd-top-box { --sd-final-color: var(--class-4); --sd-text: var(--sd-text-secondary); }
+.sd-container.sd-cls-5 .sd-top-box { --sd-final-color: var(--class-5); --sd-text: var(--sd-text-secondary); }
+.sd-container.sd-cls-unknown .sd-top-box { --sd-final-color: var(--class-unknown); --sd-text: var(--sd-text-secondary); --sd-border: var(--sd-border-secondary); }
+.sd-container.sd-cls-habitable .sd-top-box { --sd-final-color: var(--class-habitable); --sd-text: var(--sd-text-secondary); }
+.sd-container.sd-cls-deadzone .sd-top-box { --sd-final-color: var(--class-deadzone); --sd-text: var(--sd-text-secondary); --sd-border: var(--sd-border-deadzone); }
+.sd-container.sd-cls-pending .sd-top-box { --sd-final-color: var(--class-pending); --sd-text: var(--sd-text-secondary); }
+.sd-container.sd-cls-n-a .sd-top-box { --sd-final-color: var(--class-n-a); --sd-text: var(--sd-text-secondary); --sd-border: var(--sd-border-secondary); }
+.sd-container.sd-cls-amended .sd-top-box { --sd-final-color: var(--class-amended); --sd-text: var(--sd-text-secondary); }
+.sd-container.sd-cls-omega .sd-top-box { --sd-final-color: var(--class-omega); --sd-text: var(--sd-text-secondary); }
+.sd-container.sd-cls-1e .sd-top-box { --sd-final-color: var(--class-1); --sd-text: var(--sd-border); }
+.sd-container.sd-cls-2e .sd-top-box { --sd-final-color: var(--class-2); --sd-text: var(--sd-text-secondary); }
+.sd-container.sd-cls-3e .sd-top-box { --sd-final-color: var(--class-3); --sd-text: var(--sd-text-secondary); }
+.sd-container.sd-cls-4e .sd-top-box { --sd-final-color: var(--class-4); --sd-text: var(--sd-text-secondary); }
+.sd-container.sd-cls-5e .sd-top-box { --sd-final-color: var(--class-5); --sd-text: var(--sd-text-secondary); }
+/* Mobile */
+@media only screen and (max-width: 600px) {
+  .sd-container .sd-top-box { margin-right: 2.5em; margin-left: 0; border-left: rgba(var(--sd-border)) 0.5em solid; border-right: none; }
+  .sd-container .sd-top-box::before { left: unset; right: -2.5em; clip-path: polygon(0% 0%, 50% 50%, 0% 100%, 50% 100%, 100% 50%, 50% 0%); }
+  .sd-container .sd-top-box::after { right: 0.75em; left: unset; clip-path: polygon(0% 0%, calc(100% - 0.75em) 50%, 0% 100%, 0.75em 100%, 100% 50%, 0.75em 0%); }
+  .sd-container .sd-hexagon { display: none; }
+  .sd-container .sd-gradient-box { padding: 0.125em 3.5em 0.125em 1.5em; }
+  .sd-container .sd-bottom-box { margin-left: 0; }
+}
+
 </style>
 </head>
 <body>
@@ -8752,10 +8941,7 @@ function openModal(level) {
     '<span class="modal-close" onclick="closeModal()">&times;</span>' +
     '<h2>Level ' + level + ' ' + badge + '</h2>' +
     '<div class="modal-sub">' + (info.name || '未知') + '</div>' +
-    '<div class="class-row">' +
-      '<span class="class-dot" style="background:' + color + ';box-shadow:0 0 6px ' + color + ';"></span>' +
-      '生存難度等級：<strong style="color:' + color + ';">' + classDisplay(info.class) + '</strong>' +
-    '</div>' +
+    getSDClassHTML(level) +
     '<div class="section"><div class="section-title">簡介</div>' +
       '<div class="summary-text">' + (summary || '暫無簡介') + '</div></div>' +
     '<div class="section"><div class="section-title">主要入口</div>' +
@@ -9385,6 +9571,45 @@ function toggleConnGroup(el) {
   else { body.style.display = 'none'; if (arrow) arrow.textContent = '▶'; }
 }
 
+
+
+/* ===== SD-Class Component (Wikidot new version) ===== */
+const SD_CLASS_META = {"0":{"display":"等级 0","symbol":"0","bullets":["安全","稳定","实体绝迹"]},"1":{"display":"等级 1","symbol":"1","bullets":["安全","稳定","极少量实体"]},"2":{"display":"等级 2","symbol":"2","bullets":["不安全","稳定","少量实体"]},"3":{"display":"等级 3","symbol":"3","bullets":["不安全","不稳定","中量实体"]},"4":{"display":"等级 4","symbol":"4","bullets":["不安全","不稳定","大量实体"]},"5":{"display":"等级 5","symbol":"5","bullets":["不安全","不稳定","实体横行"]},"unknown":{"display":"未定分级","symbol":"?","bullets":["性质未解明","信息未知","未探明实体"]},"habitable":{"display":"等级：宜居","symbol":"♡","bullets":["安全","长期聚居地","无有害实体"]},"deadzone":{"display":"等级：死区","symbol":"☠","bullets":["环境危害","极度不宜居","潜在异常实体"]},"pending":{"display":"等待分级","symbol":"…","bullets":["安全性未知","不稳定","未探明实体存在"]},"n/a":{"display":"不适用","symbol":"∅","bullets":["不存在","缺失物质","不适合生命存在"]},"amended":{"display":"等级：修正","symbol":"✎","bullets":["不安全且不稳定","未知实体数量","文件被篡改"]},"omega":{"display":"终结","symbol":"Ω","bullets":["隐藏的档案","机密性质","受保护的实体"]},"1e":{"display":"等级 1-环境危害","symbol":"1E","bullets":["稳定","极少量实体","环境危害"]},"2e":{"display":"等级 2-环境危害","symbol":"2E","bullets":["不安全","少量实体","环境危害"]},"3e":{"display":"等级 3-环境危害","symbol":"3E","bullets":["不安全","中量实体","环境危害"]},"4e":{"display":"等级 4-环境危害","symbol":"4E","bullets":["不安全","大量实体","环境危害"]},"5e":{"display":"等级 5-环境危害","symbol":"5E","bullets":["不安全","实体横行","环境危害"]}};
+function mapToSDClass(cls) {
+  if (cls == null) return 'unknown';
+  var s = String(cls).toLowerCase().trim();
+  if (/^\d+$/.test(s)) { var n = parseInt(s); if (n <= 0) return '0'; if (n >= 5) return '5'; return String(n); }
+  if (s.indexOf('5e') !== -1) return '5e';
+  if (s.indexOf('4e') !== -1) return '4e';
+  if (s.indexOf('3e') !== -1) return '3e';
+  if (s.indexOf('2e') !== -1) return '2e';
+  if (s.indexOf('1e') !== -1) return '1e';
+  if (s === 'habitable' || s.indexOf('宜居') !== -1 || s.indexOf('安全') !== -1 || s.indexOf('綠洲') !== -1 || s.indexOf('绿洲') !== -1) return 'habitable';
+  if (s === 'deadzone' || s.indexOf('死区') !== -1 || s.indexOf('死區') !== -1 || s.indexOf('凶残') !== -1 || s.indexOf('凶殘') !== -1) return 'deadzone';
+  if (s === 'omega' || s.indexOf('终结') !== -1 || s.indexOf('終結') !== -1) return 'omega';
+  if (s === 'amended' || s.indexOf('修正') !== -1) return 'amended';
+  if (s === 'pending' || s.indexOf('待') !== -1) return 'pending';
+  if (s === 'n/a' || s === 'na' || s.indexOf('不适用') !== -1 || s.indexOf('不適用') !== -1) return 'n/a';
+  if (s === '?' || s === 'unknown' || s === '' || s.indexOf('未知') !== -1) return 'unknown';
+  return 'unknown';
+}
+function getSDClassHTML(levelId) {
+  var info = LEVEL_INFO[levelId];
+  if (!info) return '';
+  var clsKey = mapToSDClass(info.class);
+  var meta = SD_CLASS_META[clsKey] || SD_CLASS_META['unknown'];
+  var bullets = meta.bullets.map(function(b){ return '<li>' + b + '</li>'; }).join('');
+  return '<div class="sd-container sd-cls-' + clsKey + '">' +
+    '<div class="sd-top-box">' +
+      '<div class="sd-hexagon"><span class="sd-hex-symbol">' + meta.symbol + '</span></div>' +
+      '<div class="sd-gradient-box">' +
+        '<div class="sd-top-text">生存难度：</div>' +
+        '<div class="sd-bottom-text">' + meta.display + '</div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="sd-bottom-box"><ul>' + bullets + '</ul></div>' +
+  '</div>';
+}
 
 /* ===== Class Badge 工具函數 ===== */
 function getClassBadge(levelId, large) {
