@@ -9232,21 +9232,39 @@ function renderCategoryView() {
     var midCount = {};
     for (var j = 0; j < shortPaths.length; j++) {
       var mid = shortPaths[j][1].level;
+      if (!mid) continue;
       midCount[mid] = (midCount[mid] || 0) + 1;
     }
     var midSorted = Object.keys(midCount).sort(function(a,b){ return midCount[b]-midCount[a]; });
     for (var k = 0; k < Math.min(10, midSorted.length); k++) {
       var midLv = midSorted[k];
-      var midPaths = shortPaths.filter(function(p){ return p[1].level === midLv; });
+      var midPaths = shortPaths.filter(function(p){ return p[1] && p[1].level === midLv; });
       var midInfo = LEVEL_INFO[midLv] || {name:'未知'};
-      html += '<div class="cat-item" onclick="toggleCatGroup(this,\'' + from + ',' + midLv + ',' + to + '\',\'short\')">';
-      html += '<div class="cat-item-header">';
+      html += '<div class="cat-item">';
+      html += '<div class="cat-item-header" onclick="toggleCatGroup(this)">';
       html += '<span class="cat-toggle">▶</span>';
       html += '<span class="cat-path">Level ' + from + ' → <b>Level ' + midLv + '</b> → Level ' + to + '</span>';
       html += '<span class="cat-name">' + midInfo.name + '</span>';
       html += '<span class="cat-count">' + midPaths.length + ' 條</span>';
       html += '</div>';
-      html += '<div class="cat-group-detail" style="display:none;" data-paths-idx=""></div>';
+      html += '<div class="cat-group-detail" style="display:none;">';
+      // 直接渲染實際路徑
+      for (var si = 0; si < Math.min(50, midPaths.length); si++) {
+        var sp = midPaths[si];
+        var sm = pathMetrics(sp);
+        var spkey = sp.map(function(s){return s.level;}).join(',');
+        var spInfo = LEVEL_INFO[midLv] || {name:'未知'};
+        html += '<div class="all-path-item' + (sm.rare>0?' rare':'') + '" data-path-key="' + spkey + '" onclick="expandPathItem(this)">';
+        html += '<div class="all-path-header"><span class="all-path-num">#' + (si+1) + '</span>';
+        html += '<span class="all-path-levels">Level ' + from + ' → Level ' + midLv + '（' + spInfo.name + '）→ Level ' + to + '</span>';
+        html += '<span class="all-path-meta">' + sm.jumps + '跳 · 危險' + sm.danger + '</span>';
+        html += '<span class="all-path-toggle">▶</span></div>';
+        html += '<div class="all-path-detail" style="display:none;"></div></div>';
+      }
+      if (midPaths.length > 50) {
+        html += '<div style="padding:8px;color:#8a8070;font-size:12px;text-align:center;">...還有 ' + (midPaths.length-50) + ' 條路徑</div>';
+      }
+      html += '</div>';
       html += '</div>';
     }
   }
@@ -9278,7 +9296,10 @@ function buildCategoryTree(paths, from, to, maxDepth, currentDepth, prefixNodes)
     for (var i = 0; i < Math.min(50, paths.length); i++) {
       var p = paths[i];
       var m = pathMetrics(p);
-      var levels = p.map(function(s){return s.level;}).join(' → ');
+      var levels = p.map(function(s){
+        var info = LEVEL_INFO[s.level] || {name:'未知'};
+        return 'Level ' + s.level + '（' + info.name + '）';
+      }).join(' → ');
       var pkey = p.map(function(s){return s.level;}).join(',');
       html += '<div class="all-path-item' + (m.rare>0?' rare':'') + '" data-path-key="' + pkey + '" onclick="expandPathItem(this)">';
       html += '<div class="all-path-header"><span class="all-path-num">#' + (i+1) + '</span>';
@@ -9306,7 +9327,7 @@ function buildCategoryTree(paths, from, to, maxDepth, currentDepth, prefixNodes)
     var counted = {};
     for (var j = 1; j < p.length - 1; j++) {
       var lv = p[j].level;
-      if (exclude[lv] || counted[lv]) continue;
+      if (!lv || lv === 'undefined' || exclude[lv] || counted[lv]) continue;
       counted[lv] = true;
       nodeCount[lv] = (nodeCount[lv] || 0) + 1;
       if (!nodePaths[lv]) nodePaths[lv] = [];
