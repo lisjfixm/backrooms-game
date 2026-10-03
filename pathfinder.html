@@ -86,6 +86,21 @@
     border-radius:4px; color:#c9a84c; font-size:12px; cursor:pointer;
     transition:all 0.2s; }
   .open-full-path-btn:hover { background:rgba(201,168,76,0.22); border-color:rgba(201,168,76,0.6); }
+  .cat-section-title { padding:12px 4px 8px; font-size:13px; color:#c9a84c;
+    font-weight:bold; border-bottom:1px solid rgba(201,168,76,0.15); margin-top:8px; }
+  .cat-item { background:rgba(20,16,10,0.6); border:1px solid rgba(201,168,76,0.15);
+    border-radius:6px; margin-bottom:4px; }
+  .cat-item-header { display:flex; align-items:center; gap:10px; padding:10px 14px;
+    cursor:pointer; transition:background 0.2s; }
+  .cat-item-header:hover { background:rgba(201,168,76,0.08); }
+  .cat-toggle { flex:none; font-size:10px; color:#8a8070; width:16px; }
+  .cat-path { flex:1; font-size:13px; color:#c0b8a8; font-family:monospace; }
+  .cat-path b { color:#c9a84c; }
+  .cat-name { flex:none; font-size:11px; color:#8a8070; max-width:120px;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .cat-count { flex:none; font-size:11px; color:#c9a84c; font-weight:bold;
+    background:rgba(201,168,76,0.1); padding:2px 8px; border-radius:3px; }
+  .cat-group-detail { padding:4px 14px 12px 40px; border-top:1px dashed rgba(201,168,76,0.1); }
   .path-card { background:rgba(20,16,10,0.7); border:1px solid rgba(201,168,76,0.2);
     border-radius:6px; margin-bottom:0; overflow:hidden;
     transition:border-color 0.3s, box-shadow 0.3s; }
@@ -9010,12 +9025,15 @@ function pathMetrics(path) {
 
 var allFoundPaths = [];
 var currentSort = 'time';
+var sortDirection = 1; // 1=升序, -1=降序
+var categoryMode = 2; // 2=兩節點分類, 3=三節點分類
 
 function sortPaths(paths, sortBy) {
   var arr = paths.slice();
-  if (sortBy === 'danger') arr.sort(function(a,b){ return pathMetrics(a).danger - pathMetrics(b).danger; });
-  else if (sortBy === 'difficulty') arr.sort(function(a,b){ return pathMetrics(a).difficulty - pathMetrics(b).difficulty; });
-  else arr.sort(function(a,b){ return pathMetrics(a).jumps - pathMetrics(b).jumps; });
+  var dir = sortDirection;
+  if (sortBy === 'danger') arr.sort(function(a,b){ return (pathMetrics(a).danger - pathMetrics(b).danger) * dir; });
+  else if (sortBy === 'difficulty') arr.sort(function(a,b){ return (pathMetrics(a).difficulty - pathMetrics(b).difficulty) * dir; });
+  else arr.sort(function(a,b){ return (pathMetrics(a).jumps - pathMetrics(b).jumps) * dir; });
   return arr;
 }
 
@@ -9130,42 +9148,209 @@ function toggleAllPaths() {
 }
 
 function changeSort(sortBy) {
-  currentSort = sortBy;
-  // 更新按鈕狀態
-  var btns = document.querySelectorAll('.sort-btn');
-  for (var i = 0; i < btns.length; i++) {
-    btns[i].className = 'sort-btn' + (btns[i].dataset.sort === sortBy ? ' active' : '');
+  if (currentSort === sortBy && sortBy !== 'category') {
+    sortDirection = -sortDirection; // 再點一次切換升/降序
+  } else {
+    currentSort = sortBy;
+    sortDirection = 1;
   }
+  renderAllPaths();
+}
+
+function setCategoryMode(mode) {
+  categoryMode = mode;
+  currentSort = 'category';
   renderAllPaths();
 }
 
 function renderAllPaths() {
   var container = document.getElementById('all-paths-container');
   if (!container) return;
-  var sorted = sortPaths(allFoundPaths, currentSort);
 
+  var dirArrow = sortDirection === 1 ? '↑' : '↓';
   var html = '<div class="sort-bar">排序方式：' +
-    '<button class="sort-btn' + (currentSort==='time'?' active':'') + '" data-sort="time" onclick="changeSort(\'time\')">時間（跳轉數）</button>' +
-    '<button class="sort-btn' + (currentSort==='danger'?' active':'') + '" data-sort="danger" onclick="changeSort(\'danger\')">危險度</button>' +
-    '<button class="sort-btn' + (currentSort==='difficulty'?' active':'') + '" data-sort="difficulty" onclick="changeSort(\'difficulty\')">難度</button>' +
+    '<button class="sort-btn' + (currentSort==='time'?' active':'') + '" onclick="changeSort(\'time\')">時間' + (currentSort==='time'?dirArrow:'') + '</button>' +
+    '<button class="sort-btn' + (currentSort==='danger'?' active':'') + '" onclick="changeSort(\'danger\')">危險度' + (currentSort==='danger'?dirArrow:'') + '</button>' +
+    '<button class="sort-btn' + (currentSort==='difficulty'?' active':'') + '" onclick="changeSort(\'difficulty\')">難度' + (currentSort==='difficulty'?dirArrow:'') + '</button>' +
+    '<button class="sort-btn' + (currentSort==='category'?' active':'') + '" onclick="changeSort(\'category\')">分類路線</button>' +
+    (currentSort==='category' ? ' <button class="sort-btn' + (categoryMode===2?' active':'') + '" onclick="setCategoryMode(2)">2節點</button><button class="sort-btn' + (categoryMode===3?' active':'') + '" onclick="setCategoryMode(3)">3節點</button>' : '') +
     '</div>';
 
-  for (var i = 0; i < sorted.length; i++) {
-    var path = sorted[i];
-    var m = pathMetrics(path);
-    var hasRare = m.rare > 0;
-    var levels = path.map(function(p){return p.level;}).join(' → ');
-    html += '<div class="all-path-item' + (hasRare ? ' rare' : '') + '" onclick="expandPathItem(this)">';
-    html += '<div class="all-path-header">';
-    html += '<span class="all-path-num">#' + (i+1) + '</span>';
-    html += '<span class="all-path-levels">' + levels + '</span>';
-    html += '<span class="all-path-meta">' + m.jumps + '跳 · 危險' + m.danger + (hasRare ? ' · 含稀有' : '') + '</span>';
-    html += '<span class="all-path-toggle">▶</span>';
-    html += '</div>';
-    html += '<div class="all-path-detail" style="display:none;"></div>';
-    html += '</div>';
+  if (currentSort === 'category') {
+    html += renderCategoryView();
+  } else {
+    var sorted = sortPaths(allFoundPaths, currentSort);
+    for (var i = 0; i < sorted.length; i++) {
+      var path = sorted[i];
+      var m = pathMetrics(path);
+      var hasRare = m.rare > 0;
+      var levels = path.map(function(p){return p.level;}).join(' → ');
+      var pkey = path.map(function(p){return p.level;}).join(',');
+      html += '<div class="all-path-item' + (hasRare ? ' rare' : '') + '" data-path-key="' + pkey + '" onclick="expandPathItem(this)">';
+      html += '<div class="all-path-header">';
+      html += '<span class="all-path-num">#' + (i+1) + '</span>';
+      html += '<span class="all-path-levels">' + levels + '</span>';
+      html += '<span class="all-path-meta">' + m.jumps + '跳 · 危險' + m.danger + (hasRare ? ' · 含稀有' : '') + '</span>';
+      html += '<span class="all-path-toggle">▶</span>';
+      html += '</div>';
+      html += '<div class="all-path-detail" style="display:none;"></div>';
+      html += '</div>';
+    }
   }
   container.innerHTML = html;
+}
+
+// 分類路線視圖：按最常經過的中間節點分組
+function renderCategoryView() {
+  if (allFoundPaths.length === 0) return '<div style="padding:20px;color:#8a8070;">沒有路徑</div>';
+
+  var from = allFoundPaths[0][0].level;
+  var to = allFoundPaths[allFoundPaths[0].length - 1].level;
+
+  // 分離：直接路徑(2節點)、短路徑(3節點)、長路徑(4+節點)
+  var directPaths = [];
+  var shortPaths = [];
+  var longPaths = [];
+  for (var i = 0; i < allFoundPaths.length; i++) {
+    var p = allFoundPaths[i];
+    if (p.length <= 2) directPaths.push(p);
+    else if (p.length === 3) shortPaths.push(p);
+    else longPaths.push(p);
+  }
+
+  var html = '';
+
+  // 長路徑分類（4+節點）
+  if (longPaths.length > 0) {
+    html += '<div class="cat-section-title">長路徑分類（' + longPaths.length + ' 條，按最常經過節點）</div>';
+    html += buildCategoryTree(longPaths, from, to, categoryMode, 0, []);
+  }
+
+  // 短路徑（3節點 = 2次跳轉）
+  if (shortPaths.length > 0) {
+    html += '<div class="cat-section-title">短路徑（' + shortPaths.length + ' 條，僅經過1個中間點）</div>';
+    var midCount = {};
+    for (var j = 0; j < shortPaths.length; j++) {
+      var mid = shortPaths[j][1].level;
+      midCount[mid] = (midCount[mid] || 0) + 1;
+    }
+    var midSorted = Object.keys(midCount).sort(function(a,b){ return midCount[b]-midCount[a]; });
+    for (var k = 0; k < Math.min(10, midSorted.length); k++) {
+      var midLv = midSorted[k];
+      var midPaths = shortPaths.filter(function(p){ return p[1].level === midLv; });
+      var midInfo = LEVEL_INFO[midLv] || {name:'未知'};
+      html += '<div class="cat-item" onclick="toggleCatGroup(this,\'' + from + ',' + midLv + ',' + to + '\',\'short\')">';
+      html += '<div class="cat-item-header">';
+      html += '<span class="cat-toggle">▶</span>';
+      html += '<span class="cat-path">Level ' + from + ' → <b>Level ' + midLv + '</b> → Level ' + to + '</span>';
+      html += '<span class="cat-name">' + midInfo.name + '</span>';
+      html += '<span class="cat-count">' + midPaths.length + ' 條</span>';
+      html += '</div>';
+      html += '<div class="cat-group-detail" style="display:none;" data-paths-idx=""></div>';
+      html += '</div>';
+    }
+  }
+
+  // 直接路徑（2節點 = 1次跳轉）排最下面
+  if (directPaths.length > 0) {
+    html += '<div class="cat-section-title">直接路徑（' + directPaths.length + ' 條，無中間點）</div>';
+    for (var d = 0; d < directPaths.length; d++) {
+      var dp = directPaths[d];
+      var dm = pathMetrics(dp);
+      var dpkey = dp.map(function(s){return s.level;}).join(',');
+      html += '<div class="all-path-item' + (dm.rare>0?' rare':'') + '" data-path-key="' + dpkey + '" onclick="expandPathItem(this)">';
+      html += '<div class="all-path-header"><span class="all-path-num">#' + (d+1) + '</span>';
+      html += '<span class="all-path-levels">Level ' + from + ' → Level ' + to + '</span>';
+      html += '<span class="all-path-meta">' + dm.jumps + '跳' + (dm.rare>0?' · 含稀有':'') + '</span>';
+      html += '<span class="all-path-toggle">▶</span></div>';
+      html += '<div class="all-path-detail" style="display:none;"></div></div>';
+    }
+  }
+
+  return html;
+}
+
+// 遞迴構建分類樹
+function buildCategoryTree(paths, from, to, maxDepth, currentDepth, prefixNodes) {
+  if (paths.length === 0 || currentDepth >= maxDepth - 1) {
+    // 顯示實際路徑
+    var html = '';
+    for (var i = 0; i < Math.min(50, paths.length); i++) {
+      var p = paths[i];
+      var m = pathMetrics(p);
+      var levels = p.map(function(s){return s.level;}).join(' → ');
+      var pkey = p.map(function(s){return s.level;}).join(',');
+      html += '<div class="all-path-item' + (m.rare>0?' rare':'') + '" data-path-key="' + pkey + '" onclick="expandPathItem(this)">';
+      html += '<div class="all-path-header"><span class="all-path-num">#' + (i+1) + '</span>';
+      html += '<span class="all-path-levels">' + levels + '</span>';
+      html += '<span class="all-path-meta">' + m.jumps + '跳 · 危險' + m.danger + '</span>';
+      html += '<span class="all-path-toggle">▶</span></div>';
+      html += '<div class="all-path-detail" style="display:none;"></div></div>';
+    }
+    if (paths.length > 50) {
+      html += '<div style="padding:8px;color:#8a8070;font-size:12px;text-align:center;">...還有 ' + (paths.length-50) + ' 條路徑</div>';
+    }
+    return html;
+  }
+
+  // 計算每個中間節點的頻率（排除起點、終點和已用前綴節點）
+  var exclude = {};
+  exclude[from] = true;
+  exclude[to] = true;
+  for (var e = 0; e < prefixNodes.length; e++) exclude[prefixNodes[e]] = true;
+
+  var nodeCount = {};
+  var nodePaths = {};
+  for (var i = 0; i < paths.length; i++) {
+    var p = paths[i];
+    var counted = {};
+    for (var j = 1; j < p.length - 1; j++) {
+      var lv = p[j].level;
+      if (exclude[lv] || counted[lv]) continue;
+      counted[lv] = true;
+      nodeCount[lv] = (nodeCount[lv] || 0) + 1;
+      if (!nodePaths[lv]) nodePaths[lv] = [];
+      nodePaths[lv].push(p);
+    }
+  }
+
+  var sortedNodes = Object.keys(nodeCount).sort(function(a,b){ return nodeCount[b]-nodeCount[a]; });
+  var html = '';
+  var topN = Math.min(10, sortedNodes.length);
+
+  for (var n = 0; n < topN; n++) {
+    var lv = sortedNodes[n];
+    var info = LEVEL_INFO[lv] || {name:'未知'};
+    var subPaths = nodePaths[lv];
+    var newPrefix = prefixNodes.concat([lv]);
+    var pathStr = 'Level ' + from + ' → ' + newPrefix.map(function(x){return '<b>Level ' + x + '</b>';}).join(' → ') + ' → Level ' + to;
+
+    html += '<div class="cat-item">';
+    html += '<div class="cat-item-header" onclick="toggleCatGroup(this)">';
+    html += '<span class="cat-toggle">▶</span>';
+    html += '<span class="cat-path">' + pathStr + '</span>';
+    html += '<span class="cat-name">' + info.name + '</span>';
+    html += '<span class="cat-count">' + subPaths.length + ' 條</span>';
+    html += '</div>';
+    html += '<div class="cat-group-detail" style="display:none;">';
+    html += buildCategoryTree(subPaths, from, to, maxDepth, currentDepth + 1, newPrefix);
+    html += '</div>';
+    html += '</div>';
+  }
+
+  return html;
+}
+
+function toggleCatGroup(el) {
+  var detail = el.querySelector('.cat-group-detail') || el.nextElementSibling;
+  var toggle = el.querySelector('.cat-toggle');
+  if (detail.style.display === 'none') {
+    detail.style.display = 'block';
+    if (toggle) toggle.textContent = '▼';
+  } else {
+    detail.style.display = 'none';
+    if (toggle) toggle.textContent = '▶';
+  }
 }
 
 function expandPathItem(el) {
@@ -9174,9 +9359,20 @@ function expandPathItem(el) {
   if (detail.style.display === 'none') {
     detail.style.display = 'block';
     toggle.textContent = '▼';
-    var idx = parseInt(el.querySelector('.all-path-num').textContent.replace('#','')) - 1;
-    var sorted = sortPaths(allFoundPaths, currentSort);
-    var path = sorted[idx];
+    // 從 data 屬性或索引獲取路徑
+    var pathKey = el.dataset.pathKey;
+    var path;
+    if (pathKey) {
+      var keys = pathKey.split(',').map(Number);
+      path = allFoundPaths.find(function(p) {
+        return p.length === keys.length && p.every(function(s,i){ return Number(s.level) === keys[i]; });
+      });
+    } else {
+      var idx = parseInt(el.querySelector('.all-path-num').textContent.replace('#','')) - 1;
+      var sorted = sortPaths(allFoundPaths, currentSort);
+      path = sorted[idx];
+    }
+    if (!path) return;
     var html = '';
     for (var i = 0; i < path.length; i++) {
       var step = path[i];
@@ -9196,8 +9392,7 @@ function expandPathItem(el) {
         }
       }
     }
-    // 加入「查看完整路徑」按鈕
-    html += '<div class="open-full-path-btn" onclick="event.stopPropagation(); openPathModal(' + idx + ')">🔍 查看完整路徑</div>';
+    html += '<div class="open-full-path-btn" onclick="event.stopPropagation(); openPathModalByKey(\'' + path.map(function(s){return s.level;}).join(',') + '\')">🔍 查看完整路徑</div>';
     detail.innerHTML = html;
   } else {
     detail.style.display = 'none';
@@ -9205,24 +9400,24 @@ function expandPathItem(el) {
   }
 }
 
-function openPathModal(idx) {
-  var sorted = sortPaths(allFoundPaths, currentSort);
-  var path = sorted[idx];
+function openPathModalByKey(key) {
+  var keys = key.split(',').map(Number);
+  var path = allFoundPaths.find(function(p) {
+    return p.length === keys.length && p.every(function(s,i){ return Number(s.level) === keys[i]; });
+  });
+  if (!path) return;
   var m = pathMetrics(path);
   var overlay = document.getElementById('modal-overlay');
   var content = document.getElementById('modal-content');
   var levels = path.map(function(p){return p.level;}).join(' → ');
-
   var html = '<span class="modal-close" onclick="closeModal()">&times;</span>';
-  html += '<h2>路徑 #' + (idx+1) + '</h2>';
+  html += '<h2>完整路徑</h2>';
   html += '<div class="modal-sub">' + levels + '</div>';
   html += '<div class="class-row"><span class="class-dot" style="background:#c9a84c;"></span>';
   html += m.jumps + ' 次跳轉 · 危險度 ' + m.danger + (m.rare > 0 ? ' · 含 ' + m.rare + ' 條稀有通道' : '') + '</div>';
   html += '<div id="modal-path-body" style="margin-top:16px;max-height:60vh;overflow-y:auto;"></div>';
   content.innerHTML = html;
   overlay.classList.add('show');
-
-  // 渲染完整路徑到彈窗中
   var body = document.getElementById('modal-path-body');
   renderPathInto(path, body, '完整路徑', m.rare > 0);
 }
