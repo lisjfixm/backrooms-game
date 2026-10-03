@@ -47,6 +47,40 @@
     color:#d49090; border-radius:3px; font-size:10px; margin-left:6px; }
   .path-divider { text-align:center; padding:16px; color:rgba(201,168,76,0.4);
     font-size:14px; letter-spacing:4px; }
+  .view-all-btn { text-align:center; padding:14px; margin:12px 0;
+    background:rgba(201,168,76,0.08); border:1px solid rgba(201,168,76,0.25);
+    border-radius:6px; cursor:pointer; color:#c9a84c; font-size:14px; font-weight:bold;
+    transition:all 0.2s; }
+  .view-all-btn:hover { background:rgba(201,168,76,0.15); border-color:rgba(201,168,76,0.5);
+    box-shadow:0 0 12px rgba(201,168,76,0.2); }
+  .all-paths-container { margin-top:8px; }
+  .sort-bar { padding:10px 14px; background:rgba(20,16,10,0.5); border-radius:6px;
+    margin-bottom:10px; font-size:13px; color:#a09080; }
+  .sort-btn { padding:4px 12px; margin-left:8px; background:rgba(201,168,76,0.08);
+    border:1px solid rgba(201,168,76,0.2); border-radius:4px; color:#a09080;
+    cursor:pointer; font-size:12px; transition:all 0.2s; }
+  .sort-btn:hover { background:rgba(201,168,76,0.15); }
+  .sort-btn.active { background:rgba(201,168,76,0.25); border-color:rgba(201,168,76,0.6);
+    color:#c9a84c; box-shadow:0 0 8px rgba(201,168,76,0.3); }
+  .all-path-item { background:rgba(20,16,10,0.6); border:1px solid rgba(201,168,76,0.15);
+    border-radius:6px; margin-bottom:6px; cursor:pointer; transition:all 0.2s; }
+  .all-path-item:hover { border-color:rgba(201,168,76,0.4); background:rgba(20,16,10,0.8); }
+  .all-path-item.rare { border-color:rgba(180,80,80,0.3); }
+  .all-path-item.rare:hover { border-color:rgba(180,80,80,0.6); }
+  .all-path-header { display:flex; align-items:center; gap:10px; padding:10px 14px; }
+  .all-path-num { flex:none; width:32px; height:24px; background:rgba(201,168,76,0.15);
+    border-radius:4px; display:flex; align-items:center; justify-content:center;
+    font-size:12px; color:#c9a84c; font-weight:bold; }
+  .all-path-levels { flex:1; font-size:13px; color:#c0b8a8; font-family:monospace; }
+  .all-path-meta { flex:none; font-size:11px; color:#8a8070; }
+  .all-path-toggle { flex:none; font-size:10px; color:#8a8070; }
+  .all-path-detail { padding:0 14px 12px 56px; border-top:1px dashed rgba(201,168,76,0.1); }
+  .mini-step { display:flex; align-items:center; gap:8px; padding:4px 0; }
+  .mini-level { flex:none; padding:2px 8px; border:1px solid; border-radius:3px;
+    font-size:11px; font-weight:bold; color:#c0b8a8; }
+  .mini-name { font-size:12px; color:#a09080; }
+  .mini-method { font-size:11px; color:#7a7060; padding:2px 0 6px 10px;
+    border-left:2px solid rgba(201,168,76,0.2); margin-left:4px; line-height:1.5; }
   .path-card { background:rgba(20,16,10,0.7); border:1px solid rgba(201,168,76,0.2);
     border-radius:6px; margin-bottom:0; overflow:hidden;
     transition:border-color 0.3s, box-shadow 0.3s; }
@@ -8920,6 +8954,61 @@ function dijkstra(from, to, avoidRare) {
   return path;
 }
 
+// 找所有簡單路徑（無循環），迭代加深確保短路徑優先
+function findAllPaths(from, to, maxDepth, maxPaths) {
+  if (!GRAPH[from] || !GRAPH[to]) return [];
+  if (from === to) return [[{ level:from, method:null }]];
+  var results = [];
+  var visited = {};
+  function dfs(level, path, depthLimit) {
+    if (results.length >= maxPaths) return;
+    var curDepth = path.length - 1;
+    if (curDepth > depthLimit) return;
+    if (level === to) {
+      // 只在當前深度限制時記錄，避免重複
+      if (curDepth === depthLimit) results.push(path.slice());
+      return;
+    }
+    if (curDepth === depthLimit) return;
+    var edges = GRAPH[level] || [];
+    for (var i = 0; i < edges.length; i++) {
+      var edge = edges[i];
+      if (visited[edge.to]) continue;
+      visited[edge.to] = true;
+      path.push({ level:edge.to, method:edge.method, rare:edge.rare });
+      dfs(edge.to, path, depthLimit);
+      path.pop();
+      visited[edge.to] = false;
+    }
+  }
+  visited[from] = true;
+  // 迭代加深：從1跳到maxDepth，確保短路徑先被找到
+  for (var d = 1; d <= maxDepth && results.length < maxPaths; d++) {
+    dfs(from, [{ level:from, method:null }], d);
+  }
+  return results;
+}
+
+function pathMetrics(path) {
+  var jumps = path.length - 1, danger = 0, rareCount = 0;
+  for (var i = 0; i < path.length; i++) {
+    danger += getDanger(path[i].level);
+    if (path[i].rare) rareCount++;
+  }
+  return { jumps:jumps, danger:danger, rare:rareCount, difficulty:jumps + rareCount * 3 };
+}
+
+var allFoundPaths = [];
+var currentSort = 'time';
+
+function sortPaths(paths, sortBy) {
+  var arr = paths.slice();
+  if (sortBy === 'danger') arr.sort(function(a,b){ return pathMetrics(a).danger - pathMetrics(b).danger; });
+  else if (sortBy === 'difficulty') arr.sort(function(a,b){ return pathMetrics(a).difficulty - pathMetrics(b).difficulty; });
+  else arr.sort(function(a,b){ return pathMetrics(a).jumps - pathMetrics(b).jumps; });
+  return arr;
+}
+
 function openModal(level) {
   const info = LEVEL_INFO[level];
   if (!info) return;
@@ -8966,12 +9055,12 @@ function findPath() {
   if (!LEVEL_INFO[from]) { alert('Level ' + from + ' 尚未收錄'); return; }
   if (!LEVEL_INFO[to]) { alert('Level ' + to + ' 尚未收錄'); return; }
 
-  var algo = routeType === 'safest' ? dijkstra : bfs;
-  var normalPath = algo(from, to, true);
-  var rarePath = algo(from, to, false);
+  // 找所有路徑（最多15跳，最多200條）
+  allFoundPaths = findAllPaths(from, to, 15, 200);
+  currentSort = routeType === 'safest' ? 'danger' : 'time';
 
   pathSteps.innerHTML = '';
-  if (!normalPath && !rarePath) {
+  if (allFoundPaths.length === 0) {
     resultTitle.textContent = '找不到路徑';
     pathSteps.innerHTML = '<div class="no-path">目前資料中沒有從 Level ' + from + ' 到 Level ' + to + ' 的已知路徑。</div>';
     resultArea.classList.add('show');
@@ -8979,85 +9068,183 @@ function findPath() {
   }
 
   var routeLabel = routeType === 'safest' ? '最安全路線' : '最快路線';
-  resultTitle.textContent = 'Level ' + from + ' → Level ' + to + '（' + routeLabel + '）';
+  resultTitle.textContent = 'Level ' + from + ' → Level ' + to + '（' + routeLabel + '）— 找到 ' + allFoundPaths.length + ' 條可能路徑';
 
-  function renderPath(path, label, isRare) {
-    var header = document.createElement('div');
-    header.className = 'method-header' + (isRare ? ' rare' : '');
-    var jumps = path.length - 1;
-    var totalDanger = path.reduce(function(s,p){ return s + getDanger(p.level); }, 0);
-    header.innerHTML = '<span class="method-tag">' + label + '</span> ' + jumps + ' 次跳轉，危險度 ' + totalDanger.toFixed(1) + (isRare ? '（含稀有通道）' : '');
-    pathSteps.appendChild(header);
+  // 排序後取第一條顯示
+  var sorted = sortPaths(allFoundPaths, currentSort);
+  var firstPath = sorted[0];
+  renderSinglePath(firstPath, '推薦路線', false);
 
-    path.forEach(function(step, i) {
-      var info = LEVEL_INFO[step.level] || {name:'未知', class:'?'};
-      var isLast = (i === path.length - 1);
-      var nextLevel = isLast ? null : path[i + 1].level;
-      var nextInfo = nextLevel ? (LEVEL_INFO[nextLevel] || {name:'未知'}) : null;
-      var wikiUrl = 'https://backrooms-wiki-cn.wikidot.com/level-' + step.level;
-      var color = classColor(info.class);
+  // 如果有多條路徑，顯示「查看所有」按鈕
+  if (allFoundPaths.length > 1) {
+    var btn = document.createElement('div');
+    btn.className = 'view-all-btn';
+    btn.id = 'view-all-btn';
+    btn.innerHTML = '▼ 查看全部 ' + allFoundPaths.length + ' 條路徑';
+    btn.onclick = function() { toggleAllPaths(); };
+    pathSteps.appendChild(btn);
 
-      var card = document.createElement('div');
-      card.className = 'path-card';
-      card.innerHTML =
-        '<div class="path-card-header" onclick="openModal(\'' + step.level + '\')">' +
-          '<div class="step-num">' + (i + 1) + '</div>' +
-          '<div class="step-header-info">' +
-            '<div class="step-level">' +
-              '<span class="level-badge">Level ' + step.level + '</span>' +
-              info.name +
-              (step.rare ? ' <span class="rare-badge">稀有</span>' : '') +
-              ' <span class="class-dot" style="background:' + color + ';box-shadow:0 0 6px ' + color + ';"></span>' +
-            '</div>' +
-            '<div class="step-name">生存難度 ' + classDisplay(info.class) + (isLast ? ' · 終點' : '') + '</div>' +
-          '</div>' +
-          '<a class="step-wiki-link" href="' + wikiUrl + '" target="_blank" onclick="event.stopPropagation()">維基</a>' +
-        '</div>';
-      pathSteps.appendChild(card);
-
-      if (!isLast) {
-        var allMethods = getAllMethods(step.level, nextLevel);
-        var methodsHtml;
-        if (allMethods.length > 0) {
-          methodsHtml = '<ul class="method-list">' + allMethods.map(function(m){return '<li>'+m+'</li>';}).join('') + '</ul>';
-        } else {
-          methodsHtml = '<div class="transition-method">' + (step.method || '未知方式') + '</div>';
-        }
-        var intro = '從「' + info.name + '」前往「' + (nextInfo ? nextInfo.name : '') + '」：';
-        var trans = document.createElement('div');
-        trans.className = 'transition-connector';
-        trans.innerHTML =
-          '<div class="transition-arrow">▼ ▼</div>' +
-          '<div class="transition-box">' +
-            '<div class="transition-label">Level ' + step.level + ' → Level ' + nextLevel + (step.rare ? ' ⚠ 稀有通道' : '') + '</div>' +
-            '<div class="transition-intro">' + intro + '</div>' +
-            methodsHtml +
-          '</div>';
-        pathSteps.appendChild(trans);
-      } else {
-        var end = document.createElement('div');
-        end.className = 'transition-connector';
-        end.innerHTML = '<div class="transition-end">✓ 已到達目標 Level ' + step.level + '</div>';
-        pathSteps.appendChild(end);
-      }
-    });
-  }
-
-  if (normalPath) renderPath(normalPath, '方法一：正常路線', false);
-  if (rarePath) {
-    var normalStr = normalPath ? normalPath.map(function(p){return p.level;}).join(',') : '';
-    var rareStr = rarePath.map(function(p){return p.level;}).join(',');
-    if (rareStr !== normalStr) {
-      var divider = document.createElement('div');
-      divider.className = 'path-divider';
-      divider.textContent = '— 或 —';
-      pathSteps.appendChild(divider);
-      renderPath(rarePath, '方法二：困難路線（含稀有通道）', true);
-    }
+    var allContainer = document.createElement('div');
+    allContainer.id = 'all-paths-container';
+    allContainer.className = 'all-paths-container';
+    allContainer.style.display = 'none';
+    pathSteps.appendChild(allContainer);
   }
 
   resultArea.classList.add('show');
   resultArea.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function toggleAllPaths() {
+  var container = document.getElementById('all-paths-container');
+  var btn = document.getElementById('view-all-btn');
+  if (!container) return;
+  if (container.style.display === 'none') {
+    container.style.display = 'block';
+    btn.innerHTML = '▲ 收起全部路徑';
+    renderAllPaths();
+  } else {
+    container.style.display = 'none';
+    btn.innerHTML = '▼ 查看全部 ' + allFoundPaths.length + ' 條路徑';
+  }
+}
+
+function changeSort(sortBy) {
+  currentSort = sortBy;
+  // 更新按鈕狀態
+  var btns = document.querySelectorAll('.sort-btn');
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].className = 'sort-btn' + (btns[i].dataset.sort === sortBy ? ' active' : '');
+  }
+  renderAllPaths();
+}
+
+function renderAllPaths() {
+  var container = document.getElementById('all-paths-container');
+  if (!container) return;
+  var sorted = sortPaths(allFoundPaths, currentSort);
+
+  var html = '<div class="sort-bar">排序方式：' +
+    '<button class="sort-btn' + (currentSort==='time'?' active':'') + '" data-sort="time" onclick="changeSort(\'time\')">時間（跳轉數）</button>' +
+    '<button class="sort-btn' + (currentSort==='danger'?' active':'') + '" data-sort="danger" onclick="changeSort(\'danger\')">危險度</button>' +
+    '<button class="sort-btn' + (currentSort==='difficulty'?' active':'') + '" data-sort="difficulty" onclick="changeSort(\'difficulty\')">難度</button>' +
+    '</div>';
+
+  for (var i = 0; i < sorted.length; i++) {
+    var path = sorted[i];
+    var m = pathMetrics(path);
+    var hasRare = m.rare > 0;
+    var levels = path.map(function(p){return p.level;}).join(' → ');
+    html += '<div class="all-path-item' + (hasRare ? ' rare' : '') + '" onclick="expandPathItem(this)">';
+    html += '<div class="all-path-header">';
+    html += '<span class="all-path-num">#' + (i+1) + '</span>';
+    html += '<span class="all-path-levels">' + levels + '</span>';
+    html += '<span class="all-path-meta">' + m.jumps + '跳 · 危險' + m.danger + (hasRare ? ' · 含稀有' : '') + '</span>';
+    html += '<span class="all-path-toggle">▶</span>';
+    html += '</div>';
+    html += '<div class="all-path-detail" style="display:none;"></div>';
+    html += '</div>';
+  }
+  container.innerHTML = html;
+}
+
+function expandPathItem(el) {
+  var detail = el.querySelector('.all-path-detail');
+  var toggle = el.querySelector('.all-path-toggle');
+  if (detail.style.display === 'none') {
+    detail.style.display = 'block';
+    toggle.textContent = '▼';
+    // 渲染詳細路徑
+    var idx = parseInt(el.querySelector('.all-path-num').textContent.replace('#','')) - 1;
+    var sorted = sortPaths(allFoundPaths, currentSort);
+    var path = sorted[idx];
+    var html = '';
+    for (var i = 0; i < path.length; i++) {
+      var step = path[i];
+      var info = LEVEL_INFO[step.level] || {name:'未知', class:'?'};
+      var color = classColor(info.class);
+      var isLast = i === path.length - 1;
+      html += '<div class="mini-step">';
+      html += '<span class="mini-level" style="border-color:' + color + ';">Level ' + step.level + '</span>';
+      html += '<span class="mini-name">' + info.name + '</span>';
+      if (step.rare) html += '<span class="rare-badge">稀有</span>';
+      html += '</div>';
+      if (!isLast) {
+        var nextLevel = path[i+1].level;
+        var methods = getAllMethods(step.level, nextLevel);
+        if (methods.length > 0) {
+          html += '<div class="mini-method">' + methods[0].substring(0,120) + (methods[0].length > 120 ? '…' : '') + '</div>';
+        }
+      }
+    }
+    detail.innerHTML = html;
+  } else {
+    detail.style.display = 'none';
+    toggle.textContent = '▶';
+  }
+}
+
+function renderSinglePath(path, label, isRare) {
+  var pathSteps = document.getElementById('path-steps');
+  var header = document.createElement('div');
+  header.className = 'method-header' + (isRare ? ' rare' : '');
+  var jumps = path.length - 1;
+  var totalDanger = path.reduce(function(s,p){ return s + getDanger(p.level); }, 0);
+  header.innerHTML = '<span class="method-tag">' + label + '</span> ' + jumps + ' 次跳轉，危險度 ' + totalDanger.toFixed(1) + (isRare ? '（含稀有通道）' : '');
+  pathSteps.appendChild(header);
+
+  path.forEach(function(step, i) {
+    var info = LEVEL_INFO[step.level] || {name:'未知', class:'?'};
+    var isLast = (i === path.length - 1);
+    var nextLevel = isLast ? null : path[i + 1].level;
+    var nextInfo = nextLevel ? (LEVEL_INFO[nextLevel] || {name:'未知'}) : null;
+    var wikiUrl = 'https://backrooms-wiki-cn.wikidot.com/level-' + step.level;
+    var color = classColor(info.class);
+
+    var card = document.createElement('div');
+    card.className = 'path-card';
+    card.innerHTML =
+      '<div class="path-card-header" onclick="openModal(\'' + step.level + '\')">' +
+        '<div class="step-num">' + (i + 1) + '</div>' +
+        '<div class="step-header-info">' +
+          '<div class="step-level">' +
+            '<span class="level-badge">Level ' + step.level + '</span>' +
+            info.name +
+            (step.rare ? ' <span class="rare-badge">稀有</span>' : '') +
+            ' <span class="class-dot" style="background:' + color + ';box-shadow:0 0 6px ' + color + ';"></span>' +
+          '</div>' +
+          '<div class="step-name">生存難度 ' + classDisplay(info.class) + (isLast ? ' · 終點' : '') + '</div>' +
+        '</div>' +
+        '<a class="step-wiki-link" href="' + wikiUrl + '" target="_blank" onclick="event.stopPropagation()">維基</a>' +
+      '</div>';
+    pathSteps.appendChild(card);
+
+    if (!isLast) {
+      var allMethods = getAllMethods(step.level, nextLevel);
+      var methodsHtml;
+      if (allMethods.length > 0) {
+        methodsHtml = '<ul class="method-list">' + allMethods.map(function(m){return '<li>'+m+'</li>';}).join('') + '</ul>';
+      } else {
+        methodsHtml = '<div class="transition-method">' + (step.method || '未知方式') + '</div>';
+      }
+      var intro = '從「' + info.name + '」前往「' + (nextInfo ? nextInfo.name : '') + '」：';
+      var trans = document.createElement('div');
+      trans.className = 'transition-connector';
+      trans.innerHTML =
+        '<div class="transition-arrow">▼ ▼</div>' +
+        '<div class="transition-box">' +
+          '<div class="transition-label">Level ' + step.level + ' → Level ' + nextLevel + (step.rare ? ' ⚠ 稀有通道' : '') + '</div>' +
+          '<div class="transition-intro">' + intro + '</div>' +
+          methodsHtml +
+        '</div>';
+      pathSteps.appendChild(trans);
+    } else {
+      var end = document.createElement('div');
+      end.className = 'transition-connector';
+      end.innerHTML = '<div class="transition-end">✓ 已到達目標 Level ' + step.level + '</div>';
+      pathSteps.appendChild(end);
+    }
+  });
 }
 
 function toggleConnLib() {
