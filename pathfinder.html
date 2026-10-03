@@ -199,6 +199,11 @@
       <label style="flex:1;display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:#a09080;min-width:140px;"><input type="radio" name="route-type" value="fastest" checked style="width:auto;"> 最快路線（最少跳轉）</label>
       <label style="flex:1;display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:#a09080;min-width:140px;"><input type="radio" name="route-type" value="safest" style="width:auto;"> 最安全路線（避開危險層級）</label>
     </div>
+    <div style="margin-bottom:12px;">
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:#a09080;">
+        <input type="checkbox" id="exclude-rare" style="width:auto;"> 排除含稀有通道的路徑
+      </label>
+    </div>
     <button onclick="findPath()">查詢路徑</button>
   </div>
 
@@ -9060,8 +9065,17 @@ function findPath() {
   if (!LEVEL_INFO[from]) { alert('Level ' + from + ' 尚未收錄'); return; }
   if (!LEVEL_INFO[to]) { alert('Level ' + to + ' 尚未收錄'); return; }
 
-  // 找所有路徑（最多15跳，最多1000條）
-  allFoundPaths = findAllPaths(from, to, 15, 1000);
+  // 找所有路徑（最多15跳，安全上限5000條）
+  allFoundPaths = findAllPaths(from, to, 15, 5000);
+
+  // 排除含稀有通道的路徑
+  var excludeRare = document.getElementById('exclude-rare').checked;
+  if (excludeRare) {
+    allFoundPaths = allFoundPaths.filter(function(p) {
+      return !p.some(function(s) { return s.rare; });
+    });
+  }
+
   currentSort = routeType === 'safest' ? 'danger' : 'time';
 
   pathSteps.innerHTML = '';
@@ -9073,7 +9087,8 @@ function findPath() {
   }
 
   var routeLabel = routeType === 'safest' ? '最安全路線' : '最快路線';
-  resultTitle.textContent = 'Level ' + from + ' → Level ' + to + '（' + routeLabel + '）— 找到 ' + allFoundPaths.length + ' 條可能路徑';
+  var filterLabel = excludeRare ? '（已排除稀有通道）' : '';
+  resultTitle.textContent = 'Level ' + from + ' → Level ' + to + '（' + routeLabel + '）' + filterLabel + ' — 找到 ' + allFoundPaths.length + ' 條可能路徑';
 
   // 排序後取第一條顯示
   var sorted = sortPaths(allFoundPaths, currentSort);
@@ -9085,7 +9100,7 @@ function findPath() {
     var btn = document.createElement('div');
     btn.className = 'view-all-btn';
     btn.id = 'view-all-btn';
-    btn.innerHTML = '▼ 查看全部 ' + allFoundPaths.length + ' 條路徑' + (allFoundPaths.length >= 1000 ? '（已達上限）' : '');
+    btn.innerHTML = '▼ 查看全部 ' + allFoundPaths.length + ' 條路徑' + (allFoundPaths.length >= 5000 ? '（已達上限）' : '');
     btn.onclick = function() { toggleAllPaths(); };
     pathSteps.appendChild(btn);
 
