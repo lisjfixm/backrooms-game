@@ -644,9 +644,60 @@
     background:rgba(201,168,76,0.3); cursor:pointer; transition:background 0.2s; }
   .gallery-dot.active { background:#c9a84c; }
 
+  /* ===== 圖片預加載覆蓋層 ===== */
+  .preloader-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(15, 13, 10, 0.97); z-index: 99999;
+    display: flex; align-items: center; justify-content: center;
+    transition: opacity 0.5s ease;
+  }
+  .preloader-overlay.hidden { opacity: 0; pointer-events: none; }
+  .preloader-box {
+    text-align: center; max-width: 420px; width: 90%;
+    padding: 40px 30px;
+  }
+  .preloader-title {
+    font-size: 22px; font-weight: 700; color: #c9a84c;
+    margin-bottom: 8px; letter-spacing: 1px;
+  }
+  .preloader-subtitle {
+    font-size: 13px; color: #8a8070; margin-bottom: 28px;
+  }
+  .preloader-bar-wrap {
+    width: 100%; height: 8px; background: rgba(201,168,76,0.15);
+    border-radius: 4px; overflow: hidden; margin-bottom: 12px;
+  }
+  .preloader-bar {
+    height: 100%; width: 0%; background: linear-gradient(90deg, #c9a84c, #e8c96a);
+    border-radius: 4px; transition: width 0.2s ease;
+  }
+  .preloader-status {
+    font-size: 13px; color: #8a8070; margin-bottom: 24px;
+  }
+  .preloader-skip {
+    background: transparent; border: 1px solid rgba(201,168,76,0.4);
+    color: #8a8070; padding: 8px 24px; border-radius: 4px;
+    font-size: 13px; cursor: pointer; transition: all 0.2s;
+  }
+  .preloader-skip:hover {
+    border-color: #c9a84c; color: #c9a84c;
+  }
+
 </style>
 </head>
 <body>
+<!-- 圖片預加載覆蓋層 -->
+<div id="preloader-overlay" class="preloader-overlay">
+  <div class="preloader-box">
+    <div class="preloader-title">正在預加載層級圖片</div>
+    <div class="preloader-subtitle">預加載後點開層級詳情可即時顯示圖片</div>
+    <div class="preloader-bar-wrap">
+      <div class="preloader-bar" id="preloader-bar"></div>
+    </div>
+    <div class="preloader-status" id="preloader-status">0 / 0 張</div>
+    <button class="preloader-skip" id="preloader-skip" onclick="skipPreload()">跳過預加載</button>
+  </div>
+</div>
 <!-- 頂部導航欄 -->
 <nav class="top-nav" id="top-nav">
   <button class="nav-item active" data-panel="home" onclick="switchPanel('home')">路徑查詢</button>
@@ -12192,6 +12243,73 @@ document.getElementById('from-level').addEventListener('keydown', function(e){ i
   function escapeHtml(s) {
     if (!s) return '';
     return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  /* ===== 圖片預加載 ===== */
+  var _preloadCancelled = false;
+  function skipPreload() {
+    _preloadCancelled = true;
+    var overlay = document.getElementById('preloader-overlay');
+    if (overlay) overlay.classList.add('hidden');
+    setTimeout(function(){ if(overlay) overlay.style.display='none'; }, 500);
+  }
+
+  function startPreload() {
+    var overlay = document.getElementById('preloader-overlay');
+    var bar = document.getElementById('preloader-bar');
+    var status = document.getElementById('preloader-status');
+    if (!overlay || !bar || !status) return;
+
+    // 收集所有唯一圖片 URL
+    var urls = [];
+    var seen = {};
+    for (var lv in LEVEL_INFO) {
+      var imgs = LEVEL_INFO[lv].images || [];
+      for (var i = 0; i < imgs.length; i++) {
+        var url = imgs[i].url;
+        if (url && !seen[url]) { seen[url] = true; urls.push(url); }
+      }
+    }
+
+    if (urls.length === 0) { skipPreload(); return; }
+
+    status.textContent = '0 / ' + urls.length + ' 張';
+    var loaded = 0;
+    var idx = 0;
+    var CONCURRENT = 4; // 並發加載數
+
+    function loadNext() {
+      if (_preloadCancelled) return;
+      if (idx >= urls.length) {
+        // 全部完成
+        bar.style.width = '100%';
+        status.textContent = urls.length + ' / ' + urls.length + ' 張 — 完成';
+        setTimeout(skipPreload, 300);
+        return;
+      }
+      var url = urls[idx++];
+      var img = new Image();
+      img.onload = img.onerror = function() {
+        loaded++;
+        var pct = Math.round((loaded / urls.length) * 100);
+        bar.style.width = pct + '%';
+        status.textContent = loaded + ' / ' + urls.length + ' 張';
+        loadNext();
+      };
+      img.src = url;
+    }
+
+    // 啟動並發加載
+    for (var c = 0; c < Math.min(CONCURRENT, urls.length); c++) {
+      loadNext();
+    }
+  }
+
+  // 頁面加載完成後啟動預加載
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', startPreload);
+  } else {
+    startPreload();
   }
 
 </script>
