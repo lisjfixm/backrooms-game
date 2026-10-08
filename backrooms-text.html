@@ -192,7 +192,7 @@ body.blackout #scene{opacity:.85;}
 <div class="power-flash" id="powerFlash"></div>
 <div id="miniMapWrap" title="點擊放大查看大地圖">
   <div class="mm-title">MAP</div>
-  <canvas id="miniMapCanvas" width="104" height="104"></canvas>
+  <canvas id="miniMapCanvas" width="143" height="143"></canvas>
   <div class="mm-hint">點擊放大</div>
 </div>
 <div id="app">
@@ -1198,9 +1198,9 @@ function renderMap(){
     if(y<minY)minY=y;if(y>maxY)maxY=y;
   }
   const gw=maxX-minX+1, gh=maxY-minY+1;
-  const maxW=300, maxH=380, pad=12;
+  const maxW=360, maxH=560, pad=12;
   let cell=Math.floor(Math.min((maxW-pad*2)/gw,(maxH-pad*2)/gh));
-  cell=Math.max(6,Math.min(18,cell));
+  cell=Math.max(6,Math.min(36,cell));
   const cw=gw*cell+pad*2, ch=gh*cell+pad*2;
   const dpr=window.devicePixelRatio||1;
   canvas.width=cw*dpr; canvas.height=ch*dpr;
@@ -1272,9 +1272,9 @@ function renderMiniMap(){
   const canvas=$('miniMapCanvas');
   if(!canvas||!G)return;
   const ctx=canvas.getContext('2d');
-  const size=104;
+  const size=143;
   const R=6;                    /* 視野半徑 → 13x13 格 */
-  const cell=Math.floor(size/(2*R+1)); /* 每格 8px */
+  const cell=Math.floor(size/(2*R+1)); /* 每格 11px */
   const dpr=window.devicePixelRatio||1;
   canvas.width=size*dpr;canvas.height=size*dpr;
   canvas.style.width=size+'px';canvas.style.height=size+'px';
