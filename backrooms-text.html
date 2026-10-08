@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>BACKROOMS 文字探險</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230a0a08'/%3E%3Ctext x='16' y='22' font-size='18' text-anchor='middle' fill='%23d8a93a' font-family='monospace'%3E%3E_%3C/text%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#0b0b08;
+  --panel:#141207;
+  --amber:#e8b53c;
+  --amber-dim:#9a7524;
+  --amber-faint:#5a4516;
+  --text:#d9c389;
+  --green:#8fd07a;
+  --red:#d96a4a;
+  --blue:#6a9fd0;
+  --cold:#9fb6c9;
+  --mono:'Courier New',ui-monospace,monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--mono);
+  overflow:hidden;
+  display:flex;flex-direction:column;
+}
+/* CRT scanlines + vignette */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:50;
+  background:repeating-linear-gradient(0deg,rgba(0,0,0,0.16) 0 1px,transparent 1px 3px);
+  mix-blend-mode:multiply;
+}
+body::after{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:51;
+  background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,0.55) 100%);
+}
+#app{flex:1;display:flex;flex-direction:column;min-height:0;position:relative;z-index:1;}
+
+/* ===== Status bar ===== */
+#statusbar{
+  flex-shrink:0;
+  background:var(--panel);
+  border-bottom:1px solid var(--amber-faint);
+  padding:6px 10px;
+  font-size:11px;line-height:1.5;
+}
+.stat-row{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;}
+.stat{color:var(--text);white-space:nowrap;}
+.stat b{color:var(--amber);font-weight:normal;}
+.stat .dead{color:var(--red);}
+.bar{display:inline-block;width:54px;height:7px;background:#000;border:1px solid var(--amber-faint);vertical-align:middle;position:relative;overflow:hidden;}
+.bar i{position:absolute;left:0;top:0;bottom:0;display:block;}
+.bar .hp{background:linear-gradient(90deg,#7a2f1e,#c9503a);}
+.bar .san{background:linear-gradient(90deg,#3a5a7a,#5a9fd0);}
+.bar .bat{background:linear-gradient(90deg,#7a6a1e,#d8b53c);}
+.loc-tag{color:var(--amber);}
+
+/* ===== Scene ===== */
+#scene{
+  flex:1;overflow-y:auto;
+  padding:14px 16px 8px;
+  min-height:0;
+  -webkit-overflow-scrolling:touch;
+}
+#scene::-webkit-scrollbar{width:0;}
+.scene-title{
+  color:var(--amber);
+  font-size:15px;
+  letter-spacing:2px;
+  margin-bottom:8px;
+  text-shadow:0 0 8px rgba(232,181,60,0.4);
+}
+.scene-text{
+  font-size:13.5px;line-height:1.85;
+  white-space:pre-wrap;
+  color:var(--text);
+  min-height:20px;
+}
+.scene-text .hl{color:var(--amber);}
+.scene-text .danger{color:var(--red);}
+.scene-text .good{color:var(--green);}
+.scene-text .cold{color:var(--cold);}
+.cursor{display:inline-block;width:8px;height:14px;background:var(--amber);vertical-align:text-bottom;animation:blink 0.9s steps(1) infinite;}
+@keyframes blink{50%{opacity:0;}}
+.event-log{margin-top:14px;border-top:1px dashed var(--amber-faint);padding-top:8px;}
+.log-line{font-size:11px;color:var(--amber-dim);line-height:1.7;white-space:pre-wrap;}
+.log-line .danger{color:var(--red);}
+.log-line .good{color:var(--green);}
+.log-line .cold{color:var(--cold);}
+
+/* ===== Actions ===== */
+#actions{
+  flex-shrink:0;
+  border-top:1px solid var(--amber-faint);
+  background:var(--panel);
+  padding:8px 10px calc(8px + env(safe-area-inset-bottom));
+}
+.dir-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;max-width:260px;margin:0 auto 8px;}
+.btn{
+  font-family:var(--mono);
+  background:#1a160a;
+  color:var(--amber);
+  border:1px solid var(--amber-faint);
+  padding:11px 4px;
+  font-size:13px;
+  cursor:pointer;
+  text-align:center;
+  border-radius:2px;
+  line-height:1;
+  transition:background .1s,color .1s;
+}
+.btn:active,.btn.pressed{background:var(--amber);color:#141207;}
+.btn.ghost{visibility:hidden;}
+.btn:disabled{opacity:.35;cursor:default;}
+.choice-wrap{display:flex;flex-direction:column;gap:6px;}
+.choice{
+  display:block;width:100%;text-align:left;
+  background:#15120a;border:1px solid var(--amber-faint);
+  color:var(--text);padding:11px 12px;font-size:13px;
+  cursor:pointer;border-radius:2px;font-family:var(--mono);
+  line-height:1.4;
+}
+.choice:active{border-color:var(--amber);color:var(--amber);}
+.choice .num{color:var(--amber);margin-right:8px;}
+.util-row{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-top:8px;}
+.util-row .btn{flex:1;min-width:64px;padding:9px 6px;font-size:11px;}
+
+/* ===== Overlays (title / death / inventory / notes) ===== */
+.overlay{
+  position:fixed;inset:0;z-index:100;
+  background:rgba(8,7,4,0.96);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:24px;text-align:center;
+  overflow-y:auto;
+}
+.overlay.hidden{display:none;}
+.overlay h1{color:var(--amber);font-size:clamp(26px,7vw,42px);letter-spacing:6px;text-shadow:0 0 14px rgba(232,181,60,0.5);margin-bottom:6px;}
+.overlay h2{color:var(--amber-dim);font-size:clamp(13px,3.5vw,17px);letter-spacing:3px;font-weight:normal;margin-bottom:18px;}
+.overlay p{color:var(--text);font-size:13px;line-height:1.9;max-width:480px;margin-bottom:18px;}
+.overlay .big-btn{
+  font-family:var(--mono);background:transparent;border:1px solid var(--amber);
+  color:var(--amber);padding:14px 34px;font-size:15px;letter-spacing:3px;cursor:pointer;
+  margin:6px;border-radius:2px;
+}
+.overlay .big-btn:active{background:var(--amber);color:#141207;}
+.overlay .small{font-size:11px;color:var(--amber-dim);margin-top:20px;line-height:1.8;}
+.overlay.danger h1{color:var(--red);text-shadow:0 0 14px rgba(217,106,74,0.5);}
+.overlay.cold h1{color:var(--cold);text-shadow:0 0 14px rgba(159,182,201,0.5);}
+
+/* modal (inventory / notes) */
+.modal{
+  position:fixed;inset:0;z-index:120;background:rgba(8,7,4,0.92);
+  display:none;flex-direction:column;padding:18px;
+}
+.modal.show{display:flex;}
+.modal h3{color:var(--amber);font-size:15px;letter-spacing:3px;margin-bottom:12px;flex-shrink:0;}
+.modal .modal-body{flex:1;overflow-y:auto;font-size:13px;line-height:1.9;-webkit-overflow-scrolling:touch;}
+.modal .modal-body::-webkit-scrollbar{width:0;}
+.modal .item-line{padding:9px 8px;border:1px solid var(--amber-faint);margin-bottom:7px;border-radius:2px;cursor:pointer;}
+.modal .item-line:active{border-color:var(--amber);}
+.modal .item-line .nm{color:var(--amber);}
+.modal .item-line .ds{display:block;color:var(--amber-dim);font-size:11px;margin-top:3px;}
+.modal .note-line{padding:10px;border:1px solid var(--amber-faint);margin-bottom:9px;border-radius:2px;text-align:left;white-space:pre-wrap;}
+.modal .note-line .t{color:var(--amber);display:block;margin-bottom:5px;font-size:12px;}
+.modal .close-btn{
+  flex-shrink:0;margin-top:12px;font-family:var(--mono);background:#1a160a;border:1px solid var(--amber-faint);
+  color:var(--amber);padding:12px;font-size:13px;cursor:pointer;border-radius:2px;
+}
+.empty{color:var(--amber-dim);text-align:center;padding:30px 0;font-size:12px;}
+
+/* flicker / power-out ambient */
+body.blackout #scene{opacity:.85;}
+.power-flash{position:fixed;inset:0;background:rgba(232,181,60,0.08);pointer-events:none;z-index:40;opacity:0;}
+@media(min-width:600px){
+  #scene{padding:22px 30px 10px;}
+  .scene-text{font-size:15px;}
+  .dir-grid{max-width:300px;}
+}
+</style>
+</head>
+<body>
+<div class="power-flash" id="powerFlash"></div>
+<div id="app">
+  <div id="statusbar"></div>
+  <div id="scene">
+    <div class="scene-title" id="sceneTitle"></div>
+    <div class="scene-text" id="sceneText"></div>
+    <div class="event-log" id="eventLog"></div>
+  </div>
+  <div id="actions">
+    <div class="dir-grid" id="dirGrid"></div>
+    <div class="choice-wrap" id="choiceWrap"></div>
+    <div class="util-row" id="utilRow"></div>
+  </div>
+</div>
+
+<!-- ===== Title ===== -->
+<div class="overlay" id="titleScreen">
+  <h1>BACKROOMS</h1>
+  <h2>文 字 探 險</h2>
+  <p>你從現實的縫隙中跌落，睜開眼——<br>嗡嗡作響的日光燈、發黃潮濕的牆紙、漫無邊際的走廊。<br>這裡沒有出口，只有無盡的等待。</p>
+  <button class="big-btn" id="startBtn">跌 入 後 室</button>
+  <button class="big-btn" id="continueBtn" style="display:none">繼 續 探 索</button>
+  <div class="small">基於 Backrooms Wiki 官方設定<br>Level 0「Threshold」→ Level 1「Habitable Zone」<br>建議開啟聲音遊玩</div>
+</div>
+
+<!-- ===== Death ===== -->
+<div class="overlay danger hidden" id="deathScreen">
+  <h1 id="deathTitle">你 迷 失 了</h1>
+  <p id="deathText"></p>
+  <button class="big-btn" id="retryBtn">重 新 跌 入</button>
+  <button class="big-btn" id="deathMenuBtn">回 到 標 題</button>
+</div>
+
+<!-- ===== Win ===== -->
+<div class="overlay cold hidden" id="winScreen">
+  <h1>你 找 到 了 出 口</h1>
+  <p id="winText"></p>
+  <button class="big-btn" id="winMenuBtn">回 到 標 題</button>
+</div>
+
+<!-- ===== Inventory ===== -->
+<div class="modal" id="invModal">
+  <h3>背 包</h3>
+  <div class="modal-body" id="invBody"></div>
+  <button class="close-btn" id="invClose">關 閉</button>
+</div>
+
+<!-- ===== Notes ===== -->
+<div class="modal" id="notesModal">
+  <h3>檔 案 室</h3>
+  <div class="modal-body" id="notesBody"></div>
+  <button class="close-btn" id="notesClose">關 閉</button>
+</div>
+
+<script>
+/* ================================================================
+   工具函式
+   ================================================================ */
+const $=id=>document.getElementById(id);
+const clamp=(v,a,b)=>v<a?a:v>b?b:v;
+const rand=(a,b)=>a+Math.random()*(b-a);
+const randi=(a,b)=>Math.floor(rand(a,b+1));
+const pick=arr=>arr[Math.floor(Math.random()*arr.length)];
+// deterministic hash from integers (0..1)
+function hash2(x,y,s=0){
+  let h=(x*374761393+y*668265263+s*1274126177)|0;
+  h=((h^(h>>>13))*1274126177)|0;
+  h=(h^(h>>>16))>>>0;
+  return h/4294967296;
+}
+// deterministic rng in a sequence for a cell (mulberry-ish)
+function cellRng(x,y,s,seq){
+  let a=(x*11983+y*1931+seq*911+s*7919)|0;
+  return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};
+}
+
+/* ================================================================
+   遊戲狀態
+   ================================================================ */
+const SAVE_KEY='backrooms_text_save_v1';
+let G=null; // active game
+function newGame(){
+  G={
+    level:0,
+    pos:{x:0,y:0},
+    facing:0,
+    hp:100,
+    sanity:100,
+    almond:2,
+    flashlight:false,
+    battery:100,
+    inv:{}, // key:count
+    notes:[],
+    runSeed:randi(1,99999),
+    visited:{}, // "x,y" -> room runtime state
+    steps:0,
+    turn:0,
+    time:0, // minutes in backrooms
+    flags:{},
+    l1:null,
+    over:false,
+    logs:[]
+  };
+  // 篩選合格地圖（避免起點被困在小封閉區）
+  let attempts=0;
+  while(!validMap()&&attempts<300){
+    G.runSeed=randi(1,99999);
+    attempts++;
+  }
+}
+
+/* 連通區域 BFS（基於牆函式，與玩家實際能否走動一致） */
+function bfsRegion(sx,sy,exitFn,boundR,cap){
+  const seen=new Set([sx+','+sy]);
+  const q=[[sx,sy]];
+  while(q.length){
+    if(seen.size>=cap)return seen;
+    const [x,y]=q.shift();
+    const e=exitFn(x,y);
+    for(const d of ['N','S','E','W']){
+      if(!e[d])continue;
+      const dd=DIRDELTA[d];
+      const nx=x+dd[0],ny=y+dd[1];
+      if(Math.abs(nx-sx)>boundR||Math.abs(ny-sy)>boundR)continue;
+      const k=nx+','+ny;
+      if(!seen.has(k)){seen.add(k);q.push([nx,ny]);}
+    }
+  }
+  return seen;
+}
+/* 檢查地圖是否可玩：L0 起點區含閃爍牆；L1 起點區含 3 設備房、辦公室、出口 */
+function validMap(){
+  const l0=bfsRegion(0,0,l0exits,14,500);
+  if(l0.size<160)return false;
+  let flicker=false;
+  for(const k of l0){
+    const [x,y]=k.split(',').map(Number);
+    if(l0type(x,y)==='flicker'){flicker=true;break;}
+  }
+  if(!flicker)return false;
+  const l1=bfsRegion(0,0,l1exits,14,800);
+  if(l1.size<250)return false;
+  if(!l1.has('3,-5')||!l1.has('8,8'))return false;
+  let util=0;
+  for(const k of l1){
+    const [x,y]=k.split(',').map(Number);
+    if(l1type(x,y)==='utility')util++;
+  }
+  return util>=3;
+}
+
+/* ================================================================
+   房間 runtime state（記錄玩家對房間的改變）
+   ================================================================ */
+function cellKey(x,y){return x+','+y;}
+function getCell(x,y){
+  const k=cellKey(x,y);
+  if(!G.visited[k]){
+    G.visited[k]={entered:false,searched:false,itemTaken:false,state:{},choices:{}};
+  }
+  return G.visited[k];
+}
+
+/* ================================================================
+   打字機
+   ================================================================ */
+let typeState={el:null,full:'',i:0,timer:null,done:null};
+function typeText(el,html,cb){
+  clearInterval(typeState.timer);
+  typeState.el=el;typeState.full=html;typeState.i=0;el.innerHTML='';typeState.done=cb;
+  // skip: 直接完成
+  typeState.timer=setInterval(()=>{
+    typeState.i+=2;
+    if(typeState.i>=typeState.full.length){
+      el.innerHTML=typeState.full;
+      clearInterval(typeState.timer);
+      if(typeState.done)typeState.done();
+    }else{
+      // 不截斷 HTML 標籤
+      let cut=typeState.full.slice(0,typeState.i);
+      const openTags=(cut.match(/<span[^>]*>/g)||[]).length;
+      const closeTags=(cut.match(/<\/span>/g)||[]).length;
+      if(openTags>closeTags)cut=cut.replace(/<[^>]*$/,'');
+      el.innerHTML=cut+'<span class="cursor"></span>';
+    }
+  },14);
+}
+function skipType(){
+  if(typeState.timer&&typeState.el){
+    clearInterval(typeState.timer);
+    typeState.el.innerHTML=typeState.full;
+    typeState.timer=null;
+    if(typeState.done)typeState.done();
+  }
+}
+$('sceneText').addEventListener('click',skipType);
+
+/* ================================================================
+   事件日誌
+   ================================================================ */
+function log(msg){
+  G.logs.push(msg);
+  if(G.logs.length>12)G.logs.shift();
+  renderLog();
+}
+function renderLog(){
+  const el=$('eventLog');
+  el.innerHTML=G.logs.slice(-7).map(l=>'<div class="log-line">'+l+'</div>').join('');
+}
+
+/* ================================================================
+   狀態列渲染
+   ================================================================ */
+function renderStatus(){
+  const lvl=G.level===0?'LEVEL 0 · THRESHOLD':'LEVEL 1 · HABITABLE ZONE';
+  const hpC=clamp(G.hp,0,100),sanC=clamp(G.sanity,0,100),batC=clamp(G.battery,0,100);
+  const fs=G.flashlight?'<span class="good">手電筒[ON]</span>':'<span style="color:var(--amber-dim)">手電筒[OFF]</span>';
+  $('statusbar').innerHTML=
+    '<div class="stat-row"><span class="loc-tag">'+lvl+'</span>'+
+    '<span class="stat">生命 <span class="bar"><i class="hp" style="width:'+hpC+'%"></i></span></span>'+
+    '<span class="stat">理智 <span class="bar"><i class="san" style="width:'+sanC+'%"></i></span></span>'+
+    '<span class="stat">電池 <span class="bar"><i class="bat" style="width:'+batC+'%"></i></span></span>'+
+    '<span class="stat">'+fs+'</span>'+
+    '<span class="stat">杏仁水 <b>x'+G.almond+'</b></span>'+
+    '<span class="stat">時間 <b>'+G.time+'</b>分</span>'+
+    '</div>';
+}
+
+/* ================================================================
+   當前房間呈現（由各關卡提供 buildRoom）
+   ================================================================ */
+let currentRoom=null;
+function present(room){
+  currentRoom=room;
+  $('sceneTitle').textContent=room.title;
+  typeText($('sceneText'),room.text);
+  // 方向按鈕
+  renderDirs(room.exits);
+  // 特殊選項
+  renderChoices(room.choices);
+  // 工具列
+  renderUtils();
+  renderStatus();
+}
+function renderDirs(exits){
+  const dirs=[['N','北'],['E','東'],['S','南'],['W','西']];
+  const grid=$('dirGrid');
+  // 3x3 配置:
+  const layout=[['ghost','','N',''],['W','','E',''],['S','','ghost','']];
+  // 用更簡單的 3x3
+  grid.innerHTML='';
+  const map3x3={
+    N:{r:0,c:1},S:{r:2,c:1},W:{r:1,c:0},E:{r:1,c:2}
+  };
+  const cells=Array.from({length:9},()=>null);
+  for(const d of ['N','S','E','W']){
+    const m=map3x3[d];cells[m.r*3+m.c]=d;
+  }
+  cells.forEach((d,i)=>{
+    const b=document.createElement('button');
+    if(!d){b.className='btn ghost';}
+    else{
+      const ok=exits&&exits[d];
+      b.className='btn';b.textContent={N:'北 ↑',S:'南 ↓',W:'西 ←',E:'東 →'}[d];
+      if(!ok)b.disabled=true;
+      b.onclick=()=>move(d);
+    }
+    grid.appendChild(b);
+  });
+}
+function renderChoices(choices){
+  const wrap=$('choiceWrap');
+  if(!choices||!choices.length){wrap.innerHTML='';return;}
+  wrap.innerHTML='';
+  choices.forEach((c,i)=>{
+    const b=document.createElement('button');
+    b.className='choice';
+    b.innerHTML='<span class="num">'+(i+1)+'.</span>'+c.label;
+    b.onclick=()=>{if(b.disabled)return;c.action(b);};
+    wrap.appendChild(b);
+  });
+}
+function renderUtils(){
+  const row=$('utilRow');
+  const utils=[
+    {l:G.flashlight?'關手電筒':'手電筒',f:toggleFlash},
+    {l:'背包',f:openInv},
+    {l:'檔案室',f:openNotes},
+    {l:'休息',f:rest},
+    {l:'說明',f:help}
+  ];
+  row.innerHTML='';
+  utils.forEach(u=>{
+    const b=document.createElement('button');
+    b.className='btn';b.textContent=u.l;b.onclick=u.f;
+    row.appendChild(b);
+  });
+}
+
+/* ================================================================
+   移動
+   ================================================================ */
+const DIRDELTA={N:[0,-1],S:[0,1],E:[1,0],W:[-1,0]};
+function move(d){
+  if(G.over)return;
+  skipType();
+  const exits=currentRoom.exits;
+  if(!exits||!exits[d])return;
+  const dd=DIRDELTA[d];
+  G.pos.x+=dd[0];G.pos.y+=dd[1];
+  G.facing=d;
+  G.steps++;
+  advanceTurn(1);
+  enterRoom();
+  checkDeath();
+}
+
+/* ================================================================
+   回合推進（消耗時間、理智緩降、電池消耗）
+   ================================================================ */
+function advanceTurn(t){
+  G.turn+=t;
+  G.time+=t;
+  // 理智：黑暗中更快下降
+  const dark=currentRoom&&currentRoom.dark&&!G.flashlight;
+  G.sanity-=t*(dark?1.0:0.35);
+  // 手電筒電池
+  if(G.flashlight){
+    G.battery-=t*0.5;
+    if(G.battery<=0){G.battery=0;G.flashlight=false;log('<span class="danger">手電筒沒電了，光線熄滅。</span>');}
+  }
+  // 低理智
+  if(G.sanity<0)G.sanity=0;
+  if(G.sanity<25){
+    hallucinate();
+  }
+  checkDeath();
+}
+
+/* ================================================================
+   房間進入（分發到關卡）
+   ================================================================ */
+function enterRoom(){
+  const x=G.pos.x,y=G.pos.y;
+  const cell=getCell(x,y);
+  const first=!cell.entered;
+  cell.entered=true;
+  if(G.level===0)buildL0Room(x,y,cell,first);
+  else buildL1Room(x,y,cell,first);
+}
+
+/* ================================================================
+   LEVEL 0 — Threshold
+   ================================================================ */
+// 牆面（垂直牆分隔 x/x+1，水平牆分隔 y/y+1）— 相鄰房間一致
+function wallV(x,y){
+  if(x===-1&&y===0)return true;   // 起點西側強制牆
+  if(x===0&&y===0)return false;    // 起點東側強制開口
+  return hash2(x*2+1,y*3,G.runSeed)<0.30;
+}
+function wallH(x,y){
+  if(x===0&&y===-1)return true;   // 起點北側強制牆
+  if(x===0&&y===0)return false;    // 起點南側強制開口
+  return hash2(x*3,y*2+1,G.runSeed+7)<0.30;
+}
+function l0exits(x,y){
+  const e={};
+  e.E=!wallV(x,y);
+  e.W=!wallV(x-1,y);
+  e.N=!wallH(x,y-1);
+  e.S=!wallH(x,y);
+  return e;
+}
+// 房間類型
+function l0type(x,y){
+  if(x===0&&y===0)return 'start';
+  const dist=Math.abs(x)+Math.abs(y);
+  const t=hash2(x,y,G.runSeed+3);
+  // 閃爍出口：夠遠才出現
+  if(dist>=7&&t>0.965)return 'flicker';
+  if(t<0.10)return 'pillar';
+  if(t<0.17)return 'flooded';
+  if(t<0.24)return 'blackout';
+  if(t<0.29)return 'red';
+  if(t<0.38)return 'storage';
+  // 普通
+  const e=l0exits(x,y);
+  const n=Object.values(e).filter(Boolean).length;
+  if(n>=3)return 'junction';
+  if(n<=1)return 'deadend';
+  return 'corridor';
+}
+
+function buildL0Room(x,y,cell,first){
+  const type=l0type(x,y);
+  const exits=l0exits(x,y);
+  const rng=cellRng(x,y,G.runSeed,5);
+  let title='',text='',choices=[],dark=false;
+
+  // 環境描述碎片（確定）
+  const wallpaper=[
+    '發黃的牆紙在轉角處微微捲起，傳來一陣潮濕的霉味。',
+    '牆紙上的菱形紋路在日光燈下重複著，像是永無止盡。',
+    '地毯吸飽了不知名的液體，每一步都發出輕微的水聲。',
+    '頭頂的日光燈發出單調的嗡嗡聲，從你跌落後就沒有停過。',
+    '牆角的地毯顏色更深，像是有什麼東西在那裡長時間停留過。',
+    '空氣中瀰漫著陳舊的氣味，鼻腔裡有一點甜膩的噁心感。'
+  ];
+  const ambient=wallpaper[Math.floor(rng()*wallpaper.length)];
+
+  if(type==='start'){
+    title='Level 0 · 跌 落 點';
+    text='你睜開眼。\n\n你躺在<span class="hl">潮濕發黃的地毯</span>上，頭頂的日光燈嗡嗡作響。你不記得自己是怎麼來的——只記得一瞬間，腳下的地面像水一樣裂開。\n\n你站起身，四處是<span class="hl">一模一樣的發黃牆紙與走廊</span>。沒有窗，沒有盡頭，沒有其他人。\n\n'+ambient;
+    addNoteMaybe(cell,'start');
+  }
+  else if(type==='corridor'){
+    title='Level 0 · 走 廊';
+    text='一條直線延伸的走廊。'+ambient+'\n\n你已經記不清這是第幾條走廊了。它們看起來都<span class="hl">完全相同</span>，唯一的區別是日光燈的明暗在微微起伏。';
+    maybeItem(cell,rng,0.18);
+  }
+  else if(type==='junction'){
+    title='Level 0 · 交 叉 口';
+    text='走廊在這裡岔開了。'+ambient+'\n\n多個方向同時展開，每一個都通向<span class="hl">更深的、無光的轉角</span>。你無法判斷哪個方向才是「前進」，因為這裡根本沒有方向。';
+    maybeItem(cell,rng,0.22);
+  }
+  else if(type==='deadend'){
+    title='Level 0 · 死 巷';
+    text='走廊到了盡頭。\n\n一面發黃的牆擋住了去路。'+ambient+'\n\n你靠近牆壁，牆紙的紋路在眼前放大。牆後<span class="danger">似乎有什麼東西在牆裡面輕輕地動</span>——也可能只是日光燈的嗡聲讓你產生了錯覺。';
+    deadendChoices(cell,choices,rng);
+  }
+  else if(type==='pillar'){
+    title='Level 0 · 柱 廳';
+    text='走廊突然開闊起來。\n\n你走進一個巨大的房間，<span class="hl">一排排等距的方形柱子</span>消失在黑暗的盡頭。柱子上貼著同樣的發黃牆紙，腳下是同樣潮濕的地毯。\n\n空曠讓聲音變得奇怪——你的腳步聲被無限地延長、反射，像是有<span class="danger">別人在柱子的另一端同步行走</span>。';
+    maybeItem(cell,rng,0.25);
+  }
+  else if(type==='flooded'){
+    title='Level 0 · 水 淹 區';
+    text='地毯消失了。\n\n腳下是一層<span class="hl">混濁發黃的積水</span>，深及你的腳踝，水底的水泥地又滑又冷。水面映著日光燈，隨著你的動作盪開一圈圈污黃的漣漪。\n\n積水讓你<span class="hl">移動變慢</span>。你不知道這水從何而來，也不想知道——它聞起來有一股發甜的腐味。';
+    floodedLogic(cell,choices);
+  }
+  else if(type==='blackout'){
+    title='Level 0 · 熄 燈 區';
+    dark=true;
+    blackoutLogic(cell,choices,x,y,ambient,text,title);
+  }
+  else if(type==='red'){
+    title='Level 0 · 紅 室';
+    redLogic(cell,choices,ambient);
+  }
+  else if(type==='storage'){
+    title='Level 0 · 儲 藏 室';
+    storageLogic(cell,choices,rng,ambient);
+  }
+  else if(type==='flicker'){
+    title='Level 0 · 閃 爍 的 牆';
+    flickerLogic(cell,choices,ambient);
+  }
+
+  // 特殊房間文字回收
+  if(type==='blackout')text=l0BlackoutText;
+  if(type==='red')text=l0RedText;
+  if(type==='storage')text=l0StorageText;
+  if(type==='flicker')text=l0FlickerText;
+
+  // 首次進入的遊盪事件（實體）— 先執行，之後才生成對應選項
+  if(first){
+    l0wanderingEvent(cell,type,rng);
+  }
+
+  // 普通地面物品選項（corridor/junction/deadend/pillar）
+  if(!cell.itemTaken&&cell.state.item&&['corridor','junction','deadend','pillar'].includes(type)){
+    choices.push({label:cell.state.item==='almond'?'撿起地上的杏仁水':cell.state.item==='battery'?'撿起一節電池':'撿起一張紙條',action:()=>{consumeItem(cell);refreshRoom();}});
+  }
+
+  // Hound 事件
+  if(cell.state.hound&&!cell.state.houndResolved){
+    choices.unshift({label:'奔跑逃離（移動到其他方向）',action:()=>{log('你拼命奔跑，腳步聲在身後漸遠……');cell.state.houndResolved=true;}});
+    choices.push({label:'蹲下躲進暗處，屏息不動',action:()=>{
+      const es=hash2(G.pos.x,G.pos.y,G.runSeed+23);
+      if(es<0.6){cell.state.houndResolved=true;log('<span class="good">你屏息躲過，奔跑聲從你身旁掠過。</span>理智 -5。');G.sanity-=5;}
+      else{G.hp-=18;cell.state.houndResolved=true;log('<span class="danger">它發現了你，利爪劃過你的身體，生命 -18。</span>');G.sanity-=8;}
+      refreshRoom();
+    }});
+  }
+
+  present({title,text,type,exits,choices,dark});
+}
+
+/* ---- 普通物品 ---- */
+function maybeItem(cell,rng,chance){
+  if(cell.itemTaken)return;
+  if(rng()<chance){
+    const r=rng();
+    if(r<0.5)cell.state.item='almond';
+    else if(r<0.8)cell.state.item='battery';
+    else cell.state.item='note';
+  }
+}
+function consumeItem(cell){
+  const it=cell.state.item;
+  if(!it)return;
+  if(it==='almond'){G.almond++;log('你撿起一瓶<span class="hl">杏仁水</span>。');}
+  else if(it==='battery'){G.battery=Math.min(100,G.battery+35);log('你找到一節電池，<span class="good">手電筒電池 +35%</span>。');}
+  else if(it==='note'){const n=randomNote();addNote(n);log('你拾起一張<span class="hl">皺巴巴的紙條</span>，已存入檔案室。');}
+  cell.itemTaken=true;cell.state.item=null;
+  renderStatus();
+}
+
+/* ---- 死巷：可躲藏 / 牆內異動 ---- */
+function deadendChoices(cell,choices,rng){
+  maybeItem(cell,rng,0.3);
+  if(!cell.itemTaken&&cell.state.item){
+    choices.push({label:'查看地面上的東西',action:()=>{consumeItem(cell);refreshRoom();}});
+  }
+  choices.push({label:'把耳朵貼在牆上',action:()=>{
+    if(!cell.state.listened){
+      cell.state.listened=true;
+      const r=hash2(G.pos.x,G.pos.y,G.runSeed+11);
+      if(r<0.5){log('牆裡傳來<span class="danger">極輕的、濕潤的呼吸聲</span>。你立刻退開。');G.sanity-=3;}
+      else{log('只有日光燈的嗡嗡聲。什麼也沒有。');}
+      refreshRoom();
+    }else log('你不敢再聽第二次。');
+  }});
+}
+
+/* ---- 水淹區 ---- */
+function floodedLogic(cell,choices){
+  if(!cell.state.entered){
+    cell.state.entered=true;
+    // 移動變慢已在 advanceTurn 描述
+  }
+  choices.push({label:'涉水前行，小心查看',action:()=>{
+    if(hash2(G.pos.x,G.pos.y,G.runSeed+13)<0.3){
+      G.sanity-=4;log('水底有什麼東西<span class="danger">碰了你的腳踝一下</span>，你猛地縮腳。可能只是漂浮的雜物。');
+    }else{
+      G.battery=Math.min(100,G.battery+10);log('水裡有一小塊還能用的<span class="good">電池</span>，電池 +10%。');
+    }
+    refreshRoom();
+  }});
+}
+
+/* ---- 熄燈區：Smiler ---- */
+function blackoutLogic(cell,choices,x,y,ambient){
+  // 進入黑暗
+  const hasSmiler=hash2(x,y,G.runSeed+17)<0.7;
+  cell.state.smiler=hasSmiler&&!cell.state.smilerGone;
+  let text;
+  if(!hasSmiler||cell.state.smilerGone){
+    text='日光燈在這裡全部熄滅了。\n\n你被<span class="hl">完全的黑暗</span>包圍，只有身後走廊的光在門口畫出一道邊界。\n\n'+(G.flashlight?'手電筒的光在黑暗中切出一道明亮的錐形，牆紙和地毯在光裡清晰可見。':'你幾乎伸手不見五指。黑暗裡，任何一點亮光都會被放大。');
+  }else{
+    if(G.flashlight){
+      text='日光燈在這裡全部熄滅了。\n\n你舉起手電筒——光柱掃過黑暗的瞬間，你看見牆角的什麼東西<span class="danger">反射出兩個亮點</span>。\n\n一張<span class="danger">巨大的、咧開的微笑</span>，在光裡一閃而逝。它沒有身體，只有一排牙齒和一雙眼睛，靜止地凝視著你。\n\n光源似乎讓它<span class="good">退縮了</span>。';
+    }else{
+      text='日光燈在這裡全部熄滅了。\n\n黑暗中，你看見了<span class="danger">不應該存在的東西</span>——\n\n兩個泛黃的亮點，和它下方一道<span class="danger">寬大、牙齒森然的微笑</span>。它沒有身體，懸浮在黑暗裡，<span class="danger">靜止不動</span>。\n\n你感覺到它的凝視。靠得更近，你的理智就被啃噬得更快。';
+    }
+  }
+  if(cell.state.smiler){
+    if(!cell.state.smilerWarned){
+      cell.state.smilerWarned=true;
+      G.sanity-=G.flashlight?6:14;
+      if(!G.flashlight){G.hp-=6;}
+      log(G.flashlight?'<span class="good">你用手電筒照向它，那個微笑退進了更深的黑暗。</span>':'<span class="danger">那個微笑的凝視讓你一陣暈眩，理智與生命被啃噬。</span>');
+    }
+    if(G.flashlight){
+      choices.push({label:'用手電筒持續照射，逼退它',action:()=>{
+        cell.state.smilerGone=true;cell.state.smiler=false;
+        G.battery=Math.max(0,G.battery-8);
+        log('<span class="good">強光下，那個微笑閃爍了幾下，消失在黑暗中。</span>電池消耗 8%。');
+        refreshRoom();
+      }});
+    }else{
+      choices.push({label:'立刻後退，不要直視',action:()=>{log('你不敢再看，退回有光的走廊。');refreshRoom();}});
+      choices.push({label:'在黑暗中摸索手電筒',action:()=>{
+        if(!G.flashlight&&G.battery>0){G.flashlight=true;log('你打開了手電筒。');}
+        refreshRoom();
+      }});
+    }
+  }
+  // 儲存到 text — 直接 present
+  cell.state._text=text;
+  // 透過特殊變數傳遞
+  l0BlackoutText=text;
+}
+let l0BlackoutText='';
+
+/* ---- 紅室 ---- */
+function redLogic(cell,choices,ambient){
+  if(!cell.state.entered){
+    cell.state.entered=true;
+    G.sanity-=10;
+    log('<span class="danger">牆紙是血紅色的，你感到一陣強烈的不安。</span>');
+  }
+  cell.state._text='你掀開牆紙走了進去。\n\n這裡的一切都被染成了<span class="danger">暗沉的血紅色</span>——牆紙、地毯、甚至日光燈的光。嗡嗡聲在這裡變得更急、更尖銳。\n\n牆上用深色的東西寫著一行字，已經乾涸發黑：\n\n<span class="danger">「不要相信你在明亮房間裡看見的人。」</span>\n\n空氣凝結，你只想快點離開。';
+  l0RedText=cell.state._text;
+  choices.push({label:'仔細檢查牆上的字',action:()=>{
+    if(!cell.state.clue){cell.state.clue=true;addNote(redNote);log('你把那行字記了下來，存入檔案室。');}
+    refreshRoom();
+  }});
+}
+let l0RedText='';
+
+/* ---- 儲藏室 ---- */
+function storageLogic(cell,choices,rng,ambient){
+  if(!cell.state.looted){
+    const n=rng();
+    if(n<0.5){cell.state.loot=['almond','battery'];}
+    else if(n<0.8){cell.state.loot=['almond','note'];}
+    else{cell.state.loot=['almond','battery','note'];}
+  }
+  cell.state._text='這是一間被遺忘的儲藏室。\n\n幾個<span class="hl">生鏽的金屬架</span>靠在牆邊，上面散落著前人留下的東西——大多數已經沒用了，但也許還有能用的。\n\n'+ambient;
+  l0StorageText=cell.state._text;
+  if(!cell.state.looted){
+    choices.push({label:'搜索置物架',action:()=>{
+      const loot=cell.state.loot||[];
+      loot.forEach(it=>{
+        if(it==='almond'){G.almond++;log('找到一瓶<span class="hl">杏仁水</span>。');}
+        if(it==='battery'){G.battery=Math.min(100,G.battery+30);log('找到一節<span class="good">電池</span>，+30%。');}
+        if(it==='note'){addNote(randomNote());log('找到一張<span class="hl">紙條</span>。');}
+      });
+      cell.state.looted=true;
+      cell.itemTaken=true;
+      renderStatus();refreshRoom();
+    }});
+  }
+}
+let l0StorageText='';
+
+/* ---- 閃爍牆：Level 0 出口 ---- */
+function flickerLogic(cell,choices,ambient){
+  cell.state._text='你停下了腳步。\n\n這段走廊看起來和別處一模一樣，但其中一面牆<span class="hl">不太對勁</span>。\n\n牆紙的顏色在<span class="hl">沒有規律地閃爍</span>——亮一下，停半秒，再快速閃兩下，像一盞接觸不良的燈。你伸手靠近，牆壁表面<span class="hl">像水面一樣微微盪漾</span>。\n\n你忽然明白：這不是牆。這是一道<span class="hl">裂縫</span>。';
+  l0FlickerText=cell.state._text;
+  choices.push({label:'靠近閃爍的牆，投入其中',action:()=>{
+    log('你走向那面閃爍的牆。牆面像水一樣吞沒了你的手……');
+    transitionToLevel1();
+  }});
+  choices.push({label:'退開，這太危險了',action:()=>{log('你壓下不安，退了回去。');refreshRoom();}});
+}
+let l0FlickerText='';
+
+/* ---- 遊盪事件：Hound ---- */
+function l0wanderingEvent(cell,type,rng){
+  if(['start','flicker','blackout'].includes(type))return;
+  if(rng()<0.09){
+    cell.state.hound=true;
+    const r=hash2(G.pos.x,G.pos.y,G.runSeed+19);
+    log('走廊另一端傳來<span class="danger">急促的、四肢著地的奔跑聲</span>。某種東西正在靠近。');
+    G.sanity-=4;
+  }
+}
+
+/* ---- 進入 Level 1 ---- */
+function transitionToLevel1(){
+  G.level=1;
+  G.pos={x:0,y:0};
+  G.l1={
+    power:true,
+    blackout:false,
+    nextBlackout:rand(12,20),
+    fuses:0,
+    needFuses:3,
+    hasKeycard:false,
+    generators:0,
+    vending:0,
+    items:{}
+  };
+  G.visited={}; // 關卡切換，重置地圖
+  G.flags.l1intro=false;
+  log('<span class="cold">你穿過了裂縫。嗡嗡聲變了，腳下變成了冰冷的水泥。</span>');
+  enterRoom();
+}
+
+/* ---- 刷新當前房間 ---- */
+function refreshRoom(){
+  const x=G.pos.x,y=G.pos.y;
+  const cell=getCell(x,y);
+  if(G.level===0)buildL0Room(x,y,cell,false);
+  else buildL1Room(x,y,cell,false);
+}
+
+/* ================================================================
+   筆記系統
+   ================================================================ */
+function addNote(n){
+  if(!G.notes.some(x=>x.id===n.id))G.notes.push(n);
+}
+function addNoteMaybe(cell,kind){
+  if(kind==='start'&&!cell.state.note){
+    cell.state.note=true;
+    addNote(introNote);
+  }
+}
+const introNote={id:'intro',title:'跌落前的最後念頭',body:'如果你看到這段話，代表你也跌進來了。\n\n記住：永遠不要停下太久。找到那面會閃的牆，走進去。\n\n牆紙是黃色的，是 Level 0。再往下，是水泥地，停電，還有更糟的東西。\n\n杏仁水可以喝，能讓你清醒。手電筒要省著用。\n\n願你比我走得更遠。'};
+const redNote={id:'redwall',title:'紅室牆上的字',body:'不要相信你在明亮房間裡看見的人。\n\n它們沒有臉。它們會模仿。\n\n如果它請你參加「派對」，無論如何都不要答應。'};
+const notePool=[
+  {id:'n1',title:'半張路線圖',body:'走廊會隨機重組，但閃爍的牆總在更深處。\n\n我走了大概……我不知道，幾個小時。聽到了奔跑聲，從那以後我一直在走。\n\n不要回頭。'},
+  {id:'n2',title:'某人的日記',body:'第 17 天？也許更久。\n\n這裡的時間沒有變化，日光燈永遠亮著，我靠杏仁水維持清醒。\n\n我在柱子間看到了自己。另一個我。它對我笑。'},
+  {id:'n3',title:'潦草的警告',body:'黑暗裡有東西，只有眼睛和牙齒。\n\n用光可以趕走它，但你不能一直照著——電池會沒電。\n\n在電池用完之前，找到下一個發光的房間。'},
+  {id:'n4',title:'倖存者的字條',body:'我聽說過 M.E.G.，一個幫助迷路者的組織。\n\n但我從沒見過他們。也許在 Level 1，也許那裡還有其他人。\n\n如果你讀到這個，別找我。我聽到了音樂聲。'},
+  {id:'n5',title:'發黃的收據',body:'杏仁水（皇家牌）· 2 瓶\n\n味道像香草與生日蛋糕。\n\n奇怪的是，喝下去的時候，我短暫地想起了家。'}
+];
+function randomNote(){return pick(notePool);}
+
+
+/* ================================================================
+   LEVEL 1 — Habitable Zone（Aquila Sector）
+   ================================================================ */
+const L1_EXIT={x:8,y:8};
+const L1_OFFICE={x:3,y:-5};
+function wallV1(x,y){
+  if(x===-1&&y===0)return true;    // 起點西牆
+  if(x===0&&y===0)return false;    // 起點東開口
+  if(x===2&&y===-5)return false;   // 辦公室西開口
+  if(x===3&&y===-5)return false;   // 辦公室東開口
+  if(x===7&&y===8)return false;    // 出口西開口
+  if(x===8&&y===8)return false;    // 出口東開口
+  return hash2(x*2+1,y*3,G.runSeed+31)<0.26;
+}
+function wallH1(x,y){
+  if(x===0&&y===-1)return false;   // 起點北開口
+  if(x===0&&y===0)return true;     // 起點南牆
+  if(x===3&&y===-6)return false;   // 辦公室北開口
+  if(x===3&&y===-5)return false;   // 辦公室南開口
+  if(x===8&&y===7)return false;    // 出口北開口
+  if(x===8&&y===8)return false;    // 出口南開口
+  return hash2(x*3,y*2+1,G.runSeed+37)<0.26;
+}
+function l1exits(x,y){
+  const e={};
+  e.E=!wallV1(x,y);
+  e.W=!wallV1(x-1,y);
+  e.N=!wallH1(x,y-1);
+  e.S=!wallH1(x,y);
+  return e;
+}
+function l1type(x,y){
+  if(x===0&&y===0)return 'arrival';
+  if(x===L1_EXIT.x&&y===L1_EXIT.y)return 'exit';
+  if(x===L1_OFFICE.x&&y===L1_OFFICE.y)return 'office';
+  const t=hash2(x,y,G.runSeed+41);
+  if(t<0.12)return 'utility';
+  if(t<0.22)return 'storeroom';
+  if(t<0.30)return 'garage';
+  const e=l1exits(x,y);
+  const n=Object.values(e).filter(Boolean).length;
+  if(n>=3)return 'junction';
+  if(n<=1)return 'deadend';
+  return 'hallway';
+}
+function buildL1Room(x,y,cell,first){
+  const type=l1type(x,y);
+  const exits=l1exits(x,y);
+  const rng=cellRng(x,y,G.runSeed+43,7);
+  let title='',text='',choices=[],dark=false;
+  const l1=G.l1;
+
+  // 停電狀態
+  l1.nextBlackout-=1;
+  if(l1.power&&l1.nextBlackout<=0){
+    l1.power=false;l1.blackoutTimer=rand(6,10);
+    log('<span class="cold">燈光閃了幾下，全部熄滅。停電了。</span>');
+    flashScreen();
+  }
+  if(!l1.power){
+    l1.blackoutTimer-=1;
+    if(l1.blackoutTimer<=0){
+      l1.power=true;l1.nextBlackout=rand(10,18);
+      log('<span class="good">日光燈重新亮起，電力恢復。</span>');
+    }
+  }
+  const blackout=!l1.power;
+
+  const concrete=[
+    '裸露的水泥柱在霧氣中若隱若現，頭頂是交錯的金屬管線。',
+    '混凝土地面粗糙冰涼，牆角有一片深色的水漬。',
+    '永久不散的薄霧讓遠處的一切都化成模糊的灰色。',
+    '某處的水管發出規律的滴聲，在空曠中迴盪。',
+    '牆上的白色油漆剝落，露出底下灰色的水泥。'
+  ];
+  const amb=concrete[Math.floor(rng()*concrete.length)];
+
+  if(type==='arrival'){
+    title='Level 1 · Aquila Sector';
+    text='你從閃爍的牆中跌出，滾落在<span class="cold">冰冷的水泥地</span>上。\n\n這裡不再是黃色的牆紙與地毯——你置身於一個<span class="cold">巨大的混凝土空間</span>，像一座廢棄的停車場或倉庫。薄霧瀰漫，管線在頭頂交錯，日光燈稀疏而昏暗。\n\n空氣比 Level 0 更冷。你隱約聽見<span class="danger">更深處傳來的聲音</span>——不止一種。\n\n'+amb+'\n\n<span class="hl">目標：找到 3 個保險絲修復總電源，並找到鑰匙卡，開啟出口。</span>';
+  }
+  else if(type==='hallway'){
+    title='Level 1 · 走 廊';
+    text='一條混凝土走廊。'+amb+'\n\n日光燈間隔很遠，明暗交替。你經過一排<span class="cold">生鏽的鐵門</span>，大多數都被焊死。';
+    l1Entity(cell,first,type,rng,0.14);
+  }
+  else if(type==='garage'){
+    title='Level 1 · 停 車 場';
+    text='你走進停車區。\n\n幾輛<span class="cold">被遺棄的車輛</span>停在車位上，車身積滿灰塵，玻璃破碎。你可以繞過它們，或檢查車內。\n\n'+amb;
+    garageChoices(cell,choices,rng);
+    l1Entity(cell,first,type,rng,0.12);
+  }
+  else if(type==='junction'){
+    title='Level 1 · 交 叉 口';
+    text='空間在這裡岔開。'+amb+'\n\n水泥柱和停車位把視線切割成多個方向。牆上有一個褪色的<span class="cold">區域指示牌</span>，但箭頭已經看不清。';
+    l1Entity(cell,first,type,rng,0.16);
+  }
+  else if(type==='deadend'){
+    title='Level 1 · 死 巷';
+    text='一堵水泥牆擋住了去路。牆邊堆著幾個<span class="cold">破損的木箱</span>。';
+    deadendL1Choices(cell,choices,rng);
+  }
+  else if(type==='utility'){
+    title='Level 1 · 設 備 房';
+    text=utilityLogic(cell,choices,rng,amb);
+  }
+  else if(type==='storeroom'){
+    title='Level 1 · 倉 庫';
+    text=storeroomLogic(cell,choices,rng,amb);
+  }
+  else if(type==='office'){
+    title='Level 1 · 保 安 亭';
+    text=officeLogic(cell,choices,amb);
+  }
+  else if(type==='exit'){
+    title='Level 1 · 出 口';
+    text=exitLogic(cell,choices,amb);
+  }
+
+  // 停電：黑暗 + Smiler
+  if(blackout){
+    dark=true;
+    if(!cell.state.smilerWarned){
+      cell.state.smilerWarned=true;
+      if(hash2(x,y,G.runSeed+47)<0.6){
+        G.sanity-=10;G.hp-=4;
+        log('停電的黑暗中，你看見<span class="danger">一雙眼睛和一道微笑</span>在柱後閃爍。理智被啃噬。');
+      }
+    }
+    if(!text.includes('手電筒')){
+      text+='\n\n<span class="danger">當前停電，四周一片漆黑。'+(G.flashlight?'手電筒的光在黑暗中格外明亮。':'你幾乎看不見任何東西。')+'</span>';
+    }
+  }
+
+  // 實體選項
+  l1EntityChoices(cell,choices);
+
+  // 進度提示（在普通房間）
+  if(['hallway','junction','garage'].includes(type)){
+    const fuse=G.l1.fuses,kc=G.l1.hasKeycard;
+    if(fuse<3||!kc){
+      text+='\n\n<span class="cold">進度：保險絲 '+fuse+'/3，鑰匙卡 '+(kc?'已取得':'未找到')+'。</span>';
+    }
+  }
+
+  present({title,text,type,exits,choices,dark});
+}
+
+/* ---- 停車場 ---- */
+function garageChoices(cell,choices,rng){
+  if(!cell.state.carChecked){
+    choices.push({label:'檢查車輛內部',action:()=>{
+      cell.state.carChecked=true;
+      const r=rng();
+      if(r<0.3){G.almond++;log('車內有一瓶遺留的<span class="hl">杏仁水</span>。');}
+      else if(r<0.5){G.battery=Math.min(100,G.battery+25);log('儀表台抽屜有<span class="good">電池</span>，+25%。');}
+      else{log('車裡只有碎裂的玻璃和灰塵。');}
+      refreshRoom();
+    }});
+  }
+}
+/* ---- 死巷木箱 ---- */
+function deadendL1Choices(cell,choices,rng){
+  if(!cell.state.boxChecked){
+    choices.push({label:'翻找木箱',action:()=>{
+      cell.state.boxChecked=true;
+      const r=rng();
+      if(r<0.4){G.almond++;log('木箱中有<span class="hl">杏仁水</span>。');}
+      else if(r<0.7){G.battery=Math.min(100,G.battery+20);log('找到<span class="good">電池</span>，+20%。');}
+      else{log('木箱全是腐爛的填充物。');}
+      refreshRoom();
+    }});
+  }
+}
+/* ---- 設備房：保險絲 ---- */
+function utilityLogic(cell,choices,rng,amb){
+  let text;
+  if(!cell.state.fuseTaken){
+    text='設備房裡是一排<span class="cold">配電櫃</span>，上面的指示燈大多熄滅。'+amb+'\n\n其中一個櫃子裡有一個<span class="hl">完好的保險絲</span>。這正是修復總電源需要的東西。';
+    choices.push({label:'取下保險絲',action:()=>{
+      cell.state.fuseTaken=true;
+      G.l1.fuses++;
+      log('取得<span class="hl">保險絲</span>（'+G.l1.fuses+'/3）。');
+      renderStatus();refreshRoom();
+    }});
+  }else{
+    text='設備房的配電櫃已被你取空。'+amb;
+  }
+  // 臨時恢復電力
+  if(!G.l1.power){
+    choices.push({label:'操作臨時開關恢復電力',action:()=>{
+      G.l1.power=true;G.l1.nextBlackout=rand(10,18);
+      log('<span class="good">你推上開關，燈光重新亮起。</span>');
+      refreshRoom();
+    }});
+  }
+  return text;
+}
+/* ---- 倉庫 ---- */
+function storeroomLogic(cell,choices,rng,amb){
+  let text;
+  if(!cell.state.looted){
+    text='一間堆滿<span class="cold">補給板條箱</span>的倉庫。'+amb+'\n\n箱子上印著模糊的標記，有些已經被前人拆開。';
+    choices.push({label:'搜索板條箱',action:()=>{
+      cell.state.looted=true;
+      const r=rng();
+      if(r<0.4){G.almond+=2;log('找到 2 瓶<span class="hl">杏仁水</span>。');}
+      else if(r<0.7){G.almond++;G.battery=Math.min(100,G.battery+20);log('找到<span class="hl">杏仁水</span>與<span class="good">電池</span>。');}
+      else{G.battery=Math.min(100,G.battery+30);log('找到<span class="good">電池</span>，+30%。');}
+      renderStatus();refreshRoom();
+    }});
+  }else{
+    text='倉庫已被你搜索一空。'+amb;
+  }
+  return text;
+}
+/* ---- 保安亭：鑰匙卡 ---- */
+function officeLogic(cell,choices,amb){
+  let text;
+  if(!G.l1.hasKeycard){
+    text='一間小小的保安亭。桌上有一台<span class="cold">早已斷電的監控螢幕</span>，牆上掛著褪色的巡邏記錄。\n\n抽屜裡有一張<span class="hl">門禁鑰匙卡</span>。';
+    choices.push({label:'取走鑰匙卡',action:()=>{
+      G.l1.hasKeycard=true;
+      log('取得<span class="hl">門禁鑰匙卡</span>。');
+      renderStatus();refreshRoom();
+    }});
+  }else{
+    text='保安亭已沒有什麼可用的。'+amb+'\n\n監控螢幕黑著，但你總覺得<span class="danger">其中一格畫面裡有什麼東西在動</span>。';
+  }
+  return text;
+}
+/* ---- 出口 ---- */
+function exitLogic(cell,choices,amb){
+  let text;
+  const f=G.l1.fuses,kc=G.l1.hasKeycard;
+  const ready=f>=3&&kc;
+  if(!ready){
+    text='你找到了一面<span class="cold">巨大的捲簾門</span>，緊閉著，門邊的讀卡機暗著，旁邊的總配電箱也沒有電。\n\n門上方有一個鏽蝕的標誌，勉強能認出「EXIT」。\n\n<span class="danger">需要先修復總電源（保險絲 '+f+'/3）並取得鑰匙卡。</span>';
+  }else{
+    text='你再次站在捲簾門前。\n\n這一次，你已經把<span class="hl">3 個保險絲</span>裝入總配電箱，燈板亮起，讀卡機發出穩定的綠光。\n\n你握著<span class="hl">鑰匙卡</span>。門的另一端，你聽不見任何聲音——那可能是離開的路，也可能是更深的地方。\n\n但你別無選擇。';
+    choices.push({label:'刷鑰匙卡，開啟捲簾門',action:()=>{
+      log('讀卡機「嗶」地響起，捲簾門轟隆隆地升起……');
+      doWin('你穿過升起的捲簾門，身後的燈光與嗡聲逐漸消失。你不知道自己將要面對什麼——但這一次，你是主動走向前方的。\n\n你逃出了 Level 1。後室的更深處，仍在等待。');
+    }});
+  }
+  return text;
+}
+
+/* ---- 實體 ---- */
+function l1Entity(cell,first,type,rng,chance){
+  if(!first)return;
+  if(rng()<chance){
+    const types=['hound','duller','skinstealer','deathmoth'];
+    // 依機率
+    const r=rng();
+    let t;
+    if(r<0.3)t='hound';
+    else if(r<0.55)t='duller';
+    else if(r<0.8)t='skinstealer';
+    else t='deathmoth';
+    cell.state.entity=t;
+    announceEntity(t);
+  }
+}
+function announceEntity(t){
+  if(t==='hound'){log('你聽見<span class="danger">低沉的嘶吼與爪子刮地的聲音</span>，某種東西鎖定了你。');G.sanity-=4;}
+  if(t==='duller'){log('轉角處站著一團<span class="cold">渾濁的灰色人形</span>，動作遲緩。');}
+  if(t==='skinstealer'){log('你看見一個<span class="cold">蒼白、沒有臉的人體模型</span>靜立著。它身上像披著什麼……皮？');}
+  if(t==='deathmoth'){log('空氣中傳來<span class="danger">密集的翅膀振動聲</span>，幾隻碩大的飛蛾從霧中飛出。');}
+}
+function l1EntityChoices(cell,choices){
+  const t=cell.state.entity;
+  if(!t||cell.state.entityResolved)return;
+  if(t==='hound'){
+    choices.unshift({label:'立刻轉身逃跑',action:()=>{
+      if(hash2(G.pos.x,G.pos.y,G.runSeed+53)<0.55){cell.state.entityResolved=true;log('<span class="good">你繞過柱子甩開了牠，嘶吼聲漸遠。</span>');}
+      else{G.hp-=14;cell.state.entityResolved=true;log('<span class="danger">牠追上來咬了一口，生命 -14。</span>');}
+      refreshRoom();
+    }});
+    choices.push({label:'用手電筒的光嚇阻',action:()=>{
+      if(G.flashlight){cell.state.entityResolved=true;G.battery=Math.max(0,G.battery-6);log('<span class="good">強光讓牠後退，你趁機離開。</span>電池 -6%。');}
+      else{log('你沒有開手電筒。');}
+      refreshRoom();
+    }});
+  }
+  if(t==='duller'){
+    if(!cell.state.dullerCount){
+      // 第一次擦過無害
+      choices.push({label:'小心繞過它',action:()=>{
+        cell.state.dullerCount=1;cell.state.entityResolved=true;
+        log('那團灰色東西<span class="cold">緩緩擦過你身旁，沒有攻擊</span>。它似乎沒有惡意。');
+        refreshRoom();
+      }});
+    }
+  }
+  if(t==='skinstealer'){
+    choices.unshift({label:'緊盯著它，慢慢後退',action:()=>{
+      cell.state.entityResolved=true;
+      log('<span class="good">你一直看著它，它保持靜止。你慢慢退開了。</span>理智 -5。');G.sanity-=5;
+      refreshRoom();
+    }});
+    choices.push({label:'轉身快跑（不要回頭）',action:()=>{
+      if(hash2(G.pos.x,G.pos.y,G.runSeed+59)<0.5){cell.state.entityResolved=true;log('<span class="good">你拼命逃跑，沒有回頭。</span>');}
+      else{G.hp-=20;cell.state.entityResolved=true;log('<span class="danger">你轉身的瞬間它撲了上來，生命 -20。</span>');}
+      refreshRoom();
+    }});
+  }
+  if(t==='deathmoth'){
+    choices.push({label:'蹲下，用手臂護住臉',action:()=>{
+      if(hash2(G.pos.x,G.pos.y,G.runSeed+61)<0.6){cell.state.entityResolved=true;log('<span class="good">飛蛾盤旋幾圈後飛走了。</span>');}
+      else{G.hp-=8;cell.state.entityResolved=true;log('<span class="danger">飛蛾撲上來，腐蝕性的體液灼傷了你，生命 -8。</span>');}
+      refreshRoom();
+    }});
+  }
+}
+/* ---- 停電閃屏 ---- */
+function flashScreen(){
+  const el=$('powerFlash');
+  el.style.transition='none';el.style.opacity='0.5';
+  setTimeout(()=>{el.style.transition='opacity .4s';el.style.opacity='0';},60);
+}
+
+/* ================================================================
+   通用動作
+   ================================================================ */
+/* ================================================================
+   通用動作
+   ================================================================ */
+function toggleFlash(){
+  if(G.flashlight){
+    G.flashlight=false;log('你關閉了手電筒。');
+  }else{
+    if(G.battery<=0){log('手電筒沒有電。');return;}
+    G.flashlight=true;log('手電筒亮起，光在黑暗中切出一道錐形。');
+  }
+  renderStatus();
+}
+function drinkAlmond(){
+  if(G.almond<=0){log('你沒有杏仁水了。');return;}
+  G.almond--;
+  G.sanity=Math.min(100,G.sanity+30);
+  G.hp=Math.min(100,G.hp+8);
+  log('<span class="good">你喝下杏仁水。味道像香草與生日蛋糕，理智回復，身體也溫暖了些。</span>');
+  renderStatus();
+}
+function openInv(){
+  const body=$('invBody');
+  let h='';
+  // 杏仁水
+  h+='<div class="item-line" onclick="drinkAlmond();openInv();"><span class="nm">杏仁水（皇家牌） x'+G.almond+'</span><span class="ds">飲用：理智 +25、生命 +8。</span></div>';
+  // 手電筒
+  h+='<div class="item-line" onclick="toggleFlash();openInv();"><span class="nm">手電筒</span><span class="ds">'+(G.flashlight?'開啟中（電池 '+Math.round(G.battery)+'%）':'關閉（電池 '+Math.round(G.battery)+'%）')+'</span></div>';
+  // 鑰匙卡
+  if(G.l1&&G.l1.hasKeycard)h+='<div class="item-line"><span class="nm">門禁鑰匙卡</span><span class="ds">用於開啟出口捲簾門。</span></div>';
+  body.innerHTML=h;
+  $('invModal').classList.add('show');
+}
+function openNotes(){
+  const body=$('notesBody');
+  if(!G.notes.length){body.innerHTML='<div class="empty">檔案室是空的。<br>在後室中尋找紙條與錄音。</div>';}
+  else{
+    body.innerHTML=G.notes.map(n=>
+      '<div class="note-line"><span class="t">'+n.title+'</span>'+n.body+'</div>'
+    ).join('');
+  }
+  $('notesModal').classList.add('show');
+}
+function rest(){
+  // 休息：回復少量體力/生命，但消耗時間，理智下降，可能遇襲
+  if(!currentRoom)return;
+  G.time+=3;
+  const r=Math.random();
+  if(currentRoom.dark&&!G.flashlight){
+    G.sanity-=6;
+    log('<span class="danger">你在黑暗中休息，不安讓你無法放鬆，理智 -6。</span>');
+  }else if(r<0.15){
+    G.hp-=10;
+    log('<span class="danger">你剛閉眼，就被什麼聲音驚醒——你感到一陣寒意，生命 -10。</span>');
+  }else{
+    G.hp=Math.min(100,G.hp+10);
+    G.sanity=Math.min(100,G.sanity+4);
+    log('<span class="good">你靠牆休息了片刻，生命 +10、理智 +4。</span>');
+  }
+  if(G.flashlight)G.battery=Math.max(0,G.battery-2);
+  checkDeath();
+  refreshRoom();
+}
+function help(){
+  addNote({id:'help',title:'生 存 指 南',body:'【移動】點擊方向按鈕（北/南/東/西）。\n\n【手電筒】黑暗區域需要，會消耗電池。點擊下方「手電筒」或背包開關。\n\n【杏仁水】飲用回復理智與生命（背包中點擊）。\n\n【休息】回復生命，但會消耗時間，黑暗中不安全。\n\n【Level 0】找到閃爍的牆，走進它。\n\n【Level 1】收集 3 個保險絲、找到鑰匙卡，開啟出口。\n\n理智歸零會讓你永遠留在這裡。'});
+  openNotes();
+}
+let hallucinationCooldown=0;
+function hallucinate(){
+  if(hallucinationCooldown>0){hallucinationCooldown--;return;}
+  hallucinationCooldown=4;
+  const visions=[
+    '走廊盡頭<span class="danger">站著一個人</span>。你眨眼，它消失了。',
+    '你聽見身後有人<span class="danger">叫你的名字</span>。回頭，只有發黃的牆紙。',
+    '牆紙的紋路開始<span class="danger">緩緩蠕動</span>，像皮膚下的血管。',
+    '鏡面般的積水中，你的倒影<span class="danger">對你笑了一下</span>。',
+    '日光燈的嗡聲忽然變成<span class="danger">許多人的耳語</span>，又很快散去。'
+  ];
+  log('<span class="danger">'+pick(visions)+'</span>');
+  G.sanity-=1;
+}
+
+/* ================================================================
+   環境音（Web Audio，使用者手勢後啟動）
+   ================================================================ */
+let audioCtx=null,buzzNodes=null;
+function initAudio(){
+  if(audioCtx)return;
+  try{
+    audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+    // 低頻嗡聲
+    const osc=audioCtx.createOscillator();
+    osc.type='sine';osc.frequency.value=60;
+    const osc2=audioCtx.createOscillator();
+    osc2.type='sine';osc2.frequency.value=120;
+    const gain=audioCtx.createGain();
+    gain.gain.value=0.04;
+    const gain2=audioCtx.createGain();
+    gain2.gain.value=0.015;
+    osc.connect(gain);gain.connect(audioCtx.destination);
+    osc2.connect(gain2);gain2.connect(audioCtx.destination);
+    osc.start();osc2.start();
+    // 120Hz 微微漂移
+    setInterval(()=>{if(audioCtx)osc2.frequency.setValueAtTime(118+Math.random()*4,audioCtx.currentTime);},3000);
+    buzzNodes={gain};
+  }catch(e){}
+}
+document.addEventListener('click',initAudio,{once:true});
+document.addEventListener('touchstart',initAudio,{once:true});
+
+/* ================================================================
+   存檔
+   ================================================================ */
+function saveGame(){
+  try{localStorage.setItem(SAVE_KEY,JSON.stringify(G));}catch(e){}
+}
+function loadGame(){
+  try{
+    const d=localStorage.getItem(SAVE_KEY);
+    if(!d)return null;
+    return JSON.parse(d);
+  }catch(e){return null;}
+}
+function hasSave(){
+  try{return !!localStorage.getItem(SAVE_KEY);}catch(e){return false;}
+}
+
+/* ================================================================
+   開始 / 結束
+   ================================================================ */
+function startGame(fromSave){
+  if(fromSave){const s=loadGame();if(s){G=s;}}
+  if(!G||!fromSave)newGame();
+  $('titleScreen').classList.add('hidden');
+  $('deathScreen').classList.add('hidden');
+  $('winScreen').classList.add('hidden');
+  G.over=false;
+  enterRoom();
+  saveGame();
+}
+function checkDeath(){
+  if(G.sanity<0)G.sanity=0;
+  if(G.hp<=0&&!G.over){G.hp=0;G.over=true;doDeath('你傷重不治，倒在了冰冷潮濕的地面上。嗡嗡聲依然持續。');}
+  if(G.sanity<=0&&!G.over){G.over=true;doDeath('你的理智徹底崩潰。你永遠地留在了這裡，對著發黃的牆壁低語。');}
+}
+function doDeath(text){
+  saveGame();
+  $('deathText').textContent=text;
+  $('deathScreen').classList.remove('hidden');
+}
+function doWin(text){
+  G.over=true;saveGame();
+  $('winText').textContent=text;
+  $('winScreen').classList.remove('hidden');
+}
+
+/* ================================================================
+   綁定
+   ================================================================ */
+$('startBtn').onclick=()=>startGame(false);
+$('continueBtn').onclick=()=>startGame(true);
+$('retryBtn').onclick=()=>{try{localStorage.removeItem(SAVE_KEY);}catch(e){}startGame(false);};
+$('deathMenuBtn').onclick=()=>{$('deathScreen').classList.add('hidden');$('titleScreen').classList.remove('hidden');refreshTitle();};
+$('winMenuBtn').onclick=()=>{$('winScreen').classList.add('hidden');$('titleScreen').classList.remove('hidden');refreshTitle();};
+$('invClose').onclick=()=>$('invModal').classList.remove('show');
+$('notesClose').onclick=()=>$('notesModal').classList.remove('show');
+function refreshTitle(){if(hasSave())$('continueBtn').style.display='inline-block';else $('continueBtn').style.display='none';}
+refreshTitle();
+// 自動存檔
+setInterval(()=>{if(G&&!G.over)saveGame();},5000);
+
+</script>
+</body>
+</html>
