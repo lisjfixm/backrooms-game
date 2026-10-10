@@ -181,6 +181,30 @@ body.blackout #scene{opacity:.85;}
 }
 #miniMapCanvas{display:block;image-rendering:pixelated;background:#070604;}
 #miniMapWrap .mm-hint{font-size:8px;color:var(--amber-faint);text-align:center;margin-top:2px;letter-spacing:1px;}
+
+/* ===== GM 系統 ===== */
+#gmPw{position:fixed;inset:0;z-index:800;background:rgba(0,0,0,.88);display:none;align-items:center;justify-content:center;padding:20px;}
+#gmPw.show{display:flex;}
+.gm-pw-card{background:var(--panel);border:1px solid var(--amber-dim);padding:22px;max-width:300px;width:100%;text-align:center;}
+.gm-pw-card h4{font-size:11px;letter-spacing:4px;color:var(--amber);margin-bottom:14px;font-weight:normal;}
+.gm-pw-card input{width:100%;background:#0a0906;border:1px solid var(--amber-faint);color:var(--text);padding:9px;text-align:center;font-family:var(--mono);font-size:13px;margin-bottom:10px;letter-spacing:2px;}
+.gm-pw-card input:focus{outline:none;border-color:var(--amber);}
+.gm-pw-card button{width:100%;background:transparent;border:1px solid var(--amber-dim);color:var(--amber);padding:9px;cursor:pointer;font-family:var(--mono);letter-spacing:3px;font-size:12px;}
+.gm-pw-card .gm-err{color:var(--red);font-size:11px;margin-top:8px;min-height:14px;}
+#gmBtn{position:fixed;bottom:8px;right:8px;z-index:700;background:var(--panel);border:1px solid var(--amber-dim);color:var(--amber);font-size:10px;letter-spacing:2px;padding:5px 9px;cursor:pointer;display:none;font-family:var(--mono);}
+#gmBtn.show{display:block;}
+#gmPanel{position:fixed;top:0;right:-320px;width:300px;max-width:88vw;height:100%;height:100dvh;background:rgba(10,9,6,.98);border-left:1px solid var(--amber-dim);z-index:750;transition:right .25s;display:flex;flex-direction:column;}
+#gmPanel.open{right:0;}
+.gm-head{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid var(--amber-faint);}
+.gm-head span{font-size:11px;letter-spacing:3px;color:var(--amber);}
+.gm-head button{background:none;border:1px solid var(--amber-faint);color:var(--text);width:26px;height:26px;cursor:pointer;font-size:14px;line-height:1;}
+.gm-body{flex:1;overflow-y:auto;padding:12px;-webkit-overflow-scrolling:touch;}
+.gm-group{margin-bottom:14px;}
+.gm-group h5{font-size:10px;letter-spacing:2px;color:var(--amber-dim);margin-bottom:7px;border-bottom:1px solid var(--amber-faint);padding-bottom:4px;font-weight:normal;}
+.gm-a{display:block;width:100%;text-align:left;background:#0a0906;border:1px solid var(--amber-faint);color:var(--text);padding:8px 10px;margin-bottom:5px;cursor:pointer;font-family:var(--mono);font-size:12px;letter-spacing:1px;}
+.gm-a:active{border-color:var(--amber);color:var(--amber);}
+.gm-a.on{background:var(--amber);color:var(--bg);border-color:var(--amber);}
+.gm-note{font-size:10px;color:var(--amber-dim);line-height:1.6;margin-top:4px;}
 @media(min-width:600px){
   #scene{padding:22px 30px 10px;}
   .scene-text{font-size:15px;}
@@ -209,7 +233,7 @@ body.blackout #scene{opacity:.85;}
   </div>
 </div>
 <div class="overlay" id="titleScreen">
-  <h1>BACKROOMS</h1>
+  <h1 id="titleH1">BACKROOMS</h1>
   <h2>文 字 探 險</h2>
   <p>你從現實的縫隙中跌落，睜開眼——<br>嗡嗡作響的日光燈、發黃潮濕的牆紙、漫無邊際的走廊。<br>這裡沒有出口，只有無盡的等待。</p>
   <button class="big-btn" id="startBtn">跌 入 後 室</button>
@@ -246,6 +270,43 @@ body.blackout #scene{opacity:.85;}
     <div class="map-legend" id="mapLegend"></div>
   </div>
   <button class="close-btn" id="mapClose">關 閉</button>
+</div>
+
+<!-- GM 密碼彈窗 -->
+<div id="gmPw">
+  <div class="gm-pw-card">
+    <h4>GM ACCESS</h4>
+    <input type="password" id="gmPwInput" placeholder="密碼" autocomplete="off">
+    <button id="gmPwOk">確 認</button>
+    <div class="gm-err" id="gmPwErr"></div>
+  </div>
+</div>
+<button id="gmBtn">GM</button>
+<!-- GM 面板 -->
+<div id="gmPanel">
+  <div class="gm-head">
+    <span>GM CONSOLE</span>
+    <button id="gmClose">×</button>
+  </div>
+  <div class="gm-body">
+    <div class="gm-group">
+      <h5>傳送</h5>
+      <button class="gm-a" id="gmTpFlicker">→ 最近的閃爍牆（Level 0 出口）</button>
+      <button class="gm-a" id="gmTpOffice">→ 鑰匙卡（Level 1 保安亭）</button>
+      <button class="gm-a" id="gmTpFuse">→ 最近的設備房（保險絲）</button>
+      <button class="gm-a" id="gmTpExit">→ 出口（Level 1 捲簾門）</button>
+    </div>
+    <div class="gm-group">
+      <h5>切換</h5>
+      <button class="gm-a" id="gmInv">無敵模式：關</button>
+      <button class="gm-a" id="gmReveal">顯示全部地圖</button>
+    </div>
+    <div class="gm-group">
+      <h5>狀態</h5>
+      <button class="gm-a" id="gmRefill">補滿 HP / 理智 / 電池 / 杏仁水</button>
+      <div class="gm-note" id="gmNote">傳送會直接移動到目標房間並進入。無敵下不會被實體殺死。</div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -543,10 +604,14 @@ function l0type(x,y){
   const dist=Math.abs(x)+Math.abs(y);
   const t=hash2(x,y,G.runSeed+3);
   if(dist>=7&&t>0.965)return 'flicker';
+  if(dist<=3)return 'corridor'; /* 起點附近安全：不會是紅室或熄燈區 */
+  /* 大區域化：以 3x3 粗塊為單位，整塊連續配置成熄燈區或紅室 */
+  const bx=Math.floor(x/3), by=Math.floor(y/3);
+  const bt=hash2(bx,by,G.runSeed+7);
+  if(bt<0.14)return 'blackout';
+  if(bt<0.20)return 'red';
   if(t<0.10)return 'pillar';
   if(t<0.17)return 'flooded';
-  if(t<0.24)return 'blackout';
-  if(t<0.29)return 'red';
   if(t<0.38)return 'storage';
   const e=l0exits(x,y);
   const n=Object.values(e).filter(Boolean).length;
@@ -1431,6 +1496,7 @@ function startGame(fromSave){
   saveGame();
 }
 function checkDeath(){
+  if(window.G&&G.invincible){G.hp=Math.max(G.hp,1);G.sanity=Math.max(G.sanity,1);return;}
   if(G.sanity<0)G.sanity=0;
   if(G.hp<=0&&!G.over){G.hp=0;G.over=true;doDeath('你傷重不治，倒在了冰冷潮濕的地面上。嗡嗡聲依然持續。');}
   if(G.sanity<=0&&!G.over){G.over=true;doDeath('你的理智徹底崩潰。你永遠地留在了這裡，對著發黃的牆壁低語。');}
@@ -1461,6 +1527,81 @@ function refreshTitle(){if(hasSave())$('continueBtn').style.display='inline-bloc
 refreshTitle();
 setInterval(()=>{if(G&&!G.over)saveGame();},5000);
 setInterval(()=>{if(G&&!G.over)renderMiniMap();},500); /* 小地圖玩家位置閃爍 */
+
+/* ===== GM 系統（隱藏：標題連點 5 次，密碼 gm2024） ===== */
+var GM_PASSWORD='gm2024';
+(function(){
+  try{if(localStorage.getItem('gm_unlocked')==='1'){$('gmBtn').classList.add('show');}}catch(e){}
+  var taps=0,last=0;
+  $('titleH1').addEventListener('click',function(){
+    var now=Date.now();
+    if(now-last>600)taps=0;
+    taps++;last=now;
+    if(taps>=5){taps=0;$('gmPw').classList.add('show');$('gmPwInput').value='';$('gmPwErr').textContent='';setTimeout(function(){$('gmPwInput').focus();},50);}
+  });
+  $('gmPwOk').onclick=function(){
+    if($('gmPwInput').value===GM_PASSWORD){
+      $('gmPw').classList.remove('show');
+      try{localStorage.setItem('gm_unlocked','1');}catch(e){}
+      $('gmBtn').classList.add('show');
+    }else{$('gmPwErr').textContent='密碼錯誤';$('gmPwInput').value='';}
+  };
+  $('gmPwInput').addEventListener('keydown',function(e){if(e.key==='Enter')$('gmPwOk').click();});
+  $('gmBtn').onclick=function(){$('gmPanel').classList.add('open');};
+  $('gmClose').onclick=function(){$('gmPanel').classList.remove('open');};
+
+  function nearest(typeFn,target){
+    var best=null,bd=1e9;
+    for(var x=-25;x<=25;x++)for(var y=-25;y<=25;y++){
+      if(typeFn(x,y)===target){
+        var d=Math.abs(x-G.pos.x)+Math.abs(y-G.pos.y);
+        if(d<bd){bd=d;best={x:x,y:y};}
+      }
+    }
+    return best;
+  }
+  function gotoTarget(x,y){
+    G.pos={x:x,y:y};
+    enterRoom();
+    refreshRoom();
+    renderStatus();
+  }
+  function ensureL1(){if(G.level===0)transitionToLevel1();}
+  $('gmTpFlicker').onclick=function(){
+    if(G.level!==0){$('gmNote').textContent='需在 Level 0 使用';return;}
+    var p=nearest(l0type,'flicker');
+    if(!p){$('gmNote').textContent='找不到閃爍牆（需距離≥7）';return;}
+    gotoTarget(p.x,p.y);
+    $('gmNote').textContent='已傳送到 ('+p.x+','+p.y+')';
+  };
+  $('gmTpOffice').onclick=function(){ensureL1();gotoTarget(L1_OFFICE.x,L1_OFFICE.y);$('gmNote').textContent='已傳送到鑰匙卡（保安亭）';};
+  $('gmTpFuse').onclick=function(){
+    ensureL1();
+    var p=nearest(l1type,'utility');
+    if(!p){$('gmNote').textContent='找不到設備房';return;}
+    gotoTarget(p.x,p.y);
+    $('gmNote').textContent='已傳送到最近設備房 ('+p.x+','+p.y+')';
+  };
+  $('gmTpExit').onclick=function(){ensureL1();gotoTarget(L1_EXIT.x,L1_EXIT.y);$('gmNote').textContent='已傳送到出口';};
+  $('gmInv').onclick=function(){
+    G.invincible=!G.invincible;
+    this.textContent='無敵模式：'+(G.invincible?'開':'關');
+    this.classList.toggle('on',G.invincible);
+  };
+  $('gmReveal').onclick=function(){
+    for(var x=-25;x<=25;x++)for(var y=-25;y<=25;y++){
+      var k=x+','+y;
+      if(!G.visited[k])G.visited[k]={entered:true,searched:true,itemTaken:false,state:{},choices:{}};
+    }
+    renderMiniMap();
+    $('gmNote').textContent='已顯示 ±25 範圍地圖';
+  };
+  $('gmRefill').onclick=function(){
+    G.hp=100;G.sanity=100;G.battery=100;G.almond=5;
+    renderStatus();
+    $('gmNote').textContent='狀態已補滿';
+  };
+})();
 </script>
 </body>
 </html>
