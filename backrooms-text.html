@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>BACKROOMS 文字探險</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230a0a08'/%3E%3Ctext x='16' y='22' font-size='18' text-anchor='middle' fill='%23d8a93a' font-family='monospace'%3E%3E_%3C/text%3E%3C/svg%3E">
 <style>
@@ -162,6 +162,14 @@ body::after{
 .empty{color:var(--amber-dim);text-align:center;padding:30px 0;font-size:12px;}
 body.blackout #scene{opacity:.85;}
 .power-flash{position:fixed;inset:0;background:rgba(232,181,60,0.08);pointer-events:none;z-index:40;opacity:0;}
+#hurtFlash{position:fixed;inset:0;pointer-events:none;z-index:42;opacity:0;background:radial-gradient(ellipse at center,rgba(217,106,74,0.0) 40%,rgba(217,60,40,0.55) 100%);transition:opacity .2s ease-out;}
+body.low-san .scene-text{animation:lowSanFlicker 2.4s infinite;}
+@keyframes lowSanFlicker{
+  0%,92%,100%{text-shadow:none;}
+  93%{text-shadow:1px 0 #f33,-1px 0 #3ff;}
+  95%{text-shadow:-1px 0 #f33,1px 0 #3ff;}
+  97%{text-shadow:2px 0 #f33,-2px 0 #3ff;}
+}
 .map-count{color:var(--amber-dim);font-size:11px;margin-bottom:8px;letter-spacing:1px;}
 #mapCanvas{background:#070604;border:1px solid var(--amber-faint);image-rendering:pixelated;max-width:100%;}
 .map-legend{margin-top:12px;font-size:11px;color:var(--amber-dim);line-height:2;text-align:left;display:inline-block;}
@@ -214,6 +222,7 @@ body.blackout #scene{opacity:.85;}
 </head>
 <body>
 <div class="power-flash" id="powerFlash"></div>
+<div id="hurtFlash"></div>
 <div id="miniMapWrap" title="點擊放大查看大地圖">
   <div class="mm-title">MAP</div>
   <canvas id="miniMapCanvas" width="168" height="168"></canvas>
@@ -449,6 +458,7 @@ function renderStatus(){
   const lvl=G.level===0?'LEVEL 0 · THRESHOLD':'LEVEL 1 · HABITABLE ZONE';
   const hpC=clamp(G.hp,0,100),sanC=clamp(G.sanity,0,100),batC=clamp(G.battery,0,100);
   const fs=G.flashlight?'<span class="good">手電筒[ON]</span>':'<span style="color:var(--amber-dim)">手電筒[OFF]</span>';
+  try{document.body.classList.toggle('low-san',G.sanity<25);}catch(e){}
   $('statusbar').innerHTML=
     '<div class="stat-row"><span class="loc-tag">'+lvl+'</span>'+
     '<span class="stat">生命 <span class="bar"><i class="hp" style="width:'+hpC+'%"></i></span></span>'+
@@ -456,6 +466,7 @@ function renderStatus(){
     '<span class="stat">電池 <span class="bar"><i class="bat" style="width:'+batC+'%"></i></span></span>'+
     '<span class="stat">'+fs+'</span>'+
     '<span class="stat">杏仁水 <b>x'+G.almond+'</b></span>'+
+    '<span class="stat">步數 <b>'+G.steps+'</b></span>'+
     '<span class="stat">時間 <b>'+G.time+'</b>分</span>'+
     '</div>';
 }
@@ -513,12 +524,25 @@ function renderUtils(){
     {l:'休息',f:rest},
     {l:'說明',f:help}
   ];
+  if(G.almond>0)utils.push({l:'喝杏仁水',f:()=>{drinkAlmond();renderUtils();}});
+  utils.push({l:'放棄',f:abandonRun});
   row.innerHTML='';
   utils.forEach(u=>{
     const b=document.createElement('button');
     b.className='btn';b.textContent=u.l;b.onclick=u.f;
     row.appendChild(b);
   });
+}
+function abandonRun(){
+  if(G&&G.over)return;
+  if(!confirm('放棄本次探險？存檔將被清除。'))return;
+  clearSave();
+  G.over=true;
+  try{document.body.classList.remove('low-san');}catch(e){}
+  $('deathScreen').classList.add('hidden');
+  $('winScreen').classList.add('hidden');
+  $('titleScreen').classList.remove('hidden');
+  refreshTitle();
 }
 
 const DIRDELTA={N:[0,-1],S:[0,1],E:[1,0],W:[-1,0]};
@@ -564,10 +588,11 @@ function advanceTurn(t){
   G.sanity-=t*(dark?1.0:0.35);
   if(G.flashlight){
     G.battery-=t*0.5;
-    if(G.battery<=0){G.battery=0;G.flashlight=false;log('<span class="danger">手電筒沒電了，光線熄滅。</span>');}
+    if(G.battery<=0){G.battery=0;G.flashlight=false;log('<span class="danger">手電筒沒電了，光線熄滅。</span>');if(currentRoom)refreshRoom();}
   }
   if(G.sanity<0)G.sanity=0;
   if(G.sanity<25){hallucinate();}
+  try{document.body.classList.toggle('low-san',G.sanity<25);}catch(e){}
   checkDeath();
 }
 
@@ -633,7 +658,11 @@ function buildL0Room(x,y,cell,first){
     '地毯吸飽了不知名的液體，每一步都發出輕微的水聲。',
     '頭頂的日光燈發出單調的嗡嗡聲，從你跌落後就沒有停過。',
     '牆角的地毯顏色更深，像是有什麼東西在那裡長時間停留過。',
-    '空氣中瀰漫著陳舊的氣味，鼻腔裡有一點甜膩的噁心感。'
+    '空氣中瀰漫著陳舊的氣味，鼻腔裡有一點甜膩的噁心感。',
+    '你停了一下，才發現自己一直數著腳步聲——第二組腳步聲並不存在，但回音總是慢半拍。',
+    '某段走廊的燈管特別暗，牆紙上有一片新鮮的、指紋狀的污痕。',
+    '通風口的格柵微微震動，像是有東西在管線裡緩慢爬行。',
+    '遠處傳來一聲很輕的開門聲，但你周圍所有的門都焊死在牆裡。'
   ];
   const ambient=wallpaper[Math.floor(rng()*wallpaper.length)];
 
@@ -704,7 +733,7 @@ function buildL0Room(x,y,cell,first){
     choices.push({label:'蹲下躲進暗處，屏息不動',action:()=>{
       const es=hash2(G.pos.x,G.pos.y,G.runSeed+23);
       if(es<0.6){cell.state.houndResolved=true;log('<span class="good">你屏息躲過，奔跑聲從你身旁掠過。</span>理智 -5。');G.sanity-=5;}
-      else{G.hp-=18;cell.state.houndResolved=true;log('<span class="danger">它發現了你，利爪劃過你的身體，生命 -18。</span>');G.sanity-=8;}
+      else{G.hp-=18;cell.state.houndResolved=true;log('<span class="danger">它發現了你，利爪劃過你的身體，生命 -18。</span>');G.sanity-=8;hurtFlash();}
       refreshRoom();
     }});
   }
@@ -780,7 +809,7 @@ function blackoutLogic(cell,choices,x,y,ambient){
     if(!cell.state.smilerWarned){
       cell.state.smilerWarned=true;
       G.sanity-=G.flashlight?6:14;
-      if(!G.flashlight){G.hp-=6;}
+      if(!G.flashlight){G.hp-=6;hurtFlash();}
       log(G.flashlight?'<span class="good">你用手電筒照向它，那個微笑退進了更深的黑暗。</span>':'<span class="danger">那個微笑的凝視讓你一陣暈眩，理智與生命被啃噬。</span>');
     }
     if(G.flashlight){
@@ -899,7 +928,10 @@ const notePool=[
   {id:'n2',title:'某人的日記',body:'第 17 天？也許更久。\n\n這裡的時間沒有變化，日光燈永遠亮著，我靠杏仁水維持清醒。\n\n我在柱子間看到了自己。另一個我。它對我笑。'},
   {id:'n3',title:'潦草的警告',body:'黑暗裡有東西，只有眼睛和牙齒。\n\n用光可以趕走它，但你不能一直照著——電池會沒電。\n\n在電池用完之前，找到下一個發光的房間。'},
   {id:'n4',title:'倖存者的字條',body:'我聽說過 M.E.G.，一個幫助迷路者的組織。\n\n但我從沒見過他們。也許在 Level 1，也許那裡還有其他人。\n\n如果你讀到這個，別找我。我聽到了音樂聲。'},
-  {id:'n5',title:'發黃的收據',body:'杏仁水（皇家牌）· 2 瓶\n\n味道像香草與生日蛋糕。\n\n奇怪的是，喝下去的時候，我短暫地想起了家。'}
+  {id:'n5',title:'發黃的收據',body:'杏仁水（皇家牌）· 2 瓶\n\n味道像香草與生日蛋糕。\n\n奇怪的是，喝下去的時候，我短暫地想起了家。'},
+  {id:'n6',title:'M.E.G. 觀察員備忘',body:'Level 1 停電期間請勿停留超過 90 秒。\n\nSmiler 對光源敏感，但並不害怕——牠只是在等你關燈。\n\n我們在保安亭留下了一張鑰匙卡，願幸運眷顧你。'},
+  {id:'n7',title:'派對的警告',body:'如果你聽到笑聲、音樂、和蛋糕的味道——\n\n那不是派對。那是 Partygoers。\n\n不要走過去。不要回應。那扇「彩色的門」是不存在的。'},
+  {id:'n8',title:'縫在玩偶裡的紙條',body:'我在玩具熊的肚子裡找到這個。\n\n熊的眼睛會跟著你轉。\n\n我把牠留在了死巷。如果你看到牠，把牠留在原地，別把牠撿起來。'}
 ];
 function randomNote(){return pick(notePool);}
 
@@ -962,7 +994,10 @@ function buildL1Room(x,y,cell,first){
     '混凝土地面粗糙冰涼，牆角有一片深色的水漬。',
     '永久不散的薄霧讓遠處的一切都化成模糊的灰色。',
     '某處的水管發出規律的滴聲，在空曠中迴盪。',
-    '牆上的白色油漆剝落，露出底下灰色的水泥。'
+    '牆上的白色油漆剝落，露出底下灰色的水泥。',
+    '地上有一圈用粉筆畫出的記號，旁邊寫著「別走這條」——字迹已發白。',
+    '一架手推車倒在路邊，貨架上的東西早已被搬空。',
+    '天花板上的燈座少了燈管，露出兩根空著的銅線。'
   ];
   const amb=concrete[Math.floor(rng()*concrete.length)];
 
@@ -974,6 +1009,7 @@ function buildL1Room(x,y,cell,first){
     title='Level 1 · 走 廊';
     text='一條混凝土走廊。'+amb+'\n\n日光燈間隔很遠，明暗交替。你經過一排<span class="cold">生鏽的鐵門</span>，大多數都被焊死。';
     l1Entity(cell,first,type,rng,0.14);
+    l1AmbientEvent(cell,first,rng);
   }
   else if(type==='garage'){
     title='Level 1 · 停 車 場';
@@ -1013,7 +1049,7 @@ function buildL1Room(x,y,cell,first){
     if(!cell.state.smilerWarned){
       cell.state.smilerWarned=true;
       if(hash2(x,y,G.runSeed+47)<0.6){
-        G.sanity-=10;G.hp-=4;
+        G.sanity-=10;G.hp-=4;hurtFlash();
         log('停電的黑暗中，你看見<span class="danger">一雙眼睛和一道微笑</span>在柱後閃爍。理智被啃噬。');
       }
     }
@@ -1140,6 +1176,19 @@ function l1Entity(cell,first,type,rng,chance){
     announceEntity(t);
   }
 }
+function l1AmbientEvent(cell,first,rng){
+  if(!first)return;
+  if(rng()>=0.10)return;
+  const evs=[
+    '牆上有一行噴漆塗鴉：<span class="cold">「不要喝自動販賣機裡的任何東西」</span>。',
+    '角落一台<span class="cold">自動販賣機</span>的卡帶微微轉動，貨道是空的。',
+    '水泥牆上有幾個<span class="danger">舊彈孔</span>，邊緣的漆還在。',
+    '地上躺著一隻磨平的工作靴，鞋帶還繫著。',
+    '通風口上貼著一張褪色的班表，名字那一欄被人用刀刮掉了。',
+    '遠處傳來電話鈴聲，但這層樓沒有電話。'
+  ];
+  log(pick(evs));
+}
 function announceEntity(t){
   if(t==='hound'){log('你聽見<span class="danger">低沉的嘶吼與爪子刮地的聲音</span>，某種東西鎖定了你。');G.sanity-=4;}
   if(t==='duller'){log('轉角處站著一團<span class="cold">渾濁的灰色人形</span>，動作遲緩。');}
@@ -1152,7 +1201,7 @@ function l1EntityChoices(cell,choices){
   if(t==='hound'){
     choices.unshift({label:'立刻轉身逃跑',action:()=>{
       if(hash2(G.pos.x,G.pos.y,G.runSeed+53)<0.55){cell.state.entityResolved=true;log('<span class="good">你繞過柱子甩開了牠，嘶吼聲漸遠。</span>');}
-      else{G.hp-=14;cell.state.entityResolved=true;log('<span class="danger">牠追上來咬了一口，生命 -14。</span>');}
+      else{G.hp-=14;cell.state.entityResolved=true;log('<span class="danger">牠追上來咬了一口，生命 -14。</span>');hurtFlash();}
       refreshRoom();
     }});
     choices.push({label:'用手電筒的光嚇阻',action:()=>{
@@ -1178,14 +1227,14 @@ function l1EntityChoices(cell,choices){
     }});
     choices.push({label:'轉身快跑（不要回頭）',action:()=>{
       if(hash2(G.pos.x,G.pos.y,G.runSeed+59)<0.5){cell.state.entityResolved=true;log('<span class="good">你拼命逃跑，沒有回頭。</span>');}
-      else{G.hp-=20;cell.state.entityResolved=true;log('<span class="danger">你轉身的瞬間它撲了上來，生命 -20。</span>');}
+      else{G.hp-=20;cell.state.entityResolved=true;log('<span class="danger">你轉身的瞬間它撲了上來，生命 -20。</span>');hurtFlash();}
       refreshRoom();
     }});
   }
   if(t==='deathmoth'){
     choices.push({label:'蹲下，用手臂護住臉',action:()=>{
       if(hash2(G.pos.x,G.pos.y,G.runSeed+61)<0.6){cell.state.entityResolved=true;log('<span class="good">飛蛾盤旋幾圈後飛走了。</span>');}
-      else{G.hp-=8;cell.state.entityResolved=true;log('<span class="danger">飛蛾撲上來，腐蝕性的體液灼傷了你，生命 -8。</span>');}
+      else{G.hp-=8;cell.state.entityResolved=true;log('<span class="danger">飛蛾撲上來，腐蝕性的體液灼傷了你，生命 -8。</span>');hurtFlash();}
       refreshRoom();
     }});
   }
@@ -1194,6 +1243,13 @@ function flashScreen(){
   const el=$('powerFlash');
   el.style.transition='none';el.style.opacity='0.5';
   setTimeout(()=>{el.style.transition='opacity .4s';el.style.opacity='0';},60);
+}
+function hurtFlash(){
+  const el=$('hurtFlash');
+  if(!el)return;
+  el.style.transition='none';el.style.opacity='0.55';
+  setTimeout(()=>{el.style.transition='opacity .25s ease-out';el.style.opacity='0';},30);
+  try{if(navigator.vibrate)navigator.vibrate(60);}catch(e){}
 }
 
 /* ===== 通用動作 ===== */
@@ -1415,6 +1471,7 @@ function rest(){
   }else if(r<0.15){
     G.hp-=10;
     log('<span class="danger">你剛閉眼，就被什麼聲音驚醒——你感到一陣寒意，生命 -10。</span>');
+    hurtFlash();
   }else{
     G.hp=Math.min(100,G.hp+10);
     G.sanity=Math.min(100,G.sanity+4);
@@ -1501,20 +1558,31 @@ function checkDeath(){
   if(G.hp<=0&&!G.over){G.hp=0;G.over=true;doDeath('你傷重不治，倒在了冰冷潮濕的地面上。嗡嗡聲依然持續。');}
   if(G.sanity<=0&&!G.over){G.over=true;doDeath('你的理智徹底崩潰。你永遠地留在了這裡，對著發黃的牆壁低語。');}
 }
+function runStatsText(){
+  const steps=G.steps||0;
+  const mins=Math.round(G.time||0);
+  const explored=Object.keys(G.visited||{}).length;
+  return '\n\n---\n本次探險：步數 '+steps+' · 時間 '+mins+' 分 · 探索 '+explored+' 格';
+}
 function doDeath(text){
   clearSave(); /* 死亡後清除存檔，避免「繼續探索」載入已死亡狀態 */
-  $('deathText').textContent=text;
+  try{document.body.classList.remove('low-san');}catch(e){}
+  $('deathText').textContent=text+runStatsText();
   $('deathScreen').classList.remove('hidden');
 }
 function doWin(text){
   G.over=true;
   clearSave(); /* 通關後清除存檔 */
-  $('winText').textContent=text;
+  try{document.body.classList.remove('low-san');}catch(e){}
+  $('winText').textContent=text+runStatsText();
   $('winScreen').classList.remove('hidden');
 }
 
 /* ===== 綁定 ===== */
-$('startBtn').onclick=()=>startGame(false);
+$('startBtn').onclick=()=>{
+  if(hasSave()&&!confirm('已有存檔，開始新遊戲將清除它。繼續？'))return;
+  startGame(false);
+};
 $('continueBtn').onclick=()=>startGame(true);
 $('retryBtn').onclick=()=>{clearSave();startGame(false);};
 $('deathMenuBtn').onclick=()=>{$('deathScreen').classList.add('hidden');$('titleScreen').classList.remove('hidden');refreshTitle();};
@@ -1563,7 +1631,6 @@ var GM_PASSWORD='gm2024';
   function gotoTarget(x,y){
     G.pos={x:x,y:y};
     enterRoom();
-    refreshRoom();
     renderStatus();
   }
   function ensureL1(){if(G.level===0)transitionToLevel1();}
