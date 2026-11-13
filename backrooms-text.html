@@ -332,6 +332,8 @@ body.l6 #scene{text-shadow:0 0 3px rgba(120,120,120,0.15);}
  * v3.2 · 可讀性、觸控與資訊層級整理
  * v3.3 · 每層真正的空間骨架：壁紙接縫、管線、百葉窗、吊燈、
  *        鐘乳石、民宅街燈、麥稈、城市立面、無盡門框；非單純換色。
+ * v3.4 · GM 無限生命/理智/電池、全材料、清實體、安全傳送；
+ *        大地圖加入 32 方位羅盤。
  * ============================================================ */
 :root{--tap:44px;--mono:'SFMono-Regular',ui-monospace,'Menlo','Consolas','Noto Sans Mono',monospace;}
 #statusbar{padding:7px 10px 6px;}
@@ -585,7 +587,7 @@ body.l12 .choice{border-left:1px solid var(--amber);border-right:1px solid var(-
 </div>
 <div class="overlay" id="titleScreen">
   <h1 id="titleH1">BACKROOMS</h1>
-  <h2>文 字 探 險 · v3.3 SPATIAL</h2>
+  <h2>文 字 探 險 · v3.4 GM COMPASS</h2>
   <p>你從現實的縫隙中跌落，睜開眼——<br>嗡嗡作響的日光燈、發黃潮濕的牆紙、漫無邊際的走廊。<br>這裡沒有出口，只有無盡的等待。</p>
   <button class="big-btn" id="startBtn">跌 入 後 室</button>
   <button class="big-btn" id="continueBtn" style="display:none">繼 續 探 索</button>
@@ -715,12 +717,18 @@ body.l12 .choice{border-left:1px solid var(--amber);border-right:1px solid var(-
     <div class="gm-group">
       <h5>切換</h5>
       <button class="gm-a" id="gmInv">無敵模式：關</button>
+      <button class="gm-a" id="gmGodHp">無限生命：關</button>
+      <button class="gm-a" id="gmGodSan">無限理智：關</button>
+      <button class="gm-a" id="gmGodBat">無限電池：關</button>
       <button class="gm-a" id="gmReveal">顯示全部地圖</button>
     </div>
     <div class="gm-group">
       <h5>狀態</h5>
       <button class="gm-a" id="gmRefill">補滿 HP / 理智 / 電池 / 杏仁水</button>
-      <div class="gm-note" id="gmNote">傳送會直接移動到目標房間並進入。無敵下不會被實體殺死。</div>
+      <button class="gm-a" id="gmMats">給予全部材料 ×5</button>
+      <button class="gm-a" id="gmClearEnt">清除附近實體</button>
+      <button class="gm-a" id="gmTpSafe">傳送到最近安全房間</button>
+      <div class="gm-note" id="gmNote">傳送會直接移動到目標房間並進入。無敵／無限生命下不會被實體殺死。</div>
     </div>
   </div>
 </div>
@@ -778,6 +786,7 @@ function newGame(){
     endings:{},                                 /* 多結局追蹤：已見結局 id->true */
     objCollapsed:false,                          /* 常駐目標列摺疊偏好 */
     torchTurns:0,                                /* 火把剩餘照明回合 */
+    godHp:false,godSanity:false,godBattery:false, /* GM 無限開關 */
     over:false,
     logs:[]
   };
@@ -951,6 +960,9 @@ const LEVEL_SHORT={0:'黃室',1:'倉庫',3:'電站',4:'辦公室',5:'旅館',6:'
 function renderStatus(){
   const lvl=LEVEL_NAMES[G.level]||('LEVEL '+G.level);
   const short='L'+G.level+' · '+(LEVEL_SHORT[G.level]||'未知');
+  if(G.godHp)G.hp=100;
+  if(G.godSanity)G.sanity=100;
+  if(G.godBattery)G.battery=100;
   const hpC=clamp(G.hp,0,100),sanC=clamp(G.sanity,0,100),batC=clamp(G.battery,0,100);
   try{document.body.classList.toggle('low-san',G.sanity<25);}catch(e){}
   /* body class 主題切換 */
@@ -2463,6 +2475,7 @@ function hurt(amount,kind,source){
   if(body&&body.dmgReduce)reduce+=body.dmgReduce;
   if(kind!=='shock'){const ch=equipCharm();if(ch&&ch.dmgReduce)reduce+=ch.dmgReduce;}
   amount=amount*(1-Math.min(0.6,reduce));
+  if(G.godHp){return 0;}
   G.hp-=amount;
   if(G.hp<0)G.hp=0;
   try{G.lastHit={name:source||(kind==='shock'?'漏電':'不明創傷'),amount:Math.round(amount)};}catch(e){}
@@ -4913,6 +4926,25 @@ function renderMap(){
   ctx.strokeStyle='#fff2c8';
   ctx.lineWidth=1;
   ctx.stroke();
+
+  /* 32 方位羅盤（大地圖玩家標記外圍） */
+  for(let i=0;i<32;i++){
+    const a=i*Math.PI*2/32 - Math.PI/2;
+    const main=i%4===0, mid=i%2===0;
+    const r1=cell*0.52, r2=cell*(main?0.78:mid?0.68:0.60);
+    ctx.strokeStyle=main?'rgba(232,181,60,.55)':'rgba(232,181,60,.16)';
+    ctx.lineWidth=main?1.2:0.7;
+    ctx.beginPath();
+    ctx.moveTo(px+cell/2+Math.cos(a)*r1,py+cell/2+Math.sin(a)*r1);
+    ctx.lineTo(px+cell/2+Math.cos(a)*r2,py+cell/2+Math.sin(a)*r2);
+    ctx.stroke();
+  }
+  ctx.fillStyle='rgba(232,181,60,.75)';
+  ctx.font='10px monospace';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText('N',px+cell/2,py-cell*0.95);
+  ctx.fillText('S',px+cell/2,py+cell*1.95);
+  ctx.fillText('E',px+cell*1.95,py+cell/2);
+  ctx.fillText('W',px-cell*0.95,py+cell/2);
   /* 圖例 */
   let legend=mapLegendHtml(G.level);
   legend+='<div><span class="sw" style="background:#e8b53c;border-radius:50%;border-color:#fff2c8"></span>你所在位置（閃爍）</div>';
@@ -5070,6 +5102,26 @@ function renderMiniMap(){
   ctx.arc(size/2,size/2,Math.max(2,cell*0.36),0,Math.PI*2);
   ctx.fill();
   ctx.strokeStyle='#ffffff';ctx.lineWidth=1;ctx.stroke();
+
+  /* 32 方位羅盤：8 主方位長刻度，其餘短刻度 */
+  const ccx=size/2, ccy=size/2;
+  for(let i=0;i<32;i++){
+    const a=i*Math.PI*2/32 - Math.PI/2;
+    const main=i%4===0, mid=i%2===0;
+    const r1=cell*0.72, r2=cell*(main?0.96:mid?0.86:0.79);
+    ctx.strokeStyle=main?'rgba(232,181,60,.55)':'rgba(232,181,60,.16)';
+    ctx.lineWidth=main?1.2:0.7;
+    ctx.beginPath();
+    ctx.moveTo(ccx+Math.cos(a)*r1,ccy+Math.sin(a)*r1);
+    ctx.lineTo(ccx+Math.cos(a)*r2,ccy+Math.sin(a)*r2);
+    ctx.stroke();
+  }
+  ctx.fillStyle='rgba(232,181,60,.75)';
+  ctx.font='10px monospace';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText('N',ccx,ccy-cell*1.18);
+  ctx.fillText('S',ccx,ccy+cell*1.18);
+  ctx.fillText('E',ccx+cell*1.18,ccy);
+  ctx.fillText('W',ccx-cell*1.18,ccy);
 }
 function rest(){
   if(!currentRoom)return;
@@ -5310,6 +5362,8 @@ function lastHitLabel(){
 }
 function checkDeath(){
   if(window.G&&G.invincible){G.hp=Math.max(G.hp,1);G.sanity=Math.max(G.sanity,1);return;}
+  if(G.godHp)G.hp=100;
+  if(G.godSanity)G.sanity=100;
   if(G.sanity<0)G.sanity=0;
   if(G.hp<=0&&!G.over){
     G.hp=0;G.over=true;
@@ -5436,6 +5490,66 @@ var GM_PASSWORD='gm2024';
     G.invincible=!G.invincible;
     this.textContent='無敵模式：'+(G.invincible?'開':'關');
     this.classList.toggle('on',G.invincible);
+  };
+  function bindToggle(id,flag,label){
+    const b=$(id);
+    b.onclick=function(){
+      ensureGame();
+      G[flag]=!G[flag];
+      b.textContent=label+'：'+(G[flag]?'開':'關');
+      b.classList.toggle('on',!!G[flag]);
+      if(G[flag]){
+        if(flag==='godHp')G.hp=100;
+        if(flag==='godSanity')G.sanity=100;
+        if(flag==='godBattery')G.battery=100;
+      }
+      renderStatus();
+      $('gmNote').textContent=label+'：'+(G[flag]?'已開啟':'已關閉');
+    };
+  }
+  bindToggle('gmGodHp','godHp','無限生命');
+  bindToggle('gmGodSan','godSanity','無限理智');
+  bindToggle('gmGodBat','godBattery','無限電池');
+  $('gmMats').onclick=function(){
+    ensureGame();
+    for(const m in MAT_NAMES){if(m!=='almond')G.inv[m]=(G.inv[m]||0)+5;}
+    G.almond=Math.max(G.almond,5);
+    renderStatus();
+    $('gmNote').textContent='已給予全部材料 ×5';
+  };
+  $('gmClearEnt').onclick=function(){
+    ensureGame();
+    let n=0;
+    for(const k in G.visited){
+      const p=k.indexOf(',');const x=+k.slice(0,p),y=+k.slice(p+1);
+      if(Math.abs(x-G.pos.x)>5||Math.abs(y-G.pos.y)>5)continue;
+      const c=G.visited[k];
+      if(c.state){if(c.state.entity)n++;delete c.state.entity;delete c.state.entityResolved;}
+    }
+    if(currentRoom&&currentRoom.cell){delete currentRoom.cell.state.entity;}
+    refreshRoom();renderMiniMap();
+    $('gmNote').textContent='已清除半徑 5 內的 '+n+' 個實體';
+  };
+  function nearestSafe(){
+    const typeFn=levelTypeFn(G.level);
+    const danger=new Set(['red','red_room','blackout','entity_corner','window_house','wrong_door','party_hint','alley','dark_stairs','whisper']);
+    let best=null,bd=1e9;
+    for(let dx=-8;dx<=8;dx++)for(let dy=-8;dy<=8;dy++){
+      const x=G.pos.x+dx,y=G.pos.y+dy;
+      if(danger.has(typeFn(x,y)))continue;
+      const c=G.visited[x+','+y];
+      if(c&&c.state&&c.state.entity)continue;
+      const d=Math.abs(dx)+Math.abs(dy);
+      if(d<bd){bd=d;best={x:x,y:y};}
+    }
+    return best;
+  }
+  $('gmTpSafe').onclick=function(){
+    ensureGame();
+    const p=nearestSafe();
+    if(!p){$('gmNote').textContent='附近沒有安全房間';return;}
+    gotoTarget(p.x,p.y);
+    $('gmNote').textContent='已傳送到最近安全房間 ('+p.x+','+p.y+')';
   };
   $('gmReveal').onclick=function(){
     for(var x=-25;x<=25;x++)for(var y=-25;y<=25;y++){
