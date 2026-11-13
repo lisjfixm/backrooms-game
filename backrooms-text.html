@@ -258,12 +258,12 @@ body.l6 #scene{text-shadow:0 0 3px rgba(120,120,120,0.15);}
   position:fixed;left:0;right:0;bottom:0;top:auto;z-index:120;
   background:var(--panel);border-top:1px solid var(--amber-faint);
   border-radius:12px 12px 0 0;
-  display:flex;flex-direction:column;
+  display:none;flex-direction:column;
   max-height:84vh;padding:14px 14px calc(16px + env(safe-area-inset-bottom));
   transform:translateY(103%);transition:transform .24s cubic-bezier(.2,.8,.2,1);
   box-shadow:0 -10px 34px rgba(0,0,0,.65);pointer-events:none;
 }
-.modal.show{transform:translateY(0);pointer-events:auto;}
+.modal.show{display:flex;transform:translateY(0);pointer-events:auto;}
 .modal h3{
   color:var(--amber);font-size:var(--fs-4);letter-spacing:3px;margin-bottom:10px;
   flex-shrink:0;display:flex;align-items:center;justify-content:space-between;
@@ -587,7 +587,7 @@ body.l12 .choice{border-left:1px solid var(--amber);border-right:1px solid var(-
 </div>
 <div class="overlay" id="titleScreen">
   <h1 id="titleH1">BACKROOMS</h1>
-  <h2>文 字 探 險 · v3.4 GM COMPASS</h2>
+  <h2>文 字 探 險 · v3.4.1 MODAL FIX</h2>
   <p>你從現實的縫隙中跌落，睜開眼——<br>嗡嗡作響的日光燈、發黃潮濕的牆紙、漫無邊際的走廊。<br>這裡沒有出口，只有無盡的等待。</p>
   <button class="big-btn" id="startBtn">跌 入 後 室</button>
   <button class="big-btn" id="continueBtn" style="display:none">繼 續 探 索</button>
@@ -5361,7 +5361,7 @@ function lastHitLabel(){
   return h.name+(h.amount?'（'+h.amount+' 點傷害）':'');
 }
 function checkDeath(){
-  if(window.G&&G.invincible){G.hp=Math.max(G.hp,1);G.sanity=Math.max(G.sanity,1);return;}
+  if(G&&G.invincible){G.hp=Math.max(G.hp,1);G.sanity=Math.max(G.sanity,1);return;}
   if(G.godHp)G.hp=100;
   if(G.godSanity)G.sanity=100;
   if(G.sanity<0)G.sanity=0;
