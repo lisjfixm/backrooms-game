@@ -330,6 +330,8 @@ body.l6 #scene{text-shadow:0 0 3px rgba(120,120,120,0.15);}
 
 /* ============================================================
  * v3.2 · 可讀性、觸控與資訊層級整理
+ * v3.3 · 每層真正的空間骨架：壁紙接縫、管線、百葉窗、吊燈、
+ *        鐘乳石、民宅街燈、麥稈、城市立面、無盡門框；非單純換色。
  * ============================================================ */
 :root{--tap:44px;--mono:'SFMono-Regular',ui-monospace,'Menlo','Consolas','Noto Sans Mono',monospace;}
 #statusbar{padding:7px 10px 6px;}
@@ -379,11 +381,185 @@ body.l6 #scene{text-shadow:0 0 2px rgba(160,150,120,.12);}
 .end-stats{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:2px 0 14px;}
 .end-stats span{font-size:10px;letter-spacing:1px;color:var(--amber-dim);border:1px solid var(--amber-faint);padding:3px 9px;border-radius:10px;}
 .end-stats span b{color:var(--amber);font-weight:normal;margin-left:4px;}
+/* 層級 chip */
+.chip.lv{color:var(--amber);border-color:var(--amber-dim);letter-spacing:1px;}
 /* 死因標籤 */
 #deathCause{font-size:11px;letter-spacing:1px;color:var(--red);opacity:.85;margin:-6px 0 14px;}
+
+/* ============================================================
+ * v3.3 · 每層真正的空間骨架（不只換色）
+ * 壁紙接縫 / 水泥管線 / 警戒條 / 百葉窗 / 吊燈地毯 /
+ * 全黑聚光 / 海平線 / 鐘乳石 / 民宅街燈 / 麥稈 / 城市立面 / 無盡門框
+ * ============================================================ */
+#levelFx{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;transition:background .4s ease;}
+#levelFx::after{
+  content:attr(data-lv);position:absolute;right:-1vw;bottom:-7vh;
+  font-family:var(--mono);font-size:36vh;line-height:1;letter-spacing:-.05em;
+  color:rgba(232,181,60,.05);text-shadow:none;user-select:none;
+}
+body.l6 #levelFx::after{color:rgba(156,138,88,.05);}
+body.l12 #levelFx::after{color:rgba(176,159,208,.05);}
+/* Level 0：發黃壁紙的垂直接縫、水平壓痕與霉斑 */
+body.l0 #levelFx{
+  background-image:
+    repeating-linear-gradient(90deg,rgba(232,181,60,.11) 0 1px,rgba(0,0,0,0) 1px 72px),
+    repeating-linear-gradient(0deg,rgba(0,0,0,.20) 0 2px,rgba(0,0,0,0) 2px 58px),
+    radial-gradient(ellipse at 12% 18%,rgba(90,69,22,.35),transparent 40%),
+    radial-gradient(ellipse at 88% 82%,rgba(70,52,12,.32),transparent 44%);
+  box-shadow:inset 0 -16px 0 rgba(0,0,0,.32),inset 0 10px 40px -20px rgba(232,181,60,.25);
+}
+/* Level 1：水泥牆、頭頂管線、右側立管與霧氣 */
+body.l1 #levelFx{
+  background-image:
+    linear-gradient(90deg,transparent 0 86%,rgba(170,180,190,.055) 93% 94%,transparent 88%),
+    linear-gradient(0deg,transparent 0 94%,rgba(170,180,190,.10) 94% 95%,transparent 95%),
+    repeating-linear-gradient(0deg,rgba(255,255,255,.035) 0 1px,rgba(0,0,0,0) 1px 9px),
+    radial-gradient(ellipse at 30% 72%,rgba(120,130,140,.16),transparent 58%);
+  box-shadow:inset 0 30px 55px -32px rgba(190,200,210,.22);
+}
+/* Level 3：上下警戒斜紋、配電網格 */
+body.l3 #levelFx{
+  background-image:
+    repeating-linear-gradient(45deg,rgba(232,181,60,.11) 0 7px,rgba(0,0,0,.22) 7px 14px),
+    repeating-linear-gradient(45deg,rgba(232,181,60,.11) 0 7px,rgba(0,0,0,.22) 7px 14px),
+    repeating-linear-gradient(90deg,rgba(122,208,138,.055) 0 1px,rgba(0,0,0,0) 1px 44px);
+  background-size:100% 8px,100% 8px,100% 100%;
+  background-position:center 13%,center 70%,center;
+  background-repeat:no-repeat,no-repeat,no-repeat;
+}
+/* Level 4：辦公室百葉窗投下的橫向光柵 */
+body.l4 #levelFx{
+  background-image:
+    repeating-linear-gradient(0deg,rgba(255,255,255,.038) 0 20px,rgba(0,0,0,0) 20px 46px),
+    radial-gradient(ellipse at 78% 14%,rgba(220,235,245,.12),transparent 38%);
+  background-size:100% 40%,100% 100%;
+  background-position:center 14%,center;
+  background-repeat:no-repeat,no-repeat;
+}
+/* Level 5：吊燈光暈 + 地毯菱形邊飾 */
+body.l5 #levelFx{
+  background-image:
+    radial-gradient(ellipse 58% 26% at 50% 16%,rgba(217,168,74,.24),transparent 72%),
+    repeating-linear-gradient(45deg,rgba(217,168,74,.06) 0 2px,rgba(0,0,0,0) 2px 26px),
+    repeating-linear-gradient(-45deg,rgba(217,168,74,.06) 0 2px,rgba(0,0,0,0) 2px 26px);
+  box-shadow:inset 0 -32px 60px -18px rgba(217,168,74,.16);
+}
+/* Level 6：全黑中的一圈微弱聚光，邊緣吞沒 */
+body.l6 #levelFx{
+  background-image:
+    radial-gradient(ellipse 66% 52% at 50% 42%,rgba(156,138,88,.10) 0 10%,rgba(0,0,0,.18) 34%,rgba(0,0,0,.62) 66%,#000 100%);
+}
+/* Level 7：海平線與下方波紋 */
+body.l7 #levelFx{
+  background-image:
+    linear-gradient(180deg,rgba(0,0,0,0) 0 62%,rgba(106,159,208,.20) 62% 62.6%,rgba(2,6,12,.55) 62.6% 100%),
+    repeating-linear-gradient(0deg,rgba(106,159,208,.07) 0 1px,rgba(0,0,0,0) 1px 22px);
+  background-size:100% 100%,100% 38%;
+  background-position:center,center bottom;
+  background-repeat:no-repeat,no-repeat;
+}
+/* Level 8：上下鐘乳石／石筍剪影 */
+body.l8 #levelFx{
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='80'%3E%3Cpath d='M0 80h180V68l-14-20-9 12-15-24-11 16-16-20-10 14-14-26-12 18-15-22-10 14-15-18-11 14-14-16V80z' fill='%23000' opacity='.32'/%3E%3C/svg%3E"),
+    radial-gradient(ellipse at 50% 92%,rgba(120,90,60,.14),transparent 60%);
+  background-repeat:repeat-x,no-repeat;
+  background-position:center 72%,center;
+  background-size:160px 64px,100% 100%;
+  -webkit-mask-image:linear-gradient(180deg,#000 0 82%,transparent 100%);
+  mask-image:linear-gradient(180deg,#000 0 82%,transparent 100%);
+}
+/* Level 9：民宅剪影與兩盞街燈光池 */
+body.l9 #levelFx{
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='84'%3E%3Cpath d='M0 84V52h12V38l14-10 14 10v14h16V34l16-12 16 12v18h14V44l13-9 13 9v8h18V40l15-11 15 11v22h10V50h12v34z' fill='%23000' opacity='.28'/%3E%3C/svg%3E"),
+    radial-gradient(circle at 16% 30%,rgba(255,190,90,.13) 0 12%,transparent 26%),
+    radial-gradient(circle at 78% 24%,rgba(255,190,90,.11) 0 10%,transparent 24%);
+  background-repeat:repeat-x,no-repeat,no-repeat;
+  background-position:center 64%,center,center;
+  background-size:180px 72px,100% 100%,100% 100%;
+}
+/* Level 10：麥稈剪影與風的斜向紋理 */
+body.l10 #levelFx{
+  background-image:
+    repeating-linear-gradient(100deg,rgba(201,180,90,.06) 0 1px,rgba(0,0,0,0) 1px 7px),
+    linear-gradient(180deg,rgba(0,0,0,0) 0 70%,rgba(201,180,90,.12) 100%),
+    radial-gradient(ellipse at 50% 0%,rgba(210,198,154,.10),transparent 55%);
+  background-size:100% 13%,100% 100%,100% 100%;
+  background-position:center 75%,center,center;
+  background-repeat:no-repeat;
+}
+/* Level 11：高樓立面豎線、地面霓虹反光 */
+body.l11 #levelFx{
+  background-image:
+    repeating-linear-gradient(90deg,rgba(122,159,208,.075) 0 2px,rgba(0,0,0,0) 2px 54px),
+    repeating-linear-gradient(90deg,rgba(122,159,208,.05) 0 1px,rgba(0,0,0,0) 1px 18px),
+    radial-gradient(ellipse at 50% 70%,rgba(90,140,220,.20),transparent 58%);
+  background-size:100% 100%,100% 42%,100% 100%;
+  background-position:center,center bottom,center;
+  background-repeat:no-repeat;
+}
+/* Level 12：兩側重複的門框，深處一束光 */
+body.l12 #levelFx{
+  -webkit-mask-image:radial-gradient(ellipse 66% 62% at 50% 42%,transparent 38%,#000 92%);
+  mask-image:radial-gradient(ellipse 66% 62% at 50% 42%,transparent 38%,#000 92%);
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='240'%3E%3Cg fill='none' stroke='%23b09fd0' stroke-width='2'%3E%3Crect x='14' y='26' width='92' height='214' stroke-opacity='.10'/%3E%3Crect x='27' y='39' width='66' height='201' stroke-opacity='.07'/%3E%3Ccircle cx='86' cy='140' r='3' stroke-opacity='.18'/%3E%3C/g%3E%3C/svg%3E"),
+    radial-gradient(ellipse 34% 30% at 50% 100%,rgba(176,159,208,.16),transparent 70%);
+  background-repeat:repeat,no-repeat;
+  background-position:center top,center bottom;
+  background-size:96px 200px,100% 100%;
+}
+/* ---- 房間級別的實體結構（優先於層級底紋） ---- */
+body.rt-red #levelFx,body.rt-red_room #levelFx{
+  background-image:radial-gradient(circle at 50% 50%,rgba(180,30,20,.22),rgba(30,0,0,.72) 78%);
+  animation:redRoomPulse 1.6s ease-in-out infinite;
+}
+@keyframes redRoomPulse{0%,100%{opacity:.85}50%{opacity:1}}
+body.rt-flooded #levelFx,body.rt-underground_pool #levelFx,body.rt-waterfall #levelFx{
+  background-image:
+    linear-gradient(180deg,rgba(0,0,0,0) 0 70%,rgba(30,70,80,.30) 100%),
+    repeating-linear-gradient(0deg,rgba(120,190,200,.09) 0 1px,rgba(0,0,0,0) 1px 16px);
+  background-size:100% 100%,100% 30%;
+  background-position:center,center bottom;
+  background-repeat:no-repeat;
+}
+body.rt-subway #levelFx{
+  background-image:radial-gradient(ellipse 70% 60% at 50% 0%,rgba(0,0,0,.65) 0 40%,rgba(0,0,0,0) 72%),linear-gradient(180deg,rgba(122,159,208,.08),transparent 55%);
+}
+body.rt-door_sea #levelFx{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='240'%3E%3Cg fill='none' stroke='%23b09fd0' stroke-width='2'%3E%3Crect x='14' y='26' width='92' height='214' stroke-opacity='.22'/%3E%3Crect x='27' y='39' width='66' height='201' stroke-opacity='.10'/%3E%3C/g%3E%3C/svg%3E"),radial-gradient(ellipse at 50% 45%,rgba(200,190,240,.10),transparent 60%);background-size:110px 220px,100% 100%;background-repeat:repeat,no-repeat;}
+body.rt-home_door #levelFx{background-image:linear-gradient(180deg,rgba(0,0,0,0) 0 55%,rgba(120,170,200,.16) 100%),radial-gradient(ellipse 40% 30% at 50% 92%,rgba(140,190,220,.20),transparent 70%);}
+body.rt-wrong_door #levelFx{background-image:linear-gradient(90deg,rgba(0,0,0,0) 0 48%,rgba(190,40,30,.22) 50%,rgba(0,0,0,0) 52%),radial-gradient(ellipse at 50% 50%,rgba(80,0,0,.35),rgba(0,0,0,.75));}
+body.rt-tv_room #levelFx{background-image:repeating-linear-gradient(0deg,rgba(200,230,255,.10) 0 2px,rgba(0,0,0,0) 2px 6px);animation:tvRoll 3s linear infinite;}
+@keyframes tvRoll{to{background-position:0 120px}}
+body.rt-mirror #levelFx{background-image:linear-gradient(90deg,rgba(120,150,180,.14) 0 49.6%,rgba(220,240,255,.45) 49.6% 50.4%,rgba(120,150,180,.14) 50.4% 100%);}
+body.rt-party_room #levelFx{background-image:repeating-linear-gradient(115deg,rgba(217,106,74,.16) 0 3px,rgba(0,0,0,0) 3px 34px),repeating-linear-gradient(65deg,rgba(232,181,60,.14) 0 3px,rgba(0,0,0,0) 3px 41px);}
+body.rt-meg_post #levelFx,body.rt-mge #levelFx,body.rt-mgeast #levelFx{background-image:repeating-linear-gradient(0deg,rgba(220,210,180,.08) 0 1px,rgba(0,0,0,0) 1px 26px),repeating-linear-gradient(90deg,rgba(220,210,180,.06) 0 1px,rgba(0,0,0,0) 1px 26px);}
+/* ---- 每層不同的版面語言（字體、標題結構、按鈕形狀） ---- */
+body.l0 .scene-title{letter-spacing:3px;text-shadow:0 0 12px rgba(232,181,60,.55);}
+body.l1 .scene-title{letter-spacing:4px;border-bottom:1px solid var(--amber-faint);padding-bottom:5px;}
+body.l3 .scene-title{border-left:3px solid var(--amber);padding-left:10px;}
+body.l5 .scene-title{font-family:Georgia,'Noto Serif TC',serif;letter-spacing:4px;}
+body.l5 .scene-text{font-family:Georgia,'Noto Serif TC',serif;line-height:2.0;}
+body.l5 .choice{border-radius:9px;font-family:Georgia,'Noto Serif TC',serif;}
+body.l5 .btn{border-radius:9px;}
+body.l6 .scene-text{max-width:560px;margin:0 auto;}
+body.l6 .scene-title{text-align:center;}
+body.l6 #statusbar{background:#000;}
+body.l7 .scene-title{letter-spacing:4px;text-shadow:0 0 14px rgba(106,159,208,.45);}
+body.l8 .scene-title{letter-spacing:2px;text-shadow:0 0 10px rgba(201,154,90,.35);}
+body.l9 .scene-title{letter-spacing:4px;border-left:2px dotted var(--amber-dim);padding-left:9px;}
+body.l9 .choice{border-left:2px dotted var(--amber-dim);}
+body.l10 .scene-text{line-height:2.05;}
+body.l10 .scene-title{letter-spacing:5px;}
+body.l11 .scene-title{letter-spacing:5px;}
+body.l11 .choice{border-left:2px solid var(--amber-faint);}
+body.l12 .scene-title{border-bottom:1px double var(--amber-faint);padding-bottom:6px;}
+body.l12 .choice{border-left:1px solid var(--amber);border-right:1px solid var(--amber);}
 </style>
 </head>
 <body>
+<div id="levelFx" data-lv="L0" aria-hidden="true"></div>
 <div class="power-flash" id="powerFlash"></div>
 <div id="hurtFlash"></div>
 <div id="toast"></div>
@@ -409,7 +585,7 @@ body.l6 #scene{text-shadow:0 0 2px rgba(160,150,120,.12);}
 </div>
 <div class="overlay" id="titleScreen">
   <h1 id="titleH1">BACKROOMS</h1>
-  <h2>文 字 探 險 · v3.2 DEEPER</h2>
+  <h2>文 字 探 險 · v3.3 SPATIAL</h2>
   <p>你從現實的縫隙中跌落，睜開眼——<br>嗡嗡作響的日光燈、發黃潮濕的牆紙、漫無邊際的走廊。<br>這裡沒有出口，只有無盡的等待。</p>
   <button class="big-btn" id="startBtn">跌 入 後 室</button>
   <button class="big-btn" id="continueBtn" style="display:none">繼 續 探 索</button>
@@ -771,22 +947,26 @@ const LEVEL_NAMES={
   11:'LEVEL 11 · ENDLESS CITY',
   12:'LEVEL 12 · THE HUB'
 };
+const LEVEL_SHORT={0:'黃室',1:'倉庫',3:'電站',4:'辦公室',5:'旅館',6:'熄燈',7:'海崖',8:'洞穴',9:'郊區',10:'麥田',11:'城市',12:'樞紐'};
 function renderStatus(){
   const lvl=LEVEL_NAMES[G.level]||('LEVEL '+G.level);
+  const short='L'+G.level+' · '+(LEVEL_SHORT[G.level]||'未知');
   const hpC=clamp(G.hp,0,100),sanC=clamp(G.sanity,0,100),batC=clamp(G.battery,0,100);
   try{document.body.classList.toggle('low-san',G.sanity<25);}catch(e){}
   /* body class 主題切換 */
   try{
-    for(const k of [3,4,5,6,7,8,9,10,11,12])document.body.classList.remove('l'+k);
-    if(G.level>=3)document.body.classList.add('l'+G.level);
+    for(const k of [0,1,2,3,4,5,6,7,8,9,10,11,12])document.body.classList.remove('l'+k);
+    document.body.classList.add('l'+G.level);
+    const fx=$('levelFx');if(fx)fx.dataset.lv='L'+G.level;
   }catch(e){}
   const rows=
-    '<div class="stat-main"><span class="loc-tag">'+lvl+'</span>'+
+    '<div class="stat-main">'+
     '<span class="stat-g'+(hpC<=25?' low':'')+'">生命<span class="bar"><i class="hp" style="width:'+hpC+'%"></i></span><b>'+Math.round(hpC)+'</b></span>'+
     '<span class="stat-g'+(sanC<=25?' low':'')+'">理智<span class="bar"><i class="san" style="width:'+sanC+'%"></i></span><b>'+Math.round(sanC)+'</b></span>'+
     '<span class="stat-g'+(batC<=15?' low':'')+'">電池<span class="bar"><i class="bat" style="width:'+batC+'%"></i></span><b>'+Math.round(batC)+'</b></span>'+
     '</div>'+
     '<div class="stat-sub">'+
+    '<span class="chip lv" title="'+lvl+'">'+short+'</span>'+
     '<span class="chip'+(G.flashlight?'':' off')+'">手電 '+(G.flashlight?'ON':'OFF')+'</span>'+
     '<span class="chip">杏仁<b>x'+G.almond+'</b></span>'+
     (G.torchTurns>0?'<span class="chip torch">火把<b>'+G.torchTurns+'</b></span>':'')+
@@ -817,6 +997,12 @@ const ROOM_LABELS={
 };
 function present(room){
   currentRoom=room;
+  try{
+    const cl=document.body.classList;
+    Array.from(cl).forEach(c=>{if(c.indexOf('rt-')===0)cl.remove(c);});
+    if(room.type)cl.add('rt-'+room.type);
+    cl.toggle('darkroom',!!room.dark);
+  }catch(e){}
   const tag=ROOM_LABELS[room.type]?'<span class="room-tag">'+ROOM_LABELS[room.type]+'</span>':'';
   $('sceneTitle').innerHTML=room.title+tag;
   typeText($('sceneText'),room.text);
