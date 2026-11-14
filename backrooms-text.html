@@ -294,7 +294,8 @@ body.l6 #scene{text-shadow:0 0 3px rgba(120,120,120,0.15);}
 }
 .mini-btn:active{background:var(--amber);color:#141207;}
 /* 觸控尺寸：方向鍵與選項 */
-.dir-grid .btn{min-height:var(--tap);font-size:var(--fs-3);}
+.dir-grid .btn{min-height:var(--tap);font-size:var(--fs-3);display:flex;align-items:center;justify-content:center;gap:2px;white-space:nowrap;}
+.dir-arrow{opacity:.55;font-size:11px;margin-left:2px;}
 .choice{min-height:var(--tap);display:flex;align-items:center;}
 /* 選單面板網格 */
 .menu-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:4px 0;}
@@ -339,6 +340,7 @@ body.l6 #scene{text-shadow:0 0 3px rgba(120,120,120,0.15);}
  * v3.5.1 · 分層背景照片（base64 內聯底圖）、暗色遮罩維持文字可讀。
  * v3.5.2 · 壞存檔座標修復加固、背景圖底色 fallback 與載入失敗降級、
  *          面板與地圖空值防禦、觸控與可讀性微調。
+ * v3.5.3 · 設定忠實化校對（層級名稱、實體描述、圖鑑）、方向通道化文案。
  * ============================================================ */
 :root{--tap:44px;--mono:'SFMono-Regular',ui-monospace,'Menlo','Consolas','Noto Sans Mono',monospace;}
 #statusbar{padding:7px 10px 6px;}
@@ -512,7 +514,7 @@ body.l10 #levelFx{
   background-position:center 75%,center,center;
   background-repeat:no-repeat;
 }
-/* Level 11：高樓立面豎線、地面霓虹反光 */
+/* Level 11：高樓立面豎線、柏油路面反光 */
 body.l11 #levelFx{
   background-image:
     repeating-linear-gradient(90deg,rgba(122,159,208,.075) 0 2px,rgba(0,0,0,0) 2px 54px),
@@ -654,7 +656,7 @@ body.l12 .choice{border-left:1px solid var(--amber);border-right:1px solid var(-
 <div id="scrim" aria-hidden="true"></div>
 <div class="overlay" id="titleScreen">
   <h1 id="titleH1">BACKROOMS</h1>
-  <h2>文 字 探 險 · v3.5.2</h2>
+  <h2>文 字 探 險 · v3.5.3</h2>
   <p>你從現實的縫隙中跌落，睜開眼——<br>嗡嗡作響的日光燈、發黃潮濕的牆紙、漫無邊際的走廊。<br>這裡沒有出口，只有無盡的等待。</p>
   <button class="big-btn" id="startBtn">跌 入 後 室</button>
   <button class="big-btn" id="continueBtn" style="display:none">繼 續 探 索</button>
@@ -772,13 +774,13 @@ body.l12 .choice{border-left:1px solid var(--amber);border-right:1px solid var(-
       <h5>跳關（直接抵達該層起點）</h5>
       <button class="gm-a" id="gmJump3">→ Level 3 電氣站</button>
       <button class="gm-a" id="gmJump4">→ Level 4 廢棄辦公室</button>
-      <button class="gm-a" id="gmJump5">→ Level 5 老旅館</button>
+      <button class="gm-a" id="gmJump5">→ Level 5 恐怖旅館</button>
       <button class="gm-a" id="gmJump6">→ Level 6 熄燈</button>
-      <button class="gm-a" id="gmJump7">→ Level 7 暮光門檻</button>
-      <button class="gm-a" id="gmJump8">→ Level 8 洞穴系統</button>
+      <button class="gm-a" id="gmJump7">→ Level 7 懼深海</button>
+      <button class="gm-a" id="gmJump8">→ Level 8 洞穴群</button>
       <button class="gm-a" id="gmJump9">→ Level 9 郊區</button>
-      <button class="gm-a" id="gmJump10">→ Level 10 麥田</button>
-      <button class="gm-a" id="gmJump11">→ Level 11 無盡城市</button>
+      <button class="gm-a" id="gmJump10">→ Level 10 豐收麥田</button>
+      <button class="gm-a" id="gmJump11">→ Level 11 不夜城</button>
       <button class="gm-a" id="gmJump12">→ Level 12 樞紐</button>
     </div>
     <div class="gm-group">
@@ -1024,19 +1026,19 @@ function renderLog(){
 
 const LEVEL_NAMES={
   0:'LEVEL 0 · THRESHOLD',
-  1:'LEVEL 1 · HABITABLE ZONE',
+  1:'LEVEL 1 · THE HABITABLE ZONE',
   3:'LEVEL 3 · ELECTRICAL STATION',
   4:'LEVEL 4 · ABANDONED OFFICE',
-  5:'LEVEL 5 · THE HOTEL',
+  5:'LEVEL 5 · TERROR HOTEL',
   6:'LEVEL 6 · LIGHTS OUT',
-  7:'LEVEL 7 · THRESHOLD',
-  8:'LEVEL 8 · CAVE SYSTEM',
+  7:'LEVEL 7 · THALASSOPHOBIA',
+  8:'LEVEL 8 · CAVE SYSTEMS',
   9:'LEVEL 9 · THE SUBURBS',
-  10:'LEVEL 10 · FIELD OF WHEAT',
-  11:'LEVEL 11 · ENDLESS CITY',
+  10:'LEVEL 10 · BUMPER CROP',
+  11:'LEVEL 11 · THE CITY THAT NEVER SLEEPS',
   12:'LEVEL 12 · THE HUB'
 };
-const LEVEL_SHORT={0:'黃室',1:'倉庫',3:'電站',4:'辦公室',5:'旅館',6:'熄燈',7:'海崖',8:'洞穴',9:'郊區',10:'麥田',11:'城市',12:'樞紐'};
+const LEVEL_SHORT={0:'黃室',1:'宜居區',3:'電站',4:'辦公室',5:'恐怖旅館',6:'熄燈',7:'懼深海',8:'洞穴群',9:'郊區',10:'豐收麥田',11:'不夜城',12:'樞紐'};
 function renderStatus(){
   const lvl=LEVEL_NAMES[G.level]||('LEVEL '+G.level);
   const short='L'+G.level+' · '+(LEVEL_SHORT[G.level]||'未知');
@@ -1088,6 +1090,76 @@ let currentRoom=null;
 const ROOM_LABELS={
   start:'跌落點',arrival:'入口',corridor:'走廊',junction:'岔路',deadend:'死路',hallway:'走廊',pillar:'柱廳',flooded:'積水',storage:'儲物間',kitchen:'廚房',mirror:'鏡廳',lounge:'休息室',shower:'淋浴間',bar:'酒吧',banquet:'宴會廳',guest:'客房',carpet:'地毯區',room_door:'房門',elevator:'電梯',lobby:'大堂',dark_stairs:'暗梯',faint_light:'微光',dark_hallway:'暗廊',dim_room:'暗室',tv_room:'電視間',tvroom:'電視室',party_room:'派對間',party_hint:'派對痕跡',red:'紅室',red_room:'紅室',blackout:'熄燈區',utility:'設備間',office:'辦公室',mge:'補給站',mgeast:'M.E.G. 前哨站',exit:'出口',storeroom:'倉庫',garage:'車庫',gen_room:'發電室',cable_tun:'電纜隧道',transformer:'變電室',cliffside:'懸崖',ocean_view:'海景',wind_gap:'風隙',cave_entrance:'洞口',cave_tunnel:'洞穴',spider_web:'蛛網',underground_pool:'水潭',stalagmite:'石筍',colony:'蛛巢',crystal:'水晶',waterfall:'瀑布',deep_exit:'深井',house_living:'民宅',cul_de_sac:'死巷',playground:'遊樂場',window_house:'窗屋',outskirt_exit:'郊外',wheat_tall:'高麥',road:'公路',pylon:'電塔',barn:'農舍',clearing:'空地',city_exit:'城市',convenience:'便利店',subway:'地鐵',office_bldg:'辦公樓',apartment:'公寓',alley:'暗巷',hub_gate:'中央車站',door_sea:'門海',home_door:'回家門',silent_hall:'靜默廳',wrong_door:'錯誤門',meg_post:'M.E.G.',numbered_door:'編號門',vending:'自動販賣機',locker:'儲物櫃',elevator_hint:'電梯門',exit_door:'電氣門',fuse_box:'配電箱',wiring:'配線間',hazard:'高壓警戒區',exit_stairs:'樓梯',cubicle:'辦公隔間',watercooler:'飲水機',meeting:'會議室',meg_stair:'補給樓梯',archive:'檔案室',server:'機房',whisper:'耳語處',entity_corner:'實體角落',cold_spot:'寒點',echo_chamber:'迴響室',lighthouse:'燈塔',arch:'拱門',suburb_street:'郊區街道',pipe_room:'管道間',flicker:'閃爍的牆'
 };
+/* v3.5.3 通道標籤：依層級與房間類型描述各方向通道；查不到回 def，再回預設方位 */
+const PASSAGE_LABELS={
+  0:{def:{N:'黃光走廊',S:'潮濕岔道',E:'黃光走廊',W:'牆紙長廊'},
+     pillar:{N:'柱廳開間',S:'柱廳開間',E:'柱廳開間',W:'柱廳開間'},
+     flooded:{N:'積水通道',S:'積水通道',E:'積水通道',W:'積水通道'},
+     dark_hallway:{N:'暗廊',S:'暗廊',E:'暗廊',W:'暗廊'}},
+  1:{def:{N:'水泥大廳',S:'庫房巷道',E:'立柱區',W:'貨架側廊'},
+     storage:{N:'庫房巷道',S:'庫房巷道',E:'庫房巷道',W:'庫房巷道'},
+     garage:{N:'水泥大廳',S:'水泥大廳',E:'水泥大廳',W:'水泥大廳'},
+     lobby:{N:'水泥大廳',S:'水泥大廳',E:'立柱區',W:'立柱區'},
+     blackout:{N:'黑廊',S:'黑廊',E:'黑廊',W:'黑廊'}},
+  3:{def:{N:'電纜隧道',S:'配線廊道',E:'變壓器夾道',W:'鐵欄杆通道'},
+     cable_tun:{N:'電纜隧道',S:'電纜隧道',E:'電纜隧道',W:'電纜隧道'},
+     transformer:{N:'變壓器夾道',S:'變壓器夾道',E:'變壓器夾道',W:'變壓器夾道'},
+     wiring:{N:'配線廊道',S:'配線廊道',E:'配線廊道',W:'配線廊道'},
+     hazard:{N:'鐵欄杆通道',S:'鐵欄杆通道',E:'鐵欄杆通道',W:'鐵欄杆通道'}},
+  4:{def:{N:'辦公隔間廊',S:'檔案側廊',E:'會議室門',W:'飲水機走道'},
+     cubicle:{N:'辦公隔間廊',S:'辦公隔間廊',E:'辦公隔間廊',W:'辦公隔間廊'},
+     meeting:{N:'會議室門',S:'會議室門',E:'會議室門',W:'會議室門'},
+     watercooler:{N:'飲水機走道',S:'飲水機走道',E:'飲水機走道',W:'飲水機走道'},
+     archive:{N:'檔案側廊',S:'檔案側廊',E:'檔案側廊',W:'檔案側廊'}},
+  5:{def:{N:'客房門廊',S:'爵士樂廊',E:'宴會廳側廊',W:'鍋爐房通道'},
+     guest:{N:'客房門廊',S:'客房門廊',E:'客房門廊',W:'客房門廊'},
+     banquet:{N:'宴會廳側廊',S:'宴會廳側廊',E:'宴會廳側廊',W:'宴會廳側廊'},
+     lobby:{N:'爵士樂廊',S:'爵士樂廊',E:'爵士樂廊',W:'爵士樂廊'},
+     room_door:{N:'客房門廊',S:'客房門廊',E:'客房門廊',W:'客房門廊'}},
+  6:{def:{N:'黑暗廊道',S:'隔音暗廊',E:'緊湊通道',W:'黑暗廊道'},
+     dark_hallway:{N:'黑暗廊道',S:'黑暗廊道',E:'黑暗廊道',W:'黑暗廊道'},
+     dim_room:{N:'緊湊通道',S:'緊湊通道',E:'緊湊通道',W:'緊湊通道'},
+     blackout:{N:'隔音暗廊',S:'隔音暗廊',E:'隔音暗廊',W:'隔音暗廊'}},
+  7:{def:{N:'海岸岩台',S:'海蝕通道',E:'淺水邊',W:'霧隙'},
+     arrival:{N:'入口房門',S:'入口房門',E:'入口房門',W:'入口房門'},
+     ocean_view:{N:'淺水邊',S:'淺水邊',E:'淺水邊',W:'淺水邊'},
+     cliffside:{N:'海岸岩台',S:'海岸岩台',E:'海岸岩台',W:'海岸岩台'},
+     wind_gap:{N:'霧隙',S:'霧隙',E:'霧隙',W:'霧隙'},
+     arch:{N:'海蝕通道',S:'海蝕通道',E:'海蝕通道',W:'海蝕通道'},
+     cave_entrance:{N:'入口房門',S:'入口房門',E:'入口房門',W:'入口房門'}},
+  8:{def:{N:'洞穴通道',S:'蛛網夾道',E:'水潭邊',W:'石筍縫'},
+     cave_tunnel:{N:'洞穴通道',S:'洞穴通道',E:'洞穴通道',W:'洞穴通道'},
+     spider_web:{N:'蛛網夾道',S:'蛛網夾道',E:'蛛網夾道',W:'蛛網夾道'},
+     underground_pool:{N:'水潭邊',S:'水潭邊',E:'水潭邊',W:'水潭邊'},
+     stalagmite:{N:'石筍縫',S:'石筍縫',E:'石筍縫',W:'石筍縫'}},
+  9:{def:{N:'郊區街道',S:'民宅門前',E:'死巷',W:'霧中路'},
+     house_living:{N:'民宅門前',S:'民宅門前',E:'民宅門前',W:'民宅門前'},
+     cul_de_sac:{N:'死巷',S:'死巷',E:'死巷',W:'死巷'},
+     suburb_street:{N:'郊區街道',S:'郊區街道',E:'郊區街道',W:'郊區街道'},
+     playground:{N:'後院小徑',S:'後院小徑',E:'後院小徑',W:'後院小徑'}},
+  10:{def:{N:'麥田埂道',S:'公路車轍',E:'穀倉側路',W:'湖畔小路'},
+     wheat_tall:{N:'麥田埂道',S:'麥田埂道',E:'麥田埂道',W:'麥田埂道'},
+     road:{N:'公路車轍',S:'公路車轍',E:'公路車轍',W:'公路車轍'},
+     barn:{N:'穀倉側路',S:'穀倉側路',E:'穀倉側路',W:'穀倉側路'},
+     clearing:{N:'湖畔小路',S:'湖畔小路',E:'湖畔小路',W:'湖畔小路'}},
+  11:{def:{N:'城市人行道',S:'暗巷',E:'公寓門廊',W:'店鋪門前'},
+     alley:{N:'暗巷',S:'暗巷',E:'暗巷',W:'暗巷'},
+     apartment:{N:'公寓門廊',S:'公寓門廊',E:'公寓門廊',W:'公寓門廊'},
+     convenience:{N:'店鋪門前',S:'店鋪門前',E:'店鋪門前',W:'店鋪門前'},
+     subway:{N:'地鐵通道',S:'地鐵通道',E:'地鐵通道',W:'地鐵通道'},
+     office_bldg:{N:'城市人行道',S:'城市人行道',E:'城市人行道',W:'城市人行道'}},
+  12:{def:{N:'混凝土隧道',S:'編號門長廊',E:'柏油通道',W:'閘門間'},
+     numbered_door:{N:'編號門長廊',S:'編號門長廊',E:'編號門長廊',W:'編號門長廊'},
+     hub_gate:{N:'閘門間',S:'閘門間',E:'閘門間',W:'閘門間'},
+     silent_hall:{N:'混凝土隧道',S:'混凝土隧道',E:'混凝土隧道',W:'混凝土隧道'},
+     door_sea:{N:'柏油通道',S:'柏油通道',E:'柏油通道',W:'柏油通道'}}
+};
+const DIR_ARROW={N:'↑',S:'↓',W:'←',E:'→'};
+function passageLabel(lv,type,dir){
+  const L=PASSAGE_LABELS[lv];
+  if(L){const t=L[type];if(t&&t[dir])return t[dir];if(L.def&&L.def[dir])return L.def[dir];}
+  return {N:'北',S:'南',W:'西',E:'東'}[dir];
+}
 function present(room){
   if(!room||typeof room!=='object'){room={title:'',text:'',type:null,exits:{},choices:[],dark:false};}
   room.title=room.title||'';
@@ -1129,7 +1201,11 @@ function renderDirs(exits){
     if(!d){b.className='btn ghost';}
     else{
       const ok=!dead&&exits&&exits[d];
-      b.className='btn';b.textContent={N:'北 ↑',S:'南 ↓',W:'西 ←',E:'東 →'}[d];
+      const lv=G?G.level:0;
+      const rtype=currentRoom?currentRoom.type:null;
+      const label=passageLabel(lv,rtype,d);
+      b.className='btn';
+      b.innerHTML=label+'<span class="dir-arrow">'+DIR_ARROW[d]+'</span>';
       if(!ok)b.disabled=true;
       b.onclick=()=>uiMove(d);
     }
@@ -1919,7 +1995,7 @@ function transitionToLevel1(){
   };
   G.visited={};G.hideOnce=false;
   G.flags.l1intro=false;
-  showLevelCard('LEVEL 1','HABITABLE ZONE · 無 盡 倉 庫');
+  showLevelCard('LEVEL 1','THE HABITABLE ZONE · 宜 居 區');
   log('<span class="cold">你穿過了裂縫。嗡嗡聲變了，腳下變成了冰冷的水泥。</span>');
   enterRoom();
 }
@@ -1980,14 +2056,14 @@ const ACH_DEFS={
   party_avoid:{title:'拒 絕 派 對',desc:'拒絕參加派對'},
   mgeast:{title:'M.E.G. 訪 客',desc:'發現 M.E.G. 前哨站'},
   l3_reach:{title:'電 流 深 處',desc:'踏進 Level 3 電氣站'},
-  l8_reach:{title:'抵 達 深 淵',desc:'抵達 Level 8 洞穴系統'},
+  l8_reach:{title:'抵 達 深 淵',desc:'抵達 Level 8 洞穴群'},
   craft_first:{title:'動 手 作 物',desc:'首次合成物品'},
   quest_done:{title:'M.E.G. 志 工',desc:'完成一項 M.E.G. 任務'},
   codex_first:{title:'觀 察 者',desc:'首次在圖鑑登記一個實體'},
   ending_first:{title:'見 證 者',desc:'首次觸發一種結局'},
   l9_reach:{title:'郊 區 薄 霧',desc:'踏進 Level 9 郊區'},
-  l10_reach:{title:'金 黃 麥 浪',desc:'踏進 Level 10 麥田'},
-  l11_reach:{title:'沒 有 盡 頭 的 城',desc:'踏進 Level 11 無盡城市'},
+  l10_reach:{title:'金 黃 麥 浪',desc:'踏進 Level 10 豐收麥田'},
+  l11_reach:{title:'沒 有 盡 頭 的 城',desc:'踏進 Level 11 不夜城'},
   l12_reach:{title:'樞 紐',desc:'抵達 Level 12 樞紐'},
   bang_survive:{title:'甩 開 逃 兵',desc:'從 Level ! 活著逃回樞紐'},
   true_end:{title:'終 於 醒 了',desc:'打開回家之門，抵達真結局'},
@@ -2505,7 +2581,7 @@ function l1EntityChoices(cell,choices){
     }});
     choices.push({label:'轉身快跑（不要回頭）',action:()=>{
       if(hash2(G.pos.x,G.pos.y,G.runSeed+59)<0.5){cell.state.entityResolved=true;log('<span class="good">你拼命逃跑，沒有回頭。</span>');}
-      else{cell.state.entityResolved=true;const dh=hurt(20,'','Skin-Stealer 剝皮者');log('<span class="danger">你轉身的瞬間它撲了上來，生命 -'+Math.round(dh)+'。</span>');}
+      else{cell.state.entityResolved=true;const dh=hurt(20,'','Skin-Stealer 竊皮者');log('<span class="danger">你轉身的瞬間它撲了上來，生命 -'+Math.round(dh)+'。</span>');}
       refreshRoom();
     }});
   }
@@ -2550,29 +2626,29 @@ function toast(msg){
 
 /* ---- 圖鑑：實體與層級資料（首次遭遇/抵達自動記錄，未發現顯示 ???） ---- */
 const ENTITY_DEFS={
-  smiler:{name:'Smiler 微笑者',danger:'中-高',behavior:'只在黑暗中浮現，沒有身體，只有眼睛與齒列的凝視。',counter:'以光源照射可逼退；切勿在無光中直視。'},
-  hound:{name:'Hound 獵犬',danger:'高',behavior:'四肢著地高速衝鋒，被聲音與動靜吸引。',counter:'拉開距離繞跑；手電筒可暫時嚇阻。'},
-  skinstealer:{name:'Skin-Stealer 竊皮者',danger:'高',behavior:'模仿人類外形的蒼白無臉人形，會偷穿人皮。',counter:'保持凝視緩退；切勿轉背狂奔。'},
-  duller:{name:'Duller 遲鈍者',danger:'低',behavior:'渾濁的灰色人形，動作遲緩，通常無惡意。',counter:'安靜繞過即可。'},
-  deathmoth:{name:'Deathmoth 死亡飛蛾',danger:'中',behavior:'成群飛舞，腐蝕性體液會灼傷肌膚。',counter:'蹲下護住頭部與臉。'},
-  wretch:{name:'Wretch 悲泣者',danger:'中',behavior:'拖著破碎的身軀發出沙啞哭喊。',counter:'不要循聲靠近。'},
-  arachne:{name:'Arachne 爬行者',danger:'中-高',behavior:'在天花板與牆面疾速爬行的蛛形實體。',counter:'用強光照射天花板逼退。'},
-  partygoer:{name:'Partygoers 派對客',danger:'極高',behavior:'以笑聲、音樂與蛋糕甜味引誘旅人參加「派對」。',counter:'絕對不要回應，也不要走近彩色的門。'},
-  window:{name:'The Windows 窗中之物',danger:'中',behavior:'出現在郊區民宅窗後的窺視者。',counter:'不要與窗後的影子對視。'}
+  smiler:{name:'Smiler 微笑者（Entity 3）',danger:'中-高',behavior:'黑暗中反光的雙眼與齒列，本體不明；受光源吸引，會追著看見的光。',counter:'保持眼神接觸緩緩後退；切勿在無光中與其直視。'},
+  hound:{name:'Hound 獵犬（Entity 8）',danger:'高',behavior:'四肢著地爬行的人型實體，利爪利齒，被聲音與動靜吸引。',counter:'直視可短暫嚇阻；拉開距離，不要轉背狂奔。'},
+  skinstealer:{name:'Skin-Stealer 竊皮者（Entity 10）',danger:'高',behavior:'披上受害者人皮偽裝，蒼白凹陷的雙眼；會重複聽到的人聲引誘獵物。',counter:'保持凝視緩退；察覺人聲不對就遠離。'},
+  duller:{name:'Duller 遲鈍者（Entity 6）',danger:'低',behavior:'深灰無臉的高挑人型，手臂極長，可伸長穿牆抓人；通常會躲避威脅。',counter:'厭惡杏仁水；安靜繞過，勿隔牆獨處。'},
+  deathmoth:{name:'Deathmoth 死亡飛蛾（Entity 4）',danger:'中',behavior:'雄蛾小而食腐、單體溫和；雌蛾較大，具腐蝕性液體；愈近巢穴中心愈敵對。',counter:'蹲下護住頭部與臉；遠離蛾群聚集處。'},
+  wretch:{name:'Wretch 悲泣者（Entity 15）',danger:'中',behavior:'經 Wretched Cycle 轉化的類人實體，聲音是判斷威脅最快的方式，集群行動。',counter:'不要循聲靠近；聽見哭喊便轉換方向。'},
+  arachne:{name:'Arachnids 蛛形類',danger:'中-高',behavior:'在天花板與岩壁間疾速爬行的蛛形群體（註：「Arachne」非主站官方名稱，對應 Level 8 的 Arachnids 總稱）。',counter:'以強光照射天花板與岩壁逼退。'},
+  partygoer:{name:'Partygoers 派對客（Entity 67）',danger:'極高',behavior:'原生棲地為 Level Fun（The SS Fun =)）；派對裝飾、笑聲與蛋糕甜味是重大警訊。',counter:'絕對不要回應，也不要走近彩色的門。'},
+  window:{name:'The Windows 窗中之物（Entity 2）',danger:'中',behavior:'占據牆面現成窗戶的人型剪影（佔據型／空窗型），以耳語與手勢引誘靠近。',counter:'一至兩公尺內會被伸手拉入；不要與窗後影子對視。'}
 };
 const LEVEL_CODEX={
-  0:{name:'Level 0 · Threshold 入口',desc:'發黃牆紙、潮濕地毯與永不停歇的日光燈嗡鳴。'},
-  1:{name:'Level 1 · Habitable Zone 宜居區',desc:'混凝土倉庫般的無盡空間，會週期性停電。'},
-  3:{name:'Level 3 · Electrical Station 電氣站',desc:'高壓電線與變壓器構成的金屬迷宮。'},
-  4:{name:'Level 4 · Abandoned Office 廢棄辦公室',desc:'明亮安靜的辦公區，少數相對安全的補給點。'},
-  5:{name:'Level 5 · The Hotel 旅館',desc:'1930 年代風格的老旅館，半夜鋼琴會自己響。'},
-  6:{name:'Level 6 · Lights Out 熄燈',desc:'完全的黑暗，移動的聲音會吸引東西。'},
-  7:{name:'Level 7 · Threshold 暮光門檻',desc:'懸崖與無盡的黑色海洋，寂遼而空曠。'},
-  8:{name:'Level 8 · Cave System 洞穴系統',desc:'鐘乳石與地下湖構成的蜘蛛巢穴。'},
-  9:{name:'Level 9 · The Suburbs 郊區',desc:'永夜薄霧裡的無盡民宅街區，窗後有窺視者。'},
-  10:{name:'Level 10 · Field of Wheat 麥田',desc:'陰天薄光下的金黃麥浪，沿公路與電塔尋找城市邊界。'},
-  11:{name:'Level 11 · Endless City 無盡城市',desc:'燈火通明卻空無一人的都市，危險藏在建築與地鐵深處。'},
-  12:{name:'Level 12 · The Hub 樞紐',desc:'所有後室路徑交會的長廊，兩側是無數編號的門與門海。'}
+  0:{name:'Level 0 · Threshold 黃室',desc:'發黃牆紙、潮濕地毯與嗡嗡日光燈的迷宮；地毯滲出的杏仁水被污染、不可飲用。是否存在實體仍屬未確認。穿過一面閃爍的牆可抵達 Level 1。'},
+  1:{name:'Level 1 · The Habitable Zone 宜居區',desc:'地下停車場與廢棄倉庫的無限嵌合體，混凝土立柱綿延；板條箱會憑空出現，燈光閃爍時段實體傾向出沒。自 Level 0 經閃爍牆進入，特定門與大廳序列可通往 The Hub。'},
+  3:{name:'Level 3 · Electrical Station 電站',desc:'老舊電力設施：磚牆、電纜、黑色液體管道與金屬欄杆封鎖的走廊；實體智慧高，常以小隊設伏。裝配線等房間蘊含可自行補充的物資。'},
+  4:{name:'Level 4 · Abandoned Office 辦公室',desc:'空蕩辦公大樓，多數窗戶已封黑，未封黑的窗戶是陷阱；本層是杏仁水最易取得之處。實體僅見 Hounds 與 Dullers。'},
+  5:{name:'Level 5 · Terror Hotel 恐怖旅館',desc:'1930 年代風格的無限旅館：大廳、Beverly Room 舞廳與鍋爐房，古董唱機安靜播放爵士樂；Deathmoths 大量聚居，為其中央巢穴之一。深入鍋爐房可通往 Level 6。'},
+  6:{name:'Level 6 · Lights Out 熄燈',desc:'徹底的黑暗，攜帶的光源亦無法作用；隔音般的寂靜，長待易生偏執與幻聽。主站記載目前未發現實體，安全等級待判定。聽見海浪聲的向下樓梯通往 Level 7。'},
+  7:{name:'Level 7 · Thalassophobia 懼深海',desc:'樓梯底部的入口房（書櫃、單椅、淺水坑）之外是無限海洋，水域分日光、暮光、午夜與深淵層。深水裡的東西潛伏於幽暗水域；水下山壁洞穴通往 Level 8。'},
+  8:{name:'Level 8 · Cave Systems 洞穴群',desc:'有機喀斯特溶洞構成的龐大網絡，空間非線性、重力異常；蛛形群體 Arachnids 與 Wretches 出沒。沿 9th Road（Dark Highway）標記行進可通往後續層級。'},
+  9:{name:'Level 9 · The Suburbs 郊區',desc:'午夜時分的無限郊區：潮濕柏油路、關閉路燈與霧靄；特有 The Mangled 與 Neighborhood Watch，窗後窺視者猶存。草地步道通往 Level 10，沿路牌長走可達 Level 11。'},
+  10:{name:'Level 10 · Bumper Crop 豐收麥田',desc:'鉛灰陰天下無盡的小麥與大麥牧場，可飲用湖水與穀倉木棚散佈其間；表土約一米深，下有蠕蟲集群，無其他敵對實體。沿公路長走可通往 Level 11。'},
+  11:{name:'Level 11 · The City That Never Sleeps 不夜城',desc:'空曠自給的都會，街區、公寓、店鋪與地鐵隧道交織，幾乎連通無數層級；實體以外來者為主，最常見 Facelings 與 Hounds。出口位置不起眼且多為單程。'},
+  12:{name:'Level 12 · The Hub 樞紐',desc:'對應主站未編號層 The Hub：地下隧道網、乾燥柏油路、混凝土牆與橙色工業燈，刻符混凝土門須層級鑰匙開啟，監督者為 Keymaster。主站編號 Level 12「Matrix」（白色審查房）是另一獨立條目，與本關無關。'}
 };
 function recordEntity(t){
   if(!G||!G.codex)return;
@@ -2859,7 +2935,7 @@ function entityChoices2(cell,choices){
     }});
     choices.push({label:'轉身快跑',action:()=>{
       if(hash2(G.pos.x,G.pos.y,G.runSeed+2003)<0.5){cell.state.entityResolved=true;log('<span class="good">你拚命跑開了。</span>');}
-      else{cell.state.entityResolved=true;const dh=hurt(20,'','Skin-Stealer 剝皮者');log('<span class="danger">它撲了上來，生命 -'+Math.round(dh)+'。</span>');}
+      else{cell.state.entityResolved=true;const dh=hurt(20,'','Skin-Stealer 竊皮者');log('<span class="danger">它撲了上來，生命 -'+Math.round(dh)+'。</span>');}
       refreshRoom();
     }});
   }
@@ -2883,7 +2959,7 @@ function entityChoices2(cell,choices){
         log('<span class="good">強光下，那東斯吱吱叫著縮進了縫隙。</span>電池 -8%。');
       }else{
         cell.state.entityResolved=true;
-        const dh=hurt(10,'','Arachne 蛛形實體');
+        const dh=hurt(10,'','Arachnids 蛛形類');
         log('<span class="danger">牠從天花板落下，爪子劃過你的肩膀，生命 -'+Math.round(dh)+'。</span>');
       }
       refreshRoom();
@@ -3250,7 +3326,7 @@ function buildL4Room(x,y,cell,first){
     title='Level 4 · 辦公走廊';
     text='一條辦公走廊。'+amb;
     /* L4 極少實體 */
-    rollEntity(cell,first,rng,0.04,[{t:'skinstealer',w:0.6},{t:'hound',w:0.4}]);
+    rollEntity(cell,first,rng,0.04,[{t:'hound',w:0.55},{t:'duller',w:0.45}]);
   }
   else if(type==='cubicle'){
     title='Level 4 · 隔間辦公區';
@@ -3367,7 +3443,7 @@ function transitionToLevel4(){
   enterRoom();
 }
 
-/* ========== LEVEL 5 · THE HOTEL 旅館 ========== */
+/* ========== LEVEL 5 · TERROR HOTEL 恐怖旅館 ========== */
 const L5_EXIT={x:7,y:7};
 const l5walls=makeWalls(401,407,0.30,L5_EXIT);
 const l5exits=makeExits(l5walls);
@@ -3406,18 +3482,18 @@ function buildL5Room(x,y,cell,first){
   const amb=hotel[Math.floor(rng()*hotel.length)];
   if(type==='arrival'){
     title='Level 5 · 旅 館';
-    text='你走下樓梯，腳下的地毯突然變得<span class="hl">厚實而柔軟</span>。\n\n這是一座<span class="cold">1930 年代風格的老旅館</span>——暗黃的壁燈、木雕護牆板、銅製把手。走廊無盡地延伸，兩側是一扇扇緊閉的房門。\n\n空氣溫暖而潮濕，你隱約聽見鋼琴的聲音，從很遠很遠的地方。\n\n'+amb;
+    text='你走下樓梯，腳下的地毯突然變得<span class="hl">厚實而柔軟</span>。\n\n這是一座<span class="cold">1930 年代風格的恐怖旅館</span>——暗黃的壁燈、木雕護牆板、銅製把手。走廊無盡地延伸，兩側是一扇扇緊閉的房門。\n\n空氣溫暖而潮濕，你隱約聽見爵士樂的聲音，從很遠很遠的地方。\n\n'+amb;
   }
   else if(type==='corridor'||type==='junction'||type==='deadend'){
     title='Level 5 · 走 廊';
     text='一條旅館走廊。'+amb;
-    rollEntity(cell,first,rng,0.10,[{t:'hound',w:0.35},{t:'skinstealer',w:0.25},{t:'wretch',w:0.25},{t:'smiler',w:0.15}]);
+    rollEntity(cell,first,rng,0.10,[{t:'deathmoth',w:0.55},{t:'hound',w:0.25},{t:'skinstealer',w:0.20}]);
     levelAmbientEvent(cell,first,rng);
   }
   else if(type==='carpet'){
     title='Level 5 · 厚 地 毯 區';
     text='腳下的地毯特別厚實，圖案是重複的暗紅色菱形。'+amb+'\n\n你注意到地毯上有一道深色痕跡，從某個房門下滑出來，又消失在門縫裡。';
-    rollEntity(cell,first,rng,0.12,[{t:'hound',w:0.3},{t:'skinstealer',w:0.3},{t:'wretch',w:0.4}]);
+    rollEntity(cell,first,rng,0.12,[{t:'deathmoth',w:0.60},{t:'hound',w:0.20},{t:'skinstealer',w:0.20}]);
   }
   else if(type==='room_door'){
     title='Level 5 · 房 間 門';
@@ -3530,8 +3606,8 @@ function transitionToLevel5(){
   G.pos={x:0,y:0};
   G.l5={};
   G.visited={};G.hideOnce=false;
-  showLevelCard('LEVEL 5','THE HOTEL · 老 旅 館');
-  log('<span class="cold">你走進了老旅館。地毯吸收了一切聲音。</span>');
+  showLevelCard('LEVEL 5','TERROR HOTEL · 恐 怖 旅 館');
+  log('<span class="cold">你走進了恐怖旅館。地毯吸收了一切聲音。</span>');
   enterRoom();
 }
 
@@ -3643,7 +3719,7 @@ function transitionToLevel6(){
   enterRoom();
 }
 
-/* ========== LEVEL 7 · THRESHOLD 暮光門檻 ========== */
+/* ========== LEVEL 7 · THALASSOPHOBIA 懼深海 ========== */
 const L7_EXIT={x:6,y:6};
 const l7walls=makeWalls(601,607,0.20,L7_EXIT);  /* 開闊地形 */
 const l7exits=makeExits(l7walls);
@@ -3665,21 +3741,21 @@ function buildL7Room(x,y,cell,first){
   const rng=cellRng(x,y,G.runSeed+613,17);
   let title='',text='',choices=[],dark=false;
   const sea=[
-    '冷風從懸崖下吹上來，帶著鹹味。',
-    '下方是無盡的黑色海洋，浪濤聲遙遠而規律。',
-    '夜空是深藍色的，沒有星星，只有一片均勻的暮光。',
-    '懸崖邊緣的岩石又濕又滑。',
-    '你聽見很遠的地方有海鳥的叫聲——但後室裡不該有海鳥。',
-    '浪頭撞在岩腳，噴起細碎的水花，又被風扯碎。',
+    '空氣鹹而冷，吸入後胸口卻出奇地放鬆。',
+    '下方是無盡的海面，浪濤聲遙遠而規律。',
+    '水面昏暗，沒有太陽，也沒有星星，只有均勻的灰光。',
+    '岩面又濕又滑，長著一層暗色苔。',
+    '你聽見很遠的地方有什麼東西游過——但後室裡不該有海裡的生物。',
+    '浪頭拍在岩腳，噴起細碎的水花，又被風扯碎。',
     '一輪沒有月亮的天空，海平線卻微微發亮。',
     '風裡夾著某種潮濕的、來自遠方的氣味。',
     '岩石上有古老的刻痕，像潮水線，又像文字。',
-    '你聽見自己的心跳被風聲蓋過，出奇地平靜。'
+    '你聽見自己的心跳被水聲蓋過，出奇地平靜。'
   ];
   const amb=sea[Math.floor(rng()*sea.length)];
   if(type==='arrival'){
-    title='Level 7 · 暮 光 門 檻';
-    text='你從微光中走出，發現自己站在<span class="cold">一道懸崖的邊緣</span>。\n\n腳下是<span class="cold">無盡的黑暗海洋</span>，冷風扑面而來，海浪聲從深處傳上來。頭頂是深藍色的暮光天空，沒有太陽，也沒有星星。\n\n這裡極其空曠，幾乎聽不見任何實體的聲音。只有風、海、和你自己的呼吸。\n\n'+amb;
+    title='Level 7 · 懼 深 海';
+    text='你沿著向下的樓梯走到底，推開一扇門。\n\n門後是一間不大的入口房：靠牆書櫃、一張單椅，地毯上積著淺水坑。由門口望出去，是<span class="cold">無盡延伸的海面</span>，昏暗的光落在水上。\n\n這裡極其空曠，幾乎聽不見任何實體的聲音。只有水、風，和你自己的呼吸。\n\n'+amb;
     if(!cell.state.introHealed){cell.state.introHealed=true;G.sanity=Math.min(100,G.sanity+15);log('<span class="good">遼闊與寂靜讓你短暫地平靜下來，理智 +15。</span>');}
   }
   else if(type==='corridor'||type==='junction'||type==='deadend'){
@@ -3687,8 +3763,8 @@ function buildL7Room(x,y,cell,first){
     text='一塊突出海面的岩石平台。'+amb;
   }
   else if(type==='cliffside'){
-    title='Level 7 · 懸 崖 邊 緣';
-    text='你站在懸崖的最外沿。下方是深不見底的黑色海水。'+amb+'\n\n你必須小心，不要跌下去。';
+    title='Level 7 · 岩 台 邊 緣';
+    text='一塊突出海面的岩台。'+amb+'\n\n你必須小心，不要跌進水裡。';
     if(!cell.state.looked){
       choices.push({label:'低頭看向海面',action:()=>{
         cell.state.looked=true;
@@ -3704,7 +3780,7 @@ function buildL7Room(x,y,cell,first){
   }
   else if(type==='ocean_view'){
     title='Level 7 · 望 海 處';
-    text='你停下腳步，望著無盡的黑色海洋。'+amb+'\n\n在這片無邊的荒蕪中，你第一次感覺到自己也許真的可以離開。';
+    text='你停下腳步，望著無盡的暗色海面。'+amb+'\n\n在這片無邊的荒蕪中，你第一次感覺到自己也許真的可以離開。';
     if(!cell.state.rested){
       choices.push({label:'坐著發呆一會',action:()=>{
         cell.state.rested=true;
@@ -3727,7 +3803,7 @@ function buildL7Room(x,y,cell,first){
   }
   else if(type==='lighthouse'){
     title='Level 7 · 燈 塔';
-    text='一座<span class="hl">斷了一半的石砌燈塔</span>立在懸崖邊緣。'+amb+'\n\n燈室早空了，鏡面裂成蜘蛛網，但鏡台還能站人。';
+    text='一座<span class="hl">斷了一半的石砌燈塔</span>立在岩台邊緣。'+amb+'\n\n燈室早空了，鏡面裂成蜘蛛網，但鏡台還能站人。';
     if(!cell.state.climbed){
       choices.push({label:'爬上燈室頂部遠望',action:()=>{
         cell.state.climbed=true;
@@ -3739,7 +3815,7 @@ function buildL7Room(x,y,cell,first){
   }
   else if(type==='arch'){
     title='Level 7 · 海 蝕 拱 門';
-    text='海浪在岩壁上鑿出一道巨大的<span class="hl">石拱</span>。'+amb+'\n\n穿過拱門，下方就是垂直落進黑海的深淵。';
+    text='海浪在岩壁上鑿出一道巨大的<span class="hl">石拱</span>。'+amb+'\n\n穿過拱門，下方就是垂直落進深水的深淵。';
     if(!cell.state.lean){
       choices.push({label:'走到拱門邊緣往下看',action:()=>{
         cell.state.lean=true;
@@ -3752,7 +3828,7 @@ function buildL7Room(x,y,cell,first){
   }
   else if(type==='cave_entrance'){
     title='Level 7 · 山 洞 入 口';
-    text='在懸崖的盡頭，你看見一個<span class="hl">黑色的山洞入口</span>。\n\n洞口潮濕，佈滿青苔與蜘蛛網。從洞裡傳來滴水聲，和某種細密的、爬行的聲音。\n\n這是通往 Level 8「Cave System」的路。';
+    text='在岩台的盡頭，你看見一個<span class="hl">黑色的山洞入口</span>。\n\n洞口潮濕，佈滿青苔與蜘蛛網。從洞裡傳來滴水聲，和某種細密的、爬行的聲音。\n\n這是通往 Level 8「Cave Systems」的路。';
     choices.push({label:'走進山洞',action:()=>{
       log('你走進黑暗的山洞，海浪聲在身後逐漸消失……');
       transitionToLevel8();
@@ -3770,12 +3846,12 @@ function transitionToLevel7(){
   G.pos={x:0,y:0};
   G.l7={};
   G.visited={};G.hideOnce=false;
-  showLevelCard('LEVEL 7','THRESHOLD · 暮 光 門 檻');
-  log('<span class="cold">你走出了黑暗，站在懸崖邊。冷風扑面。</span>');
+  showLevelCard('LEVEL 7','THALASSOPHOBIA · 深 海 之 門');
+  log('<span class="cold">你走出了黑暗，站在臨海的岩台上。冷風扑面。</span>');
   enterRoom();
 }
 
-/* ========== LEVEL 8 · CAVE SYSTEM 洞穴系統 ========== */
+/* ========== LEVEL 8 · CAVE SYSTEMS 洞穴群 ========== */
 const L8_EXIT={x:7,y:7};
 const l8walls=makeWalls(701,707,0.30,L8_EXIT);
 const l8exits=makeExits(l8walls);
@@ -3817,7 +3893,7 @@ function buildL8Room(x,y,cell,first){
   else if(type==='cave_tunnel'){
     title='Level 8 · 洞 穴 通 道';
     text='一條狹窄的洞穴通道。'+amb;
-    rollEntity(cell,first,rng,0.12,[{t:'arachne',w:0.4},{t:'wretch',w:0.3},{t:'skinstealer',w:0.3}]);
+    rollEntity(cell,first,rng,0.12,[{t:'arachne',w:0.5},{t:'wretch',w:0.5}]);
     levelAmbientEvent(cell,first,rng);
   }
   else if(type==='spider_web'){
@@ -3847,7 +3923,7 @@ function buildL8Room(x,y,cell,first){
   else if(type==='stalagmite'){
     title='Level 8 · 石 筍 林';
     text='地面長滿了尖銳的石筍，像一片石化的森林。'+amb+'\n\n你必須在縫隙間小心前進。';
-    rollEntity(cell,first,rng,0.10,[{t:'arachne',w:0.5},{t:'deathmoth',w:0.5}]);
+    rollEntity(cell,first,rng,0.10,[{t:'arachne',w:0.5},{t:'wretch',w:0.5}]);
     if(!cell.state.probed){
       choices.push({label:'撥開石筍縫隙翻找',action:()=>{
         cell.state.probed=true;
@@ -3918,7 +3994,7 @@ function transitionToLevel8(){
   G.pos={x:0,y:0};
   G.l8={};
   G.visited={};G.hideOnce=false;
-  showLevelCard('LEVEL 8','CAVE SYSTEM · 洞 穴 系 統');
+  showLevelCard('LEVEL 8','CAVE SYSTEMS · 洞 穴 群');
   unlockAch('l8_reach');
   if(G.noTorch!==false)unlockAch('l8_nodark');
   log('<span class="cold">你走進了洞穴。蜘蛛網在你臉頰邊划过。</span>');
@@ -3934,16 +4010,16 @@ function transitionToLevel9(){
 }
 function transitionToLevel10(){
   G.level=10;G.pos={x:0,y:0};G.l10={};G.visited={};G.hideOnce=false;
-  showLevelCard('LEVEL 10','FIELD OF WHEAT · 麥 田');
+  showLevelCard('LEVEL 10','BUMPER CROP · 麥 田 牧 場');
   unlockAch('l10_reach');
   log('<span class="cold">霧散了，你站在無盡的金黃麥田裡，陰天的薄光落在肩上。</span>');
   enterRoom();
 }
 function transitionToLevel11(){
   G.level=11;G.pos={x:0,y:0};G.l11={};G.visited={};G.hideOnce=false;
-  showLevelCard('LEVEL 11','THE ENDLESS CITY · 無 盡 城 市');
+  showLevelCard('LEVEL 11','THE CITY THAT NEVER SLEEPS · 無 盡 都 市');
   unlockAch('l11_reach');
-  log('<span class="cold">麥田的盡頭接著水泥與霓虹——一座沒有盡頭的城市在你面前展開。</span>');
+  log('<span class="cold">麥田的盡頭接著混凝土與柏油路——一座沒有盡頭的城市在你面前展開。</span>');
   enterRoom();
 }
 function transitionToLevel12(){
@@ -4170,7 +4246,7 @@ LEVEL_AMB_EVENTS[9]=[
 ];
 /* 出口可達性擴充：L9 出口 (7,7) 必須在起點連通集內 */
 EXTRA_DEEP_CHECKS.push({fn:l9exits,ex:L9_EXIT.x,ey:L9_EXIT.y,bound:14,cap:500});
-/* ========== LEVEL 10 · FIELD OF WHEAT 麥田 ========== */
+/* ========== LEVEL 10 · BUMPER CROP 豐收麥田 ========== */
 const L10_EXIT={x:8,y:8};
 const l10walls=makeWalls(1001,1007,0.24,L10_EXIT);
 const l10exits=makeExits(l10walls);
@@ -4187,7 +4263,7 @@ function l10type(x,y){
   return autoType(l10exits(x,y));  /* corridor / junction / deadend → 麥田小徑 */
 }
 const farmDiaryNote={id:'farm_diary10',title:'穀倉裡的褪色日記',body:'我已經在這片田裡走了三天。\n\n麥子永遠是金黃的，天永遠陰著。一開始我以為只要朝一個方向一直走就能出去，但公路和電塔總是把我帶回原點附近——除非你懂得看它們排成的那一條直線。\n\nM.E.G. 的人留過字：別在高麥裡亂鑽。那些東西（我叫牠們狗）就躲在麥稈後面，你聽見聲音的時候已經太近了。要走就走公路，要停就停在開闊處。\n\n我把最後一條能量棒藏在穀倉的飼料桶後面。如果你看到這本日記，代表我沒能走到城市。\n\n往電塔連成的方向走，盡頭有灰光。那不是雲。那是城市。'};
-const roadMegaNote={id:'road_mega10',title:'路標旁的 M.E.G. 觀察記錄',body:'【M.E.G. 野外觀測 · Level 10】\n\n這層是一片無盡金黃麥田，陰天薄光，視野受阻於比人高的麥稈。好消息：天光足夠，手電筒幾乎不必開。壞消息：Hound 在麥稈裡伏擊，靜音、近距離才出聲。\n\n導航方式：找到廢棄柏油公路與高壓電塔。它們大致沿同一方向延伸，連向地平線上一抹不自然的灰亮——那就是 Level 11「無盡城市」的邊界。\n\n資源：傾斜的穀倉可搜出布料、電線、金屬碎片與少量食物。開闊空地可稍作休息。\n\n別回頭。別鑽進高麥。跟著電塔走。'};
+const roadMegaNote={id:'road_mega10',title:'路標旁的 M.E.G. 觀察記錄',body:'【M.E.G. 野外觀測 · Level 10】\n\n這層是一片無盡金黃麥田，陰天薄光，視野受阻於比人高的麥稈。好消息：天光足夠，手電筒幾乎不必開。壞消息：Hound 在麥稈裡伏擊，靜音、近距離才出聲。\n\n導航方式：找到廢棄柏油公路與高壓電塔。它們大致沿同一方向延伸，連向地平線上一抹不自然的灰亮——那就是 Level 11「不夜城」的邊界。\n\n資源：傾斜的穀倉可搜出布料、電線、金屬碎片與少量食物。開闊空地可稍作休息。\n\n別回頭。別鑽進高麥。跟著電塔走。'};
 function buildL10Room(x,y,cell,first){
   const type=l10type(x,y);
   const exits=l10exits(x,y);
@@ -4331,7 +4407,7 @@ LEVEL_AMB_EVENTS[10]=[
 ];
 LEVEL_AMB_EVENTS[11]=[
   '路口的紅綠燈無人車輛，仍規律地由紅轉黃再轉綠，像在等待永不會來的行人。',
-  '一塊霓虹招牌剛換了字——上一秒還寫著「營業中」，這一秒變成了別的語言。',
+  '一塊普通招牌剛換了字——上一秒還寫著「營業中」，這一秒變成讀不懂的語言。',
   '地下傳來地鐵進站的隆隆聲，伴隨剎車的尖嘯，可出口處沒有月台。',
   '細雨落在空無一人的柏油路上，雨刷在一輛廢車上自動擺動了一下，又停下。',
   '某輛違停的車忽然響起警報，在空街裡迴盪了十秒，然後自己安靜下來。',
@@ -4348,8 +4424,8 @@ LEVEL_AMB_EVENTS[12]=[
   '一扇門後傳來火車廣播，站名你聽過又忘記。',
   '腳步迴音在第三格磁磚處分岔，分成兩個方向。'
 ];
-/* ========== LEVEL 11 · THE ENDLESS CITY 無盡城市 ========== */
-/* 無盡城市：高樓、馬路、霓虹、地鐵、公寓、商店與辦公樓綿延不絕。
+/* ========== LEVEL 11 · THE CITY THAT NEVER SLEEPS 不夜城 ========== */
+/* 不夜城：混凝土高樓、馬路、地鐵、公寓、商店與辦公樓綿延不絕。
    街道上有薄霧、廢棄車輛、紅綠燈仍在閃。可進入建築搜刮——
    資源比曠野多，但建築內部有實體。核心目標：找到中央車站，
    那座刻有符號的地鐵入口，就是通往樞紐（Level 12）的門。 */
@@ -4360,7 +4436,7 @@ EXTRA_DEEP_CHECKS.push({fn:l11exits,ex:L11_EXIT.x,ey:L11_EXIT.y,bound:14,cap:150
 
 /* 專屬紙條（≥2） */
 const commuterNote={id:'commuter11',title:'通勤者遺留的紙條',body:'我在這座城市走了三天。\n\n麵包店的燈亮著，貨架是滿的，飲料冰鎮得剛好——但櫃檯後面永遠沒人。紅綠燈自己在換，地鐵自己在跑，好像所有人都在，又好像所有人從未存在過。\n\n我發現一件事：地鐵月台牆上，每隔一段就刻同一個符號——一個被圓圈圍住的箭頭，指向「中央車站」。\n\n如果那些列車真的通往某處，那一定是那裡。跟著符號走。別在公寓裡過夜。\n\n——一個趕不上末班車的人'};
-const mgeCityNote={id:'mge_city11',title:'M.E.G. 城市觀察備忘',body:'【Level 11 · 無盡城市 · 前哨觀察】\n\n這是深鏈中少數「物資豐沛」的層級：便利店、辦公室、公寓都能找到食物、材料與電池。但請記住代價——\n\n街上相對安全，真正的危險在建築內部。黑暗的地鐵站與窄巷裡，牠們習慣了這座城市的燈光。\n\n出口線索：尋找「中央車站」。那是一座宏偉、月台資訊版全白的終點站；它的地鐵入口閘門上刻著與市區相同的符號。走進那道閘門，據傳可抵達「樞紐」——所有後室路徑交會的地方。\n\n留下補給，祝平安。'};
+const mgeCityNote={id:'mge_city11',title:'M.E.G. 城市觀察備忘',body:'【Level 11 · 不夜城 · 前哨觀察】\n\n這是深鏈中少數「物資豐沛」的層級：便利店、辦公室、公寓都能找到食物、材料與電池。但請記住代價——\n\n街上相對安全，真正的危險在建築內部。黑暗的地鐵站與窄巷裡，牠們習慣了這座城市的燈光。\n\n出口線索：尋找「中央車站」。那是一座宏偉、月台資訊版全白的終點站；它的地鐵入口閘門上刻著與市區相同的符號。走進那道閘門，據傳可抵達「樞紐」——所有後室路徑交會的地方。\n\n留下補給，祝平安。'};
 
 function l11type(x,y){
   if(x===0&&y===0)return 'arrival';
@@ -4384,11 +4460,11 @@ function buildL11Room(x,y,cell,first){
   /* 城市街道氛圍池 */
   const street=[
     '柏油路面裂開，縫隙裡長著發黃的雜草，薄霧貼著地面流動。',
-    '兩旁高樓的窗戶黑洞洞的，只有幾扇還亮著慘白的霓虹。',
+    '兩旁高樓的窗戶黑洞洞的，多像一面面昏黑的鏡子，只餘幾扇透出慘白光。',
     '一輛廢棄轎車斜停在路邊，車門敞著，方向盤上覆了一層灰。',
     '路口的紅綠燈在無車的街上規律切換，綠光在霧裡暈開。',
     '人行道上的磁磚翹起，踩上去發出空洞的回聲。',
-    '霓虹招牌的殘影在濕漉漉的路面上拉長，像融化的水彩。',
+    '水泥立面與柏油路在薄霧裡重疊，街區遠看一格格雷同，像複印出來的。',
     '遠處傳來列車進站的剎車聲，卻看不見任何軌道。',
     '報攤上的報紙疊得整整齊齊，頭版日期全是同一天。',
     '一棟辦公樓的電梯指示燈在 14 樓與 15 樓之間來回跳動。',
@@ -4398,7 +4474,7 @@ function buildL11Room(x,y,cell,first){
 
   if(type==='arrival'){
     title='Level 11 · 城市邊界';
-    text='麥田在你腳下戛然而止，取而代之的是<span class="hl">濕漉漉的柏油馬路</span>。\n\n一座<span class="cold">沒有盡頭的城市</span>在薄霧中展開：高樓夾著窄街，霓虹殘影在路面上晃動，紅綠燈兀自閃爍。空氣冷而乾淨，像深夜十二點的市中心。\n\n這裡<span class="hl">比曠野富庶得多</span>——便利店、辦公大樓、公寓都還留著物資。但你隱約記得：<span class="danger">真正的危險，在建築的門後</span>。\n\n傳聞這座城市的盡頭有一座中央車站，它刻著符號的地鐵入口，通往所有路徑交會的地方。\n\n'+amb;
+    text='麥田在你腳下戛然而止，取而代之的是<span class="hl">濕漉漉的柏油馬路</span>。\n\n一座<span class="cold">沒有盡頭的城市</span>在薄霧中展開：混凝土高樓夾著窄街，立面單調雷同，窗戶如昏黑暗鏡；紅綠燈兀自切換。空氣冷而乾淨，像深夜十二點的市中心。\n\n這裡<span class="hl">比曠野富庶得多</span>——便利店、辦公大樓、公寓都還留著物資。但你隱約記得：<span class="danger">真正的危險，在建築的門後</span>。\n\n傳聞這座城市的盡頭有一座中央車站，它刻著符號的地鐵入口，通往所有路徑交會的地方。\n\n'+amb;
     if(!cell.state.introHealed){cell.state.introHealed=true;G.sanity=Math.min(100,G.sanity+8);log('<span class="good">城市的燈火讓你短暫地以為自己回到了人間，理智 +8。</span>');}
   }
   else if(type==='corridor'){
@@ -4501,7 +4577,7 @@ function buildL11Room(x,y,cell,first){
   }
   else if(type==='alley'){
     title='Level 11 · 暗巷';
-    text='一條夾在兩棟高樓間的窄巷，霓虹光照不到這裡。'+amb+'\n\n牆上滿是塗鴉與脫落的瓷磚，垃圾車歪在深處——<span class="danger">黑暗裡像有什麼東西在挪動</span>。';
+    text='一條夾在兩棟高樓間的窄巷，高樓的影子罩住這裡。'+amb+'\n\n牆上滿是塗鴉與脫落的瓷磚，垃圾車歪在深處——<span class="danger">黑暗裡像有什麼東西在挪動</span>。';
     dark=true;
     if(!cell.state.searched){
       choices.push({label:'借著微弱的光翻找垃圾車',action:()=>{
@@ -4526,7 +4602,7 @@ function buildL11Room(x,y,cell,first){
     title='Level 11 · 中央車站';
     text='霧在這裡散開。\n\n你站在一座<span class="hl">宏偉的終點站大廳</span>——高聳的穹頂下，月台資訊板是一片空白，列車時刻表從未被填寫。\n\n大廳正中央，是一道<span class="hl">與市區地鐵相同符號的閘門</span>：一個被圓圈圍住的箭頭。閘門半開，門後不是月台，而是一條<span class="cold">向上延伸、燈火通明的長廊</span>。\n\n所有路徑，都在這裡交會。';
     choices.push({label:'走進刻有符號的閘門（前往樞紐）',action:()=>{
-      log('你邁進閘門，城市的霓虹在身後迅速褪色……');
+      log('你邁進閘門，城市的燈光在身後迅速褪色……');
       transitionToLevel12();
     }});
     choices.push({label:'在車站大廳休息一下',action:()=>{
@@ -4543,6 +4619,9 @@ function buildL11Room(x,y,cell,first){
 
 /* ============================================================
  * LEVEL 12 · THE HUB 樞紐（深鏈收束點）
+ * 保守對照：本關場景對應主站「未編號層 The Hub」（地下隧道網、
+ * 乾燥柏油路、混凝土門、層級鑰匙、Keymaster）；主站編號 Level 12
+ * 「Matrix」（白色審查房）是另一獨立條目，本關不寫成 Matrix。
  * 所有走廊交會的地下長廊；兩側為無數編號門（彩蛋，僅窺視）；
  * 盡頭是「門海」（wanderer）；另有條件式「回家之門」（return）、
  * M.E.G. 嚮導留言處、可整備的靜默廳，以及會觸發 Level ! 的錯誤之門。
@@ -4606,7 +4685,7 @@ function buildL12Room(x,y,cell,first){
 
   if(type==='arrival'){
     title='Level 12 · 樞 紐 入 口';
-    text='你從無盡城市的最後一條巷子走出來，腳下一腳踏進一條<span class="hl">無比寬闊的地下長廊</span>。\n\n這就是<span class="hl">樞紐（The Hub）</span>——後室所有走廊交會的地方。長廊兩側是密密麻麻、編號不一的門；長廊的某個方向，隱隱有一片開闊到不真實的光。\n\n牆上釘著一塊 M.E.G. 的布告板。也許你該先看看上面寫了什麼。';
+    text='你從不夜城的最後一條巷子走出來，腳下一腳踏進一條<span class="hl">無比寬闊的地下長廊</span>。\n\n這就是<span class="hl">樞紐（The Hub）</span>——後室所有走廊交會的地方。長廊兩側是密密麻麻、編號不一的門；長廊的某個方向，隱隱有一片開闊到不真實的光。\n\n牆上釘著一塊 M.E.G. 的布告板。也許你該先看看上面寫了什麼。';
     choices.push({label:'沿長廊四處看看',action:()=>{log('你在樞紐的長廊上站定，深呼吸。');refreshRoom();}});
   }
   else if(type==='numbered_door'){
@@ -5266,7 +5345,7 @@ function roomColor(type){
     'suburb_street':'#161d26','house_living':'#23262e','cul_de_sac':'#1a1f28','playground':'#1f2430','window_house':'#0c1420','outskirt_exit':'#2a3018',
     /* L10 麥田：金黃系 */
     'wheat_tall':'#3a3412','road':'#3a3018','pylon':'#2e2a1a','barn':'#3a2a10','clearing':'#4a4218','city_exit':'#1a2a3a',
-    /* L11 無盡城市：霓虹冷藍系 */
+    /* L11 不夜城：混凝土冷藍系 */
     'city_street':'#14202e','convenience':'#2a3a2a','subway':'#0c1018','office_bldg':'#1c2a3a','apartment':'#2e2438','alley':'#141018','hub_gate':'#1a3a4a',
     /* L12 樞紐：紫灰系 */
     'numbered_door':'#2a2238','meg_post':'#2a3a4a','silent_hall':'#242030','wrong_door':'#4a1414','home_door':'#3a3a4a','door_sea':'#3a2a4a','bang':'#2a0606'
