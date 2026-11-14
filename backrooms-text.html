@@ -337,6 +337,8 @@ body.l6 #scene{text-shadow:0 0 3px rgba(120,120,120,0.15);}
  * v3.5 · 資料補齊（顏色/標籤/深層圖鑑）、成就與圖鑑進度與防禦、
  *        小地圖效能優化、死後狀態守衛、存檔遷移加固、手機 UI 整理。
  * v3.5.1 · 分層背景照片（base64 內聯底圖）、暗色遮罩維持文字可讀。
+ * v3.5.2 · 壞存檔座標修復加固、背景圖底色 fallback 與載入失敗降級、
+ *          面板與地圖空值防禦、觸控與可讀性微調。
  * ============================================================ */
 :root{--tap:44px;--mono:'SFMono-Regular',ui-monospace,'Menlo','Consolas','Noto Sans Mono',monospace;}
 #statusbar{padding:7px 10px 6px;}
@@ -397,8 +399,10 @@ body.l6 #scene{text-shadow:0 0 2px rgba(160,150,120,.12);}
  * 全黑聚光 / 海平線 / 鐘乳石 / 民宅街燈 / 麥稈 / 城市立面 / 無盡門框
  * ============================================================ */
 /* ===== v3.5.1 分層背景照片（base64 內聯，最底層；#levelFx 裝飾在其上） ===== */
-#bgPhoto{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;background-size:cover;background-position:center 42%;filter:brightness(.52) saturate(.72);}
+#bgPhoto{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;background-color:var(--bg,#0b0b08);background-size:cover;background-position:center 42%;filter:brightness(.52) saturate(.72);}
 #bgPhoto::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,5,3,.58) 0%,rgba(6,5,3,.34) 38%,rgba(6,5,3,.62) 100%);}
+/* 圖片載入失敗時由 JS 加上 .bg-failed：移除底圖，保留底色與暗紗，文字仍可讀 */
+#bgPhoto.bg-failed{background-image:none!important;}
 body.l0 #bgPhoto{background-image:url("data:image/jpeg;base64,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");}
 body.l1 #bgPhoto{background-image:url("data:image/jpeg;base64,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");}
 body.l3 #bgPhoto{background-image:url("data:image/jpeg;base64,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");}
@@ -575,6 +579,50 @@ body.l11 .scene-title{letter-spacing:5px;}
 body.l11 .choice{border-left:2px solid var(--amber-faint);}
 body.l12 .scene-title{border-bottom:1px double var(--amber-faint);padding-bottom:6px;}
 body.l12 .choice{border-left:1px solid var(--amber);border-right:1px solid var(--amber);}
+
+/* ===== v3.5.2 UIUX 微調：字號下限、觸控熱區、背景照片上的文字對比 ===== */
+:root{--fs-1:12px;} /* 可讀資訊下限 12px（原 11px） */
+/* 正文 / 狀態主數值 / 可操作文字 ≥14px；次要資訊 ≥12px */
+#statusbar{font-size:12px;}
+.scene-text{font-size:14px;}
+.log-line,.event-log .log-line{font-size:12px;}
+.btn{font-size:14px;}
+.choice{font-size:14px;}
+.util-row .btn,.util-row.v3 .btn{font-size:14px;}
+.overlay p{font-size:14px;}
+.overlay .small{font-size:12px;}
+.modal .modal-body{font-size:14px;}
+.modal .item-line .ds{font-size:12px;}
+.modal .note-line .t{font-size:12px;}
+.panel-sub{font-size:12px;}
+.map-count,.map-legend{font-size:12px;}
+.empty{font-size:12px;}
+#objBar{font-size:14px;}
+#toast{font-size:14px;}
+.stat-main .loc-tag{font-size:12px;}
+.stat-g{font-size:14px;}
+.stat-g b{font-size:14px;}
+.chip{font-size:12px;}
+.room-tag{font-size:14px;}
+.end-stats span{font-size:12px;}
+#deathCause{font-size:12px;}
+#miniMapWrap .mm-btn{font-size:12px;}
+.gm-pw-card h4,.gm-pw-card .gm-err,.gm-head span,.gm-group h5,.gm-note,#gmBtn{font-size:12px;}
+/* 觸控熱區 ≥44px */
+.mini-btn{min-height:44px;padding:10px 14px;font-size:14px;display:inline-flex;align-items:center;justify-content:center;}
+.gm-a{min-height:44px;padding:10px 12px;font-size:12px;display:flex;align-items:center;}
+.gm-head button{width:44px;height:44px;}
+/* 彈層內容底部留白：最後一張卡不貼關閉鈕；底部淡淡出提示可續捲，不壓文字 */
+.modal .modal-body{padding-bottom:56px;overscroll-behavior:contain;}
+.modal{position:relative;}
+.modal::after{content:'';position:absolute;left:0;right:0;bottom:60px;height:56px;pointer-events:none;background:linear-gradient(180deg,rgba(8,7,4,0) 0%,rgba(8,7,4,.55) 45%,rgba(8,7,4,.92) 100%);}
+/* 彈層背後暗底 scrim：單開時出現，全關閉時隱藏；GM 側欄不套用；顯示時攔截點擊避免穿透 */
+#scrim{position:fixed;inset:0;z-index:110;background:rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity .18s ease;}
+#scrim.show{opacity:1;pointer-events:auto;}
+/* 背景照片上的文字：極淡底襯＋輕投影，壓過照片雜紋但不蓋過正文 */
+#scene{background:linear-gradient(180deg,rgba(8,7,4,.30),rgba(8,7,4,.42));}
+.scene-text{text-shadow:0 1px 2px rgba(0,0,0,.55);}
+.event-log{text-shadow:0 1px 2px rgba(0,0,0,.5);}
 </style>
 </head>
 <body>
@@ -603,9 +651,10 @@ body.l12 .choice{border-left:1px solid var(--amber);border-right:1px solid var(-
     <div class="util-row" id="utilRow"></div>
   </div>
 </div>
+<div id="scrim" aria-hidden="true"></div>
 <div class="overlay" id="titleScreen">
   <h1 id="titleH1">BACKROOMS</h1>
-  <h2>文 字 探 險 · v3.5.1</h2>
+  <h2>文 字 探 險 · v3.5.2</h2>
   <p>你從現實的縫隙中跌落，睜開眼——<br>嗡嗡作響的日光燈、發黃潮濕的牆紙、漫無邊際的走廊。<br>這裡沒有出口，只有無盡的等待。</p>
   <button class="big-btn" id="startBtn">跌 入 後 室</button>
   <button class="big-btn" id="continueBtn" style="display:none">繼 續 探 索</button>
@@ -804,6 +853,9 @@ function newGame(){
     endings:{},                                 /* 多結局追蹤：已見結局 id->true */
     objCollapsed:false,                          /* 常駐目標列摺疊偏好 */
     torchTurns:0,                                /* 火把剩餘照明回合 */
+    l6Rooms:0,                                   /* v3.5.2：L6 已走房間數 */
+    noTorch:true,                                /* v3.5.2：是否尚未使用火把/照明彈 */
+    qBeacon:false,                               /* v3.5.2：L10 電塔信標是否已留下 */
     godHp:false,godSanity:false,godBattery:false, /* GM 無限開關 */
     over:false,
     logs:[]
@@ -991,6 +1043,7 @@ function renderStatus(){
   if(G.godHp)G.hp=100;
   if(G.godSanity)G.sanity=100;
   if(G.godBattery)G.battery=100;
+  if((G.almond||0)>=5)unlockAch('almond_stock');
   const hpC=clamp(G.hp,0,100),sanC=clamp(G.sanity,0,100),batC=clamp(G.battery,0,100);
   try{document.body.classList.toggle('low-san',G.sanity<25);}catch(e){}
   /* body class 主題切換 */
@@ -1123,6 +1176,28 @@ function closeOtherModals(except){
     const el=$(id); if(el)el.classList.remove('show');
   }
 }
+/* v3.5.2 scrim 同步：任一 .modal 開啟時顯示暗底，全關閉時隱藏；GM 側欄不觸發 */
+(function syncScrim(){
+  const scrim=$('scrim');if(!scrim)return;
+  const sync=()=>{try{scrim.classList.toggle('show',!!document.querySelector('.modal.show'));}catch(e){}};
+  sync();
+  scrim.addEventListener('click',()=>{
+    const open=document.querySelector('.modal.show');
+    if(open)open.classList.remove('show');
+  });
+  try{
+    const obs=new MutationObserver(sync);
+    for(const id of MODAL_IDS){
+      const el=$(id);if(!el)continue;
+      /* 點彈層背景（非卡片/按鈕）或 scrim 皆可關閉最上層彈層 */
+      el.addEventListener('click',e=>{
+        if(e.target.closest('button,.item-line,.note-line,#mapCanvas,.map-legend'))return;
+        el.classList.remove('show');
+      });
+      obs.observe(el,{attributes:true,attributeFilter:['class']});
+    }
+  }catch(e){}
+})();
 function closeMenu(){$('menuModal').classList.remove('show');}
 function toggleObjBar(){
   if(!G)return;
@@ -1234,16 +1309,16 @@ function advanceTurn(t){
   const lit=G.flashlight||(G.torchTurns>0);
   const dark=currentRoom&&currentRoom.dark&&!lit;
   /* L6 熄燈：理智下降更快 */
-  const l6Mul=(G.level===6)?2.5:1.0;
+  const l6Mul=(G.level===6)?2.2:1.0;
   /* 護身符 / 工具：理智消耗減免 */
   let sanReduce=0;
   const ch=equipCharm();if(ch&&ch.sanReduce)sanReduce+=ch.sanReduce;
   const tool=G.equip&&G.equip.tool?EQUIP_DEFS[G.equip.tool]:null;
   if(tool&&tool.sanReduce)sanReduce+=tool.sanReduce;
-  G.sanity-=t*(dark?1.0:0.35)*l6Mul*(1-Math.min(0.5,sanReduce));
+  G.sanity-=t*(dark?1.0:0.30)*l6Mul*(1-Math.min(0.5,sanReduce));
   if(G.flashlight){
     /* L6 手電筒電池消耗更快 */
-    const batMul=(G.level===6)?2.0:1.0;
+    const batMul=(G.level===6)?1.75:1.0;
     G.battery-=t*0.5*batMul;
     if(G.battery<=0){G.battery=0;G.flashlight=false;log('<span class="danger">手電筒沒電了，光線熄滅。</span>');}
   }
@@ -1874,6 +1949,7 @@ function addNote(n){
     G.notes.push(n);
     unlockAch('first_note');
     if(G.notes.length>=5)unlockAch('note_5');
+    if(G.notes.length>=10)unlockAch('note_10');
     checkQuests();
   }
 }
@@ -1914,7 +1990,13 @@ const ACH_DEFS={
   l11_reach:{title:'沒 有 盡 頭 的 城',desc:'踏進 Level 11 無盡城市'},
   l12_reach:{title:'樞 紐',desc:'抵達 Level 12 樞紐'},
   bang_survive:{title:'甩 開 逃 兵',desc:'從 Level ! 活著逃回樞紐'},
-  true_end:{title:'終 於 醒 了',desc:'打開回家之門，抵達真結局'}
+  true_end:{title:'終 於 醒 了',desc:'打開回家之門，抵達真結局'},
+  /* v3.5.2 新成就 */
+  craft_5:{title:'熟 練 工 匠',desc:'累計合成 5 次物品'},
+  note_10:{title:'紙 頁 獵 人',desc:'收集 10 張紙條'},
+  l6_walker:{title:'黑 暗 漫 步 者',desc:'在 Level 6 走過 12 個房間'},
+  l8_nodark:{title:'未 曾 熄 燈',desc:'未使用火把或照明彈，抵達 Level 8'},
+  almond_stock:{title:'杏仁水儲備',desc:'同時持有 5 瓶以上杏仁水'}
 };
 function unlockAch(id){
   if(!G)return;
@@ -1945,7 +2027,16 @@ const notePool=[
   {id:'n18',title:'水晶洞的歌',body:'洞壁的水晶會共鳴。\n\n你敲一下，整個洞會回你一個不和諧的音。再敲，回聲裡多了一個人的聲音。\n\n我後來不敲了。它在學我的名字。'},
   {id:'n19',title:'伺服器機房的貼紙',body:'機架上貼著一張便利貼：「沒人在這些機器上存資料。」\n\n「但燈還亮著。風扇還在轉。它們在等一個早就下班的人。」'},
   {id:'n20',title:'給下一個掉落者',body:'如果你讀到這個，你還活著。\n\n往下走。Level 8 的井底不是出口——它是門。\n\n門後有人在等你，也許是我，也許是「不是我」。別問。走就是了。'},
-  {id:'n21',title:'淋浴間的字',body:'某間淋浴間的瓷磚上刻著：\n\n「熱水是假的。鏡子是假的。連我想起的家都是假的。」\n\n水還在流。牆是涼的。'}
+  {id:'n21',title:'淋浴間的字',body:'某間淋浴間的瓷磚上刻著：\n\n「熱水是假的。鏡子是假的。連我想起的家都是假的。」\n\n水還在流。牆是涼的。'},
+  /* v3.5.2 新紙條 */
+  {id:'n22',title:'斷掉的迴紋針',body:'迴紋針被掰成兩段，彎曲的方向對準同一扇門。\n\n旁邊寫著：「辦公桌第三排，抽屜沒有鎖。但你拉開前，先聽聽椅輪有沒有聲音。」'},
+  {id:'n23',title:'客房留言卡',body:'房號 417 的留言卡，字跡工整：\n\n「床很軟，別睡。衣櫃裡那件外套不是我的——它昨晚自己挪了位置。」\n\n卡背還有一行小字：數過三間同樣的房間後，就不要再開第四扇門。'},
+  {id:'n24',title:'黑暗中的計步',body:'地板上用指甲刻著正字，一路延伸進黑暗。\n\n最後一組旁邊畫了個箭頭，指向牆角。牆角什麼都沒有。\n\n刻字的人數到第幾步，沒有人知道。'},
+  {id:'n25',title:'鹽粒畫的圈',body:'一小圈粗鹽圍著地面的凹陷，鹽粒還完整。\n\n紙條壓在石塊下：「別踩進圈裡。我踩過一次，回來時鞋上多了不是我的泥。」'},
+  {id:'n26',title:'水晶測溫記錄',body:'兩塊水晶被並排鑿下，旁邊刻著溫度與日期——日期是明天。\n\n「亮藍色那塊會吸熱。別貼皮膚。兩塊一起帶著，它們靠在一起時不會共鳴。」'},
+  {id:'n27',title:'麥田驛站標記',body:'電塔基座上用黑漆畫了一個圓圈，中間一道向上的箭頭。\n\n「沿電塔排成的直線走，城市在同一側。信標留在這裡，後面的人就不會繞回麥田。」'},
+  {id:'n28',title:'便利店收銀條',body:'收銀機吐出的條碼紙，日期空白，貨品一欄印著：\n\n「杏仁水 ×1、能量棒 ×1、你不記得拿過的東西 ×1。」\n\n找零金額欄，寫著你的房號。'},
+  {id:'n29',title:'公寓牆貼',body:'撕下的日曆貼在廚房瓷磚上，那一頁被圈了三次。\n\n「聽樓上的腳步。如果兩次落地之間隔一樣，不要開門。這棟樓沒有樓上。」'}
 ];
 function randomNote(){return pick(notePool);}
 
@@ -2557,7 +2648,10 @@ function unequipItem(slot){
 }
 
 /* ---- 合成：材料 + 配方 ---- */
-const MAT_NAMES={cloth:'布料',tape:'膠帶',wire:'電線',scrap:'金屬碎片',alcohol:'酒精',rope:'繩索',cell:'電池芯',pipe:'鐵棍',almond:'杏仁水',bandage:'繃帶',lighter:'打火機',crystal:'水晶'};
+const MAT_NAMES={cloth:'布料',tape:'膠帶',wire:'電線',scrap:'金屬碎片',alcohol:'酒精',rope:'繩索',cell:'電池芯',pipe:'鐵棍',almond:'杏仁水',bandage:'繃帶',lighter:'打火機',crystal:'水晶',
+  /* v3.5.2 新增消耗品名稱（避免背包/toast 顯示英文 id） */
+  medband:'浸藥繃帶',energy_bar:'能量棒',luckymilk:'幸運豆奶',sparebat:'備用電池',torch:'火把',filter:'濾嘴面罩',flare:'照明彈',shockbaton:'電擊棍',strongpipe:'強化鐵棍',photo:'記憶相片',
+  salve_pad:'薄荷藥膏墊',bitter_draught:'苦藥湯',sealed_almond:'密封杏仁水',dry_cell:'備用乾電池',salt_pouch:'粗鹽驅囊',wax_candle:'蜂蠟小蠟燭'};
 const RECIPES=[
   {id:'bandage_cloth',name:'臨時繃帶',need:{cloth:1,tape:1},give:{bandage:1},desc:'布料混膠帶：基本包紮，生命 +20。'},
   {id:'medband',name:'浸藥繃帶',need:{bandage:1,almond:1},give:{medband:1},desc:'繃帶浸過杏仁水：生命 +35。'},
@@ -2568,7 +2662,12 @@ const RECIPES=[
   {id:'strongpipe',name:'強化鐵棍',need:{scrap:1,tape:1,pipe:1},give:{strongpipe:1},desc:'加固棍身：可多次使用的武器。'},
   {id:'flare',name:'照明彈',need:{scrap:1,wire:1,cell:1},give:{flare:1},desc:'一次性：短暫大範圍照明，可逼退暗處實體。'},
   {id:'filter',name:'濾嘴面罩',need:{cloth:1,tape:1,alcohol:1},give:{filter:1},desc:'過濾嗆人空氣：使用時理智 +12 並壓下幻覺。'},
-  {id:'battery_pack',name:'電池包',need:{cell:2,tape:1},give:{sparebat:1},desc:'兩個電池芯並聯：較省材料的備用電池。'}
+  {id:'battery_pack',name:'電池包',need:{cell:2,tape:1},give:{sparebat:1},desc:'兩個電池芯並聯：較省材料的備用電池。'},
+  /* v3.5.2 新配方 */
+  {id:'salve_pad',name:'薄荷藥膏墊',need:{bandage:1,cloth:1},give:{salve_pad:1},desc:'浸過清涼藥草的布墊：使用時生命 +15、理智 +5。'},
+  {id:'sealed_almond',name:'密封杏仁水',need:{almond:1,tape:1},give:{sealed_almond:1},desc:'封膜延緩揮發：飲用時理智 +40、生命 +8，比現開更濃。'},
+  {id:'dry_cell',name:'備用乾電池',need:{cell:1,scrap:1,tape:1},give:{dry_cell:1},desc:'封装電池芯：使用時電池 +25%。'},
+  {id:'wax_candle',name:'蜂蠟小蠟燭',need:{cloth:1},needTool:{lighter:1},give:{wax_candle:1},desc:'布料裹蠟、借打火機引燃：點燃後照明 8 回合。'}
 ];
 function matCount(k){
   if(!G||!G.inv)return 0;
@@ -2603,6 +2702,8 @@ function doCraft(r){
   }
   G.craft[r.id]=(G.craft[r.id]||0)+1;
   unlockAch('craft_first');
+  const craftTotal=Object.values(G.craft).reduce((a,b)=>a+(b||0),0);
+  if(craftTotal>=5)unlockAch('craft_5');
   toast('合成完成：'+r.name);
   log('<span class="good">你合成了 '+r.name+'。</span>');
   renderStatus();
@@ -2614,7 +2715,11 @@ const QUEST_DEFS={
   q_medkit:{title:'送醫療包',desc:'在 Level 4 的 M.E.G. 補給點留下一卷浸藥繃帶。',reward:'橡膠絕緣手套、杏仁水 +2'},
   q_lostnotes:{title:'遺失的日誌',desc:'集齊 5 張紙條，拼湊前人的足跡。',reward:'幸運硬幣、理智回滿'},
   q_marker:{title:'在懸崖設置標記',desc:'在 Level 7 的望海處刻下 M.E.G. 記號。',reward:'電池回滿、金屬碎片 +2'},
-  q_home:{title:'回家的線索',desc:'同時取得「深處刻字」與「M.E.G. 深層備忘」。',reward:'回家的鑰匙（真結局關鍵物）'}
+  q_home:{title:'回家的線索',desc:'同時取得「深處刻字」與「M.E.G. 深層備忘」。',reward:'回家的鑰匙（真結局關鍵物）'},
+  /* v3.5.2 新任務 */
+  q_wardrobe:{title:'旅館衣櫃清點',desc:'在 Level 5 翻找 3 間客房或房門。',reward:'能量棒 +2、布料 +1'},
+  q_beacon:{title:'電塔信標',desc:'在 Level 10 高壓電塔下留下記號，並帶著信標抵達 Level 11。',reward:'備用電池 +1、理智 +10'},
+  q_crystal:{title:'水晶錠兩枚',desc:'攜帶 2 塊水晶抵達 Level 12 樞紐。',reward:'銅殼懷錶（裝備欄）'}
 };
 function questState(id){
   if(!G.quests)G.quests={};
@@ -2631,6 +2736,9 @@ function questDone(id){
   if(id==='q_lostnotes'){G.sanity=100;G.inv.eq_lucky_coin=(G.inv.eq_lucky_coin||0)+1;}
   if(id==='q_marker'){G.battery=100;G.inv.scrap=(G.inv.scrap||0)+2;}
   if(id==='q_home'){G.inv.home_key=1;}
+  if(id==='q_wardrobe'){G.inv.energy_bar=(G.inv.energy_bar||0)+2;G.inv.cloth=(G.inv.cloth||0)+1;}
+  if(id==='q_beacon'){G.inv.sparebat=(G.inv.sparebat||0)+1;G.sanity=Math.min(100,G.sanity+10);}
+  if(id==='q_crystal'){G.inv.eq_pocket_watch=(G.inv.eq_pocket_watch||0)+1;}
   unlockAch('quest_done');
 }
 function checkQuests(){
@@ -2639,6 +2747,11 @@ function checkQuests(){
   const hasDepth=(G.notes||[]).some(n=>n&&n.id==='depth8');
   const hasMe=(G.notes||[]).some(n=>n&&n.id==='me_deep');
   if(hasDepth&&hasMe)questDone('q_home');
+  /* v3.5.2 新任務判定 */
+  const wd=questState('q_wardrobe');
+  if(!wd.done&&(wd.progress||0)>=3)questDone('q_wardrobe');
+  if(!questState('q_beacon').done&&G.qBeacon&&(G.level===11||G.level===12))questDone('q_beacon');
+  if(!questState('q_crystal').done&&(G.inv.crystal||0)>=2&&G.codex&&G.codex.levels&&G.codex.levels[12])questDone('q_crystal');
 }
 
 /* ---- 多結局追蹤（跨局持久化於獨立 meta，供標題畫面統計） ---- */
@@ -2841,7 +2954,9 @@ const LEVEL_AMB_EVENTS={
     '電梯樓層指示燈在不存在的樓層之間跳動。',
     '踢腳線縫裡飄出非常淡的、陳舊的咖啡味。',
     '你經過一排辦公桌，其中一把椅子緩緩轉回了面對你的方向。',
-    '冷氣出風口吹出一縷帶著灰塵味的冷風。'
+    '冷氣出風口吹出一縷帶著灰塵味的冷風。',
+    '影印機亮著，吐出的紙上只有一行你看不懂的字。',
+    '某張辦公椅自己轉向你，椅輪在地毯上沒有聲音。'
   ],
   5:[
     '走廊盡頭傳來拖鞋拖地的聲音，又戛然而止。',
@@ -2849,7 +2964,9 @@ const LEVEL_AMB_EVENTS={
     '鋼琴漏出一個不成調的音，像有人誤碰了琴鍵。',
     '你身後的壁燈一盞盞熄滅，回頭卻全都亮著。',
     '長走廊的某扇門縫裡透出暖色燈光，推開卻只是一面牆。',
-    '床單的漿洗味從某扇房門後飄出，裡面卻沒有床。'
+    '床單的漿洗味從某扇房門後飄出，裡面卻沒有床。',
+    '鋼琴彈到一半停住，剩一個音在走廊裡迴盪。',
+    '電梯樓梯間傳來鑰匙碰撞聲，可樓梯間沒有門。'
   ],
   6:[
     '黑暗裡，你聽見自己名字被極輕地叫了一次。',
@@ -2857,7 +2974,9 @@ const LEVEL_AMB_EVENTS={
     '遠處傳來腳步聲，和你的節奏剛好錯開。',
     '你感到一縷冷風拂過後頸——但這裡沒有風。',
     '你停下，四周的呼吸聲也跟著停下。你一走，它又開始。',
-    '腳下的地板觸感忽然從地毯變成冰涼的瓷磚，又變了回來。'
+    '腳下的地板觸感忽然從地毯變成冰涼的瓷磚，又變了回來。',
+    '你的呼吸在黑暗裡多了一拍，等你停下，它也停下。',
+    '地面某處滾過一顆小石頭，方向與你相反。'
   ],
   7:[
     '霧色海面上，遠處的燈光忽明忽滅，像有人在對你打燈號。',
@@ -2865,7 +2984,9 @@ const LEVEL_AMB_EVENTS={
     '海浪聲裡夾著一個不屬於浪聲的、規律的敲擊。',
     '霧濃了又散，你發覺岸邊的石頭比剛才近了一些。',
     '某個濕潤的、鱗片般的東西，在霧裡擦過你視線的邊緣。',
-    '底下傳來一聲悠長的、不像任何生物的嘆息。'
+    '底下傳來一聲悠長的、不像任何生物的嘆息。',
+    '霧裡浮起一盞不屬於任何船的燈，閃了兩次就滅了。',
+    '海浪聲間夾著很輕的、有人喚你名字的聲音。'
   ],
   8:[
     '水滴從鐘乳石墜落，回聲在洞裡盪了很久。',
@@ -2873,7 +2994,9 @@ const LEVEL_AMB_EVENTS={
     '很深的地方，傳來一下規律的敲擊，像有人在另一邊鑿壁。',
     '水面下有氣泡浮上來——但這水從哪兒來？',
     '洞壁的水晶被你的腳步震出一聲細微的和鳴。',
-    '井壁滲下的水是溫的，像是另一側有什麼在發熱。'
+    '井壁滲下的水是溫的，像是另一側有什麼在發熱。',
+    '水晶壁面同步震出一聲低鳴，像在回應你的心跳。',
+    '滴水聲規律得像計時器，突然停了整整十秒。'
   ],
   9:[
     '窗簾後面傳來規律的拖地聲，屋內的燈卻一直沒亮。',
@@ -3202,6 +3325,7 @@ function buildL4Room(x,y,cell,first){
         const r=hash2(x,y,G.runSeed+331);
         if(r<0.4){log('你在舊卷宗裡夾到一張<span class="hl">紙條</span>，已記入檔案室。');addNote(randomNote());}
         else if(r<0.65){G.almond++;log('抽屜深處有一瓶被遺忘的<span class="hl">杏仁水</span>。');}
+        else if(r<0.90){G.inv.alcohol=(G.inv.alcohol||0)+1;log('抽屜角落有一罐密封的<span class="hl">酒精</span>。');}
         else log('抽屜裡全是發黃的表格，沒有一張寫著你的名字。');
         refreshRoom();
       }});
@@ -3301,6 +3425,7 @@ function buildL5Room(x,y,cell,first){
     if(!cell.state.opened){
       choices.push({label:'輕輕推開門看看',action:()=>{
         cell.state.opened=true;
+        if(!cell.state.wrCounted){cell.state.wrCounted=true;const w=questState('q_wardrobe');w.progress=Math.min(3,(w.progress||0)+1);checkQuests();}
         const r=hash2(x,y,G.runSeed+415);
         if(r<0.3){G.almond++;log('房間床頭櫃上有一瓶<span class="hl">杏仁水</span>。');}
         else if(r<0.5){G.battery=Math.min(100,G.battery+20);log('抽屜裡有一節<span class="good">電池</span>，+20%。');}
@@ -3367,6 +3492,7 @@ function buildL5Room(x,y,cell,first){
     if(!cell.state.rummaged){
       choices.push({label:'翻找床頭櫃',action:()=>{
         cell.state.rummaged=true;
+        if(!cell.state.wrCounted){cell.state.wrCounted=true;const w=questState('q_wardrobe');w.progress=Math.min(3,(w.progress||0)+1);checkQuests();}
         const r=hash2(x,y,G.runSeed+343);
         if(r<0.35){G.battery=Math.min(100,G.battery+20);log('床頭櫃抽屜裡有<span class="good">電池</span>，+20%。');}
         else if(r<0.6){log('抽屜夾著一張<span class="hl">紙條</span>，已記入檔案室。');addNote(randomNote());}
@@ -3429,6 +3555,7 @@ function buildL6Room(x,y,cell,first){
   const exits=l6exits(x,y);
   const rng=cellRng(x,y,G.runSeed+513,15);
   let title='',text='',choices=[],dark=true;  /* L6 永遠黑暗 */
+  if(first){G.l6Rooms=(G.l6Rooms||0)+1;if(G.l6Rooms>=12)unlockAch('l6_walker');}
   if(type==='arrival'){
     title='Level 6 · LIGHTS OUT';
     text='你走下最後一級台階。\n\n<span class="danger">完全的黑暗。</span>\n\n沒有日光燈，沒有壁燈，沒有任何光線。你舉起手電筒——光柱在黑暗中像一根脆弱的蠟燭，<span class="danger">照不到三步遠</span>。\n\n這裡是 Level 6。移動會發出聲音，聲音會吸引黑暗中的東西。你必須安靜。\n\n遠處有一點極淡的微光——也許是出口。';
@@ -3471,6 +3598,7 @@ function buildL6Room(x,y,cell,first){
         cell.state.checked=true;
         log('地面上有一圈潮濕的、手掌按出的印記，正中央還有余溫。你立刻縮手。');
         G.sanity-=3;
+        if(hash2(x,y,G.runSeed+517)<0.30){G.inv.crystal=(G.inv.crystal||0)+1;log('冰層縫裡卡著一小塊<span class="hl">水晶</span>，觸感冰透。');}
         refreshRoom();
       }});
     }
@@ -3483,6 +3611,7 @@ function buildL6Room(x,y,cell,first){
         cell.state.listened=true;
         log('回聲的最後，多出了一個<span class="danger">不屬於你的、更輕的回聲</span>。你後退離開。');
         G.sanity-=4;
+        if(hash2(x,y,G.runSeed+519)<0.25){G.inv.cloth=(G.inv.cloth||0)+1;log('牆角掛著一塊受潮的<span class="hl">布料</span>。');}
         refreshRoom();
       }});
     }
@@ -3581,6 +3710,7 @@ function buildL7Room(x,y,cell,first){
         cell.state.rested=true;
         G.sanity=Math.min(100,G.sanity+10);
         log('<span class="good">你望著海浪，理智 +10。</span>');
+        if(hash2(x,y,G.runSeed+617)<0.20){G.inv.cloth=(G.inv.cloth||0)+1;log('岩縫裡夾著一塊被風吹乾的<span class="hl">布料</span>。');}
         refreshRoom();
       }});
     }
@@ -3718,6 +3848,14 @@ function buildL8Room(x,y,cell,first){
     title='Level 8 · 石 筍 林';
     text='地面長滿了尖銳的石筍，像一片石化的森林。'+amb+'\n\n你必須在縫隙間小心前進。';
     rollEntity(cell,first,rng,0.10,[{t:'arachne',w:0.5},{t:'deathmoth',w:0.5}]);
+    if(!cell.state.probed){
+      choices.push({label:'撥開石筍縫隙翻找',action:()=>{
+        cell.state.probed=true;
+        if(hash2(x,y,G.runSeed+721)<0.30){G.inv.rope=(G.inv.rope||0)+1;log('石筍根部纏著一卷前人留下的<span class="hl">繩索</span>。');}
+        else log('縫隙裡只有碎石與潮氣。');
+        refreshRoom();
+      }});
+    }
   }
   else if(type==='colony'){
     title='Level 8 · 蜘 蛛 巢';
@@ -3742,6 +3880,7 @@ function buildL8Room(x,y,cell,first){
       choices.push({label:'敲下一塊完整的水晶',action:()=>{
         cell.state.harvested=true;
         G.inv.crystal=(G.inv.crystal||0)+1;
+        if(hash2(x,y,G.runSeed+723)<0.50){G.inv.crystal=(G.inv.crystal||0)+1;log('旁邊還裂著一塊較小的<span class="hl">水晶</span>，你一併取下。');}
         log('你撬下一塊有稜角的<span class="hl">水晶</span>。敲落的剎那，整個洞回你一個不和諧的音。');
         refreshRoom();
       }});
@@ -3781,6 +3920,7 @@ function transitionToLevel8(){
   G.visited={};G.hideOnce=false;
   showLevelCard('LEVEL 8','CAVE SYSTEM · 洞 穴 系 統');
   unlockAch('l8_reach');
+  if(G.noTorch!==false)unlockAch('l8_nodark');
   log('<span class="cold">你走進了洞穴。蜘蛛網在你臉頰邊划过。</span>');
   enterRoom();
 }
@@ -4071,7 +4211,7 @@ function buildL10Room(x,y,cell,first){
   else if(type==='wheat_tall'){
     title='Level 10 · 高 聳 麥 田';
     text='麥稈高過你的頭頂，形成密閉的黃色甬道，視野被完全切斷。沙沙聲從四面八方傳來，你分不清哪是風、哪是<span class="danger">別的</span>。'+amb;
-    rollEntity(cell,first,rng,0.22,[{t:'hound',w:0.78},{t:'wretch',w:0.22}]);
+    rollEntity(cell,first,rng,0.18,[{t:'hound',w:0.78},{t:'wretch',w:0.22}]);
     levelAmbientEvent(cell,first,rng);
     if(!cell.state.pushed){
       choices.push({label:'蹲下壓低身子，迅速穿過這段高麥',action:()=>{
@@ -4118,6 +4258,13 @@ function buildL10Room(x,y,cell,first){
         G.inv.wire=(G.inv.wire||0)+1;
         G.inv.scrap=(G.inv.scrap||0)+1;
         log('你撬開鏽死的設備箱，撿到一段<span class="hl">電線</span>和一塊<span class="hl">金屬碎片</span>。');
+        refreshRoom();
+      }});
+    }
+    if(!G.qBeacon){
+      choices.push({label:'在塔身刻下 M.E.G. 信標記號',action:()=>{
+        G.qBeacon=true;
+        log('<span class="good">你在鋼鐵骨架上畫下圓圈與向上箭頭——後面的人看見信標，就知道城市在這個方向。</span>');
         refreshRoom();
       }});
     }
@@ -4178,7 +4325,9 @@ LEVEL_AMB_EVENTS[10]=[
   '你腳下的田徑忽然斷了——眼前是一圈走不出去的死麥，比你高。',
   '陰天的光線暗了一瞬，像有雲掠過，但天上根本沒有雲。',
   '某處傳來風車緩慢的嘎吱聲，一下，又一下，然後靜了。',
-  '麥穗刮過你的手背，沙沙作響——像有什麼東西在你身後同步行走。'
+  '麥穗刮過你的手背，沙沙作響——像有什麼東西在你身後同步行走。',
+  '風把倒伏的麥稈吹回原狀，你剛才踩出的小徑消失了。',
+  '某片麥田比周圍矮一截，像被什麼東西啃過。'
 ];
 LEVEL_AMB_EVENTS[11]=[
   '路口的紅綠燈無人車輛，仍規律地由紅轉黃再轉綠，像在等待永不會來的行人。',
@@ -4195,7 +4344,9 @@ LEVEL_AMB_EVENTS[12]=[
   '右邊一扇門的門把輕輕轉動了一下，又停下——像是有人在另一側試過。',
   '某扇沒有編號的門縫滲出一線血紅的光，溫度比周遭高了幾度。',
   '遠處傳來推車碾過磁磚的聲音，由近而遠，像是 M.E.G. 嚮導的最後巡邏。',
-  '你憶起牆上留言的最後一句：「願你是後者。」長廊的燈為你亮了一格。'
+  '你憶起牆上留言的最後一句：「願你是後者。」長廊的燈為你亮了一格。',
+  '一扇門後傳來火車廣播，站名你聽過又忘記。',
+  '腳步迴音在第三格磁磚處分岔，分成兩個方向。'
 ];
 /* ========== LEVEL 11 · THE ENDLESS CITY 無盡城市 ========== */
 /* 無盡城市：高樓、馬路、霓虹、地鐵、公寓、商店與辦公樓綿延不絕。
@@ -4253,7 +4404,7 @@ function buildL11Room(x,y,cell,first){
   else if(type==='corridor'){
     title='Level 11 · 城市街道';
     text='一條空蕩的城市街道向霧裡延伸。'+amb;
-    rollEntity(cell,first,rng,0.08,[{t:'hound',w:0.3},{t:'skinstealer',w:0.25},{t:'smiler',w:0.2},{t:'wretch',w:0.25}]);
+    rollEntity(cell,first,rng,0.10,[{t:'hound',w:0.3},{t:'skinstealer',w:0.25},{t:'smiler',w:0.2},{t:'wretch',w:0.25}]);
     levelAmbientEvent(cell,first,rng);
   }
   else if(type==='junction'){
@@ -4265,7 +4416,7 @@ function buildL11Room(x,y,cell,first){
   else if(type==='deadend'){
     title='Level 11 · 街道盡頭';
     text='路在一面封死的捲簾門前斷掉。'+amb;
-    rollEntity(cell,first,rng,0.09,[{t:'hound',w:0.3},{t:'skinstealer',w:0.25},{t:'smiler',w:0.2},{t:'wretch',w:0.25}]);
+    rollEntity(cell,first,rng,0.10,[{t:'hound',w:0.3},{t:'skinstealer',w:0.25},{t:'smiler',w:0.2},{t:'wretch',w:0.25}]);
     levelAmbientEvent(cell,first,rng);
   }
   else if(type==='convenience'){
@@ -4281,13 +4432,14 @@ function buildL11Room(x,y,cell,first){
         if(r2<0.30){G.inv.cell=(G.inv.cell||0)+1;extra='，還在收銀台抽屜摸到一顆電池芯';}
         else if(r2<0.55){G.inv.tape=(G.inv.tape||0)+1;extra='，膠帶一卷';}
         else if(r2<0.75){G.inv.scrap=(G.inv.scrap||0)+1;extra='，鐵架拆下的金屬碎片';}
+        else if(r2<0.90){G.inv.cloth=(G.inv.cloth||0)+1;extra='，貨架縫裡撿到一塊布料';}
         log('<span class="hl">你帶走一瓶杏仁水、一條能量棒</span>'+extra+'。');
         refreshRoom();
       }});
     }else{
       text+='\n\n貨架已被你清空。';
     }
-    rollEntity(cell,first,rng,0.12,[{t:'skinstealer',w:0.5},{t:'wretch',w:0.3},{t:'hound',w:0.2}]);
+    rollEntity(cell,first,rng,0.14,[{t:'skinstealer',w:0.5},{t:'wretch',w:0.3},{t:'hound',w:0.2}]);
   }
   else if(type==='subway'){
     title='Level 11 · 地鐵站';
@@ -4317,6 +4469,7 @@ function buildL11Room(x,y,cell,first){
         G.inv.scrap=(G.inv.scrap||0)+1;
         G.inv.tape=(G.inv.tape||0)+1;
         G.inv.wire=(G.inv.wire||0)+1;
+        if(hash2(x,y,G.runSeed+1133)<0.25){G.inv.wire=(G.inv.wire||0)+1;log('電話線束裡還抽出一段額外的<span class="hl">電線</span>。');}
         log('你拆了廢棄電話與桌椅，收穫<span class="hl">金屬碎片、膠帶與電線</span>。');
         if(!cell.state.noteGiven){cell.state.noteGiven=true;addNote(mgeCityNote);log('地圖旁夾著一份 M.E.G. 的城市觀察備忘。');}
         refreshRoom();
@@ -4324,7 +4477,7 @@ function buildL11Room(x,y,cell,first){
     }else{
       text+='\n\n大堂已被你翻過一遍。';
     }
-    rollEntity(cell,first,rng,0.10,[{t:'skinstealer',w:0.5},{t:'wretch',w:0.3},{t:'hound',w:0.2}]);
+    rollEntity(cell,first,rng,0.14,[{t:'skinstealer',w:0.5},{t:'wretch',w:0.3},{t:'hound',w:0.2}]);
   }
   else if(type==='apartment'){
     title='Level 11 · 公寓房間';
@@ -4356,6 +4509,7 @@ function buildL11Room(x,y,cell,first){
         if(hash2(x,y,G.runSeed+1131)<0.5){
           G.inv.scrap=(G.inv.scrap||0)+1;
           G.inv.tape=(G.inv.tape||0)+1;
+          if(hash2(x,y,G.runSeed+1135)<0.20){G.inv.tape=(G.inv.tape||0)+1;log('爛攤深處還有一卷乾淨的<span class="hl">膠帶</span>。');}
           log('你在爛攤子裡扒出<span class="hl">金屬碎片與一卷膠帶</span>。');
         }else{
           G.sanity-=4;
@@ -4670,7 +4824,8 @@ function finishBangSurvive(){
   G.l12.bangSurvived=true;
   unlockAch('bang_survive');
   G.hp=Math.max(1,G.hp-10); /* 生還代價 */
-  G.pos={x:G.l12.bangFrom.x,y:G.l12.bangFrom.y};
+  const bf=G.l12&&G.l12.bangFrom;
+  G.pos=(bf&&Number.isFinite(bf.x)&&Number.isFinite(bf.y))?{x:bf.x,y:bf.y}:{x:0,y:0};
   G.l12.bangLeg=0;
   log('<span class="good">你衝進走廊盡頭的白光，滾回樞紐的磁磚地上。身後那條血紅走廊靜靜合上了。你活下來了。</span>');
   toast('你甩開了 Level ! 的追兵');
@@ -4747,6 +4902,7 @@ function drinkAlmond(){
   renderStatus();
 }
 function openInv(){
+  if(!G)return;
   const body=$('invBody');
   let h='';
   h+='<div class="panel-sub">裝 備</div>';
@@ -4783,7 +4939,14 @@ function openInv(){
     ['shockbaton','電擊棍','使用：電暈當前實體（一次性）'],
     ['strongpipe','強化鐵棍','使用：擊退當前實體'],
     ['pipe','鐵棍','使用：擊退當前 Hound'],
-    ['photo','記憶相片','使用：理智 +20']
+    ['photo','記憶相片','使用：理智 +20'],
+    /* v3.5.2 新消耗品 */
+    ['salve_pad','薄荷藥膏墊','使用：生命 +15、理智 +5'],
+    ['bitter_draught','苦藥湯','使用：生命 -6、理智 +25（身體虛弱時勿飲）'],
+    ['sealed_almond','密封杏仁水','使用：理智 +40、生命 +8'],
+    ['dry_cell','備用乾電池','使用：電池 +25%'],
+    ['salt_pouch','粗鹽驅囊','使用：驅散當前房間的實體'],
+    ['wax_candle','蜂蠟小蠟燭','使用：點燃，照明 8 回合']
   ];
   for(const u of useList){
     const key=u[0];const c=G.inv[key]||0;
@@ -4838,9 +5001,16 @@ function useInvItem(key){
     case 'energy_bar': if(!(G.inv.energy_bar>0))return; G.inv.energy_bar--; G.hp=Math.min(100,G.hp+10); G.sanity=Math.min(100,G.sanity+8); log('<span class="good">能量棒充飢。生命 +10、理智 +8。</span>'); break;
     case 'luckymilk': if(!(G.inv.luckymilk>0))return; G.inv.luckymilk--; G.sanity=Math.min(100,G.sanity+12); log('<span class="good">幸運豆奶入口微甜。理智 +12。</span>'); break;
     case 'sparebat': if(!(G.inv.sparebat>0))return; G.inv.sparebat--; G.battery=Math.min(100,G.battery+40); log('<span class="good">你換上備用電池。手電筒電池 +40%。</span>'); break;
-    case 'torch': if(!(G.inv.torch>0))return; G.inv.torch--; G.torchTurns=12; log('<span class="good">你點燃火把。火光暫時照亮四周，不耗電池（約 12 回合）。</span>'); break;
+    case 'torch': if(!(G.inv.torch>0))return; G.inv.torch--; G.torchTurns=12; G.noTorch=false; log('<span class="good">你點燃火把。火光暫時照亮四周，不耗電池（約 12 回合）。</span>'); break;
     case 'filter': if(!(G.inv.filter>0))return; G.inv.filter--; G.sanity=Math.min(100,G.sanity+12); hallucinationCooldown=6; log('<span class="good">你戴上濾嘴面罩，嗆人的空氣變得溫和。理智 +12，幻覺暫緩。</span>'); break;
-    case 'flare': if(!(G.inv.flare>0))return; G.inv.flare--; G.torchTurns=Math.max(G.torchTurns,6); {const cell=getCell(G.pos.x,G.pos.y); cell.state.entityResolved=true; log('<span class="good">照明彈轰然亮起，刺眼的白光逼退了暗處的東西。</span>');} break;
+    case 'flare': if(!(G.inv.flare>0))return; G.inv.flare--; G.torchTurns=Math.max(G.torchTurns,6); G.noTorch=false; {const cell=getCell(G.pos.x,G.pos.y); cell.state.entityResolved=true; log('<span class="good">照明彈轰然亮起，刺眼的白光逼退了暗處的東西。</span>');} break;
+    /* v3.5.2 新消耗品 */
+    case 'salve_pad': if(!(G.inv.salve_pad>0))return; G.inv.salve_pad--; G.hp=Math.min(100,G.hp+15); G.sanity=Math.min(100,G.sanity+5); log('薄荷藥膏墊帶著清涼的香氣。<span class="good">生命 +15、理智 +5。</span>'); break;
+    case 'bitter_draught': if(!(G.inv.bitter_draught>0))return; if(G.hp<=10){log('身體太虛，苦湯會要了你的命，你把它收了回去。');return;} G.inv.bitter_draught--; G.hp-=6; G.sanity=Math.min(100,G.sanity+25); log('苦藥湯滑過喉嚨，臉色發白，但思緒前所未有地清醒。<span class="danger">生命 -6</span>，<span class="good">理智 +25。</span>'); break;
+    case 'sealed_almond': if(!(G.inv.sealed_almond>0))return; G.inv.sealed_almond--; G.sanity=Math.min(100,G.sanity+40); G.hp=Math.min(100,G.hp+8); log('封膜延緩了揮發，這一口比現開的更濃。<span class="good">理智 +40、生命 +8。</span>'); break;
+    case 'dry_cell': if(!(G.inv.dry_cell>0))return; G.inv.dry_cell--; G.battery=Math.min(100,G.battery+25); log('你換上乾電池。<span class="good">電池 +25%。</span>'); break;
+    case 'salt_pouch': if(!(G.inv.salt_pouch>0))return; {const cell=getCell(G.pos.x,G.pos.y); if(cell.state.entity){G.inv.salt_pouch--; cell.state.entityResolved=true; cell.state.houndResolved=true; log('<span class="good">粗鹽灑落地，那東西退開了房間。</span>');} else{log('你撒出粗鹽，這附近沒有可驅散的東西。');} } break;
+    case 'wax_candle': if(!(G.inv.wax_candle>0))return; G.inv.wax_candle--; G.torchTurns=Math.max(G.torchTurns,8); log('<span class="good">小蠟燭點燃，一團穩定的暖光照亮四周（約 8 回合）。</span>'); break;
     case 'shockbaton': if(!(G.inv.shockbaton>0))return; {const cell=getCell(G.pos.x,G.pos.y); const t=cell.state.entity; if(t==='hound'||t==='skinstealer'||t==='wretch'){G.inv.shockbaton--; cell.state.entityResolved=true; log('<span class="good">電擊棍火花四迸——那個東西被電暈，抽搐著退入黑暗。</span>');} else{log('你按下電擊棍，嗞一聲電流空轉。這附近沒有可電暈的目標。');} } break;
     case 'strongpipe': if(!(G.inv.strongpipe>0))return; {const cell=getCell(G.pos.x,G.pos.y); const t=cell.state.entity; if(t){G.inv.strongpipe--; cell.state.entityResolved=true; log('<span class="good">強化鐵棍重重揮出，那個東西哀鳴著退開。</span>');} else{log('你揮了揮強化鐵棍，什麼也沒發生。');} } break;
     case 'pipe': if(!(G.inv.pipe>0))return; {const cell=getCell(G.pos.x,G.pos.y); const t=cell.state.entity; if(t==='hound'||cell.state.hound){G.inv.pipe--; cell.state.entityResolved=true; cell.state.houndResolved=true; log('<span class="good">你揮起鐵棍猛擊——那個東西慘叫著退入黑暗。</span>');} else{log('你揮了揮鐵棍，什麼也沒發生。');} } break;
@@ -4850,6 +5020,7 @@ function useInvItem(key){
   renderStatus();refreshRoom();
 }
 function openNotes(){
+  if(!G)return;
   const body=$('notesBody');
   if(!G.notes||!G.notes.length){body.innerHTML='<div class="empty">檔案室是空的。<br>在後室中尋找紙條與錄音。</div>';}
   else{
@@ -4864,6 +5035,7 @@ function openNotes(){
 /* ---- 合成面板 ---- */
 function doCraftById(id){const r=RECIPES.find(x=>x.id===id);if(r)doCraft(r);}
 function openCraft(){
+  if(!G)return;
   const body=$('craftBody');
   let h='<div class="empty" style="padding:4px 0 10px">材料可在各層搜刮：布料 / 膠帶 / 電線 / 金屬碎片 / 酒精 / 繩索 / 電池芯。</div>';
   for(const r of RECIPES){
@@ -4883,6 +5055,7 @@ function openCraft(){
 
 /* ---- 任務面板 ---- */
 function openQuests(){
+  if(!G)return;
   const body=$('questBody');
   let h='';
   for(const id in QUEST_DEFS){
@@ -4898,6 +5071,7 @@ function openQuests(){
 
 /* ---- 圖鑑面板 ---- */
 function openCodex(){
+  if(!G)return;
   const body=$('codexBody');
   const codex=(G&&G.codex)||{};
   const entities=codex.entities||{};
@@ -4980,6 +5154,7 @@ function levelExitFn(lv){
 function renderMap(){
   const canvas=$('mapCanvas');
   if(!canvas||!G)return;
+  if(!G.visited||!G.pos||!Number.isFinite(G.pos.x)||!Number.isFinite(G.pos.y))return;
   const ctx=canvas.getContext('2d');
   const keys=Object.keys(G.visited);
   $('mapCount').textContent='已探索 '+keys.length+' 格 · '+(LEVEL_NAMES[G.level]||('LEVEL '+G.level));
@@ -5392,7 +5567,7 @@ function fillSaveDefaults(obj){
   }
   if(obj.level===9&&!obj.l9)obj.l9={};
   if(obj.level===12&&!obj.l12)obj.l12={};
-  if(typeof obj.pos!=='object'||typeof obj.pos.x!=='number'||typeof obj.pos.y!=='number'){
+  if(!obj.pos||typeof obj.pos!=='object'||!Number.isFinite(obj.pos.x)||!Number.isFinite(obj.pos.y)){
     obj.pos={x:0,y:0};
   }else{
     obj.pos.x=Math.round(obj.pos.x);obj.pos.y=Math.round(obj.pos.y);
@@ -5414,6 +5589,10 @@ function fillSaveDefaults(obj){
   if(!Number.isFinite(obj.runSeed)||obj.runSeed<1)obj.runSeed=1;
   obj.runSeed=Math.round(obj.runSeed);
   if(typeof obj.flashlight!=='boolean')obj.flashlight=false;
+  /* v3.5.2 新執行期欄位：undefined 視同初始值，避免讀回 NaN / 誤判 */
+  if(!Number.isFinite(obj.l6Rooms)||obj.l6Rooms<0)obj.l6Rooms=0;
+  if(typeof obj.noTorch!=='boolean')obj.noTorch=true;
+  if(typeof obj.qBeacon!=='boolean')obj.qBeacon=false;
   /* v3 新系統欄位 */
   if(!obj.equip||typeof obj.equip!=='object')obj.equip={body:null,tool:null,charm:null};
   if(typeof obj.equip.body==='undefined')obj.equip.body=null;
@@ -5596,6 +5775,32 @@ function refreshTitle(){
 refreshTitle();
 setInterval(()=>{if(G&&!G.over)saveGame();},5000);
 setInterval(()=>{if(G&&!G.over)renderMiniMap(false);},500); /* 小地圖：狀態未變則不重繪 */
+
+/* v3.5.2 背景圖保險：預載各層 base64 底圖；任一載入失敗就降級為純底色＋暗紗，文字仍可讀 */
+(function bgSafetyNet(){
+  try{
+    const bg=$('bgPhoto');if(!bg)return;
+    const urls=new Set();
+    for(const sheet of document.styleSheets){
+      let rules=null;
+      try{rules=sheet.cssRules||sheet.rules;}catch(e){continue;}
+      if(!rules)continue;
+      for(const r of rules){
+        try{
+          if(r.selectorText&&r.selectorText.indexOf('#bgPhoto')>=0){
+            const img=r.style&&r.style.backgroundImage;
+            if(img&&img.indexOf('url(')===0){const m=img.match(/url\("?([^")]+)"?\)/);if(m)urls.add(m[1]);}
+          }
+        }catch(e){}
+      }
+    }
+    for(const u of urls){
+      const im=new Image();
+      im.onerror=()=>{try{bg.classList.add('bg-failed');}catch(e){}};
+      im.src=u;
+    }
+  }catch(e){}
+})();
 
 /* ===== GM 系統（隱藏：標題連點 5 次，密碼 gm2024） ===== */
 var GM_PASSWORD='gm2024';
