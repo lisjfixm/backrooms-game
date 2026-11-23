@@ -341,6 +341,7 @@ body.l6 #scene{text-shadow:0 0 3px rgba(120,120,120,0.15);}
  * v3.5.2 · 壞存檔座標修復加固、背景圖底色 fallback 與載入失敗降級、
  *          面板與地圖空值防禦、觸控與可讀性微調。
  * v3.5.3 · 設定忠實化校對（層級名稱、實體描述、圖鑑）、方向通道化文案。
+ * v3.5.4 · 彈層關閉中央化與地圖重繪 interval 洩漏修復、守衛補強、死亡／結局收尾清理。
  * ============================================================ */
 :root{--tap:44px;--mono:'SFMono-Regular',ui-monospace,'Menlo','Consolas','Noto Sans Mono',monospace;}
 #statusbar{padding:7px 10px 6px;}
@@ -656,7 +657,7 @@ body.l12 .choice{border-left:1px solid var(--amber);border-right:1px solid var(-
 <div id="scrim" aria-hidden="true"></div>
 <div class="overlay" id="titleScreen">
   <h1 id="titleH1">BACKROOMS</h1>
-  <h2>文 字 探 險 · v3.5.3</h2>
+  <h2>文 字 探 險 · v3.5.4</h2>
   <p>你從現實的縫隙中跌落，睜開眼——<br>嗡嗡作響的日光燈、發黃潮濕的牆紙、漫無邊際的走廊。<br>這裡沒有出口，只有無盡的等待。</p>
   <button class="big-btn" id="startBtn">跌 入 後 室</button>
   <button class="big-btn" id="continueBtn" style="display:none">繼 續 探 索</button>
@@ -933,6 +934,8 @@ function deepGraphValid(){
 
 function cellKey(x,y){return x+','+y;}
 function getCell(x,y){
+  if(!G)return null;
+  if(!G.visited)G.visited={};
   const k=cellKey(x,y);
   if(!G.visited[k]){
     G.visited[k]={entered:false,searched:false,itemTaken:false,state:{},choices:{}};
@@ -1020,8 +1023,10 @@ function log(msg){
   renderLog();
 }
 function renderLog(){
+  if(!G)return;
   const el=$('eventLog');
-  el.innerHTML=G.logs.slice(-7).map(l=>'<div class="log-line">'+l+'</div>').join('');
+  if(!el)return;
+  el.innerHTML=(G.logs||[]).slice(-7).map(l=>'<div class="log-line">'+l+'</div>').join('');
 }
 
 const LEVEL_NAMES={
@@ -1040,6 +1045,7 @@ const LEVEL_NAMES={
 };
 const LEVEL_SHORT={0:'黃室',1:'宜居區',3:'電站',4:'辦公室',5:'恐怖旅館',6:'熄燈',7:'懼深海',8:'洞穴群',9:'郊區',10:'豐收麥田',11:'不夜城',12:'樞紐'};
 function renderStatus(){
+  if(!G)return;
   const lvl=LEVEL_NAMES[G.level]||('LEVEL '+G.level);
   const short='L'+G.level+' · '+(LEVEL_SHORT[G.level]||'未知');
   if(G.godHp)G.hp=100;
@@ -1235,10 +1241,12 @@ function renderChoices(choices){
   });
 }
 function renderUtils(){
+  if(!G)return;
   const row=$('utilRow');
+  if(!row)return;
   row.className='util-row v3';
   row.innerHTML='';
-  const dead=!G||G.over;
+  const dead=G.over;
   const mk=(label,fn)=>{const b=document.createElement('button');b.className='btn';b.textContent=label;b.disabled=dead;b.onclick=()=>{if(!G||G.over)return;fn();};row.appendChild(b);};
   mk(G.flashlight?'手電 [ON]':'手電 [OFF]',toggleFlash);
   mk(G.almond>0?'喝杏仁水 ('+G.almond+')':'杏仁水 (0)',()=>{drinkAlmond();renderUtils();});
@@ -1246,10 +1254,18 @@ function renderUtils(){
 }
 /* 常駐「當前目標」一列：可點擊摺疊 */
 const MODAL_IDS=['invModal','notesModal','achModal','mapModal','craftModal','questModal','codexModal','menuModal'];
+/* v3.5.4 中央關閉：所有隱藏彈層的路徑都走這裡；關閉地圖時一併清重繪 interval，避免背景持續跑 */
+function closeModal(id){
+  const el=$(id); if(el)el.classList.remove('show');
+  if(id==='mapModal'&&mapBlink){clearInterval(mapBlink);mapBlink=null;}
+}
+function closeAllModals(){
+  for(const id of MODAL_IDS)closeModal(id);
+}
 function closeOtherModals(except){
   for(const id of MODAL_IDS){
     if(id===except)continue;
-    const el=$(id); if(el)el.classList.remove('show');
+    closeModal(id);
   }
 }
 /* v3.5.2 scrim 同步：任一 .modal 開啟時顯示暗底，全關閉時隱藏；GM 側欄不觸發 */
@@ -1259,7 +1275,7 @@ function closeOtherModals(except){
   sync();
   scrim.addEventListener('click',()=>{
     const open=document.querySelector('.modal.show');
-    if(open)open.classList.remove('show');
+    if(open)closeModal(open.id);
   });
   try{
     const obs=new MutationObserver(sync);
@@ -1268,13 +1284,13 @@ function closeOtherModals(except){
       /* 點彈層背景（非卡片/按鈕）或 scrim 皆可關閉最上層彈層 */
       el.addEventListener('click',e=>{
         if(e.target.closest('button,.item-line,.note-line,#mapCanvas,.map-legend'))return;
-        el.classList.remove('show');
+        closeModal(el.id);
       });
       obs.observe(el,{attributes:true,attributeFilter:['class']});
     }
   }catch(e){}
 })();
-function closeMenu(){$('menuModal').classList.remove('show');}
+function closeMenu(){closeModal('menuModal');}
 function toggleObjBar(){
   if(!G)return;
   G.objCollapsed=!G.objCollapsed;
@@ -1336,6 +1352,7 @@ function uiMove(d){
   move(d);
 }
 function move(d){
+  if(!G||!G.pos)return;
   if(G.over)return;
   if(!currentRoom){try{enterRoom();}catch(e){}if(!currentRoom)return;}
   skipType();
@@ -1413,6 +1430,7 @@ function enterRoom(){
   if(G.over)return;
   const x=G.pos.x,y=G.pos.y;
   const cell=getCell(x,y);
+  if(!cell)return;
   const first=!cell.entered;
   cell.entered=true;
   try{recordLevel(G.level);}catch(e){}
@@ -2001,8 +2019,10 @@ function transitionToLevel1(){
 }
 
 function refreshRoom(){
+  if(!G||!G.pos)return;
   const x=G.pos.x,y=G.pos.y;
   const cell=getCell(x,y);
+  if(!cell)return;
   if(G.level===0)buildL0Room(x,y,cell,false);
   else if(G.level===1)buildL1Room(x,y,cell,false);
   else if(G.level===3)buildL3Room(x,y,cell,false);
@@ -4819,6 +4839,7 @@ function finishWanderer(){
   try{document.body.classList.remove('lbang');}catch(e){}
   recordEnding('wanderer');
   clearSave();
+  try{closeAllModals();}catch(e){}
   try{document.body.classList.remove('low-san');}catch(e){}
   const h1=$('winTitle'); if(h1)h1.textContent='永 恆 流 浪 者';
   renderWinStats();
@@ -4837,6 +4858,7 @@ function finishReturn(){
   try{setBuzzLevel(0);}catch(e){}
   try{document.body.classList.remove('lbang');}catch(e){}
   clearSave();
+  try{closeAllModals();}catch(e){}
   try{document.body.classList.remove('low-san');}catch(e){}
   const h1=$('winTitle'); if(h1)h1.textContent='你 終 於 醒 了';
   renderWinStats();
@@ -4917,7 +4939,7 @@ function finishBangSurvive(){
 
 /* 結局頁的統計小卡 */
 function renderWinStats(){
-  const el=$('winStats');if(!el)return;
+  const el=$('winStats');if(!el||!G)return;
   const explored=Object.keys(G.visited||{}).length;
   el.innerHTML='<div class="end-stats">'+
     '<span>步數<b>'+(G.steps||0)+'</b></span>'+
@@ -4937,6 +4959,7 @@ function transitionToFinal(){
   stopHeart();
   try{setBuzzLevel(0);}catch(e){}
   clearSave();
+  try{closeAllModals();}catch(e){}
   try{document.body.classList.remove('low-san');}catch(e){}
   $('winTitle').textContent='你 找 到 了 出 口';
   renderWinStats();
@@ -5196,10 +5219,7 @@ function openMap(){
   if(mapBlink)clearInterval(mapBlink);
   mapBlink=setInterval(renderMap,500);
 }
-function closeMap(){
-  $('mapModal').classList.remove('show');
-  if(mapBlink){clearInterval(mapBlink);mapBlink=null;}
-}
+function closeMap(){closeModal('mapModal');}
 function levelTypeFn(lv){
   if(lv===0)return l0type;
   if(lv===1)return l1type;
@@ -5267,7 +5287,7 @@ function renderMap(){
     let fill=roomColor(type);
     ctx.fillStyle=fill;
     ctx.fillRect(px+0.5,py+0.5,cell-1,cell-1);
-    const e=exitFn(x,y);
+    const e=exitFn(x,y)||{};
     ctx.strokeStyle='#8a6a1e';
     ctx.lineWidth=1.5;
     ctx.beginPath();
@@ -5798,6 +5818,7 @@ function checkDeath(){
   }
 }
 function runStatsText(){
+  if(!G)return '';
   const steps=G.steps||0;
   const mins=Math.round(G.time||0);
   const explored=Object.keys(G.visited||{}).length;
@@ -5811,6 +5832,7 @@ function doDeath(text,title,cause){
   try{stopHeart();}catch(e){}
   try{setBuzzLevel(0.04);}catch(e){}
   currentRoom=null;
+  try{closeAllModals();}catch(e){}
   try{document.body.classList.remove('low-san');document.body.classList.remove('lbang');}catch(e){}
   try{const lc=$('levelCard');if(lc){lc.classList.remove('show');lc.classList.add('hidden');}}catch(e){}
   $('winScreen').classList.add('hidden');
@@ -5829,13 +5851,13 @@ $('continueBtn').onclick=()=>startGame(true);
 $('retryBtn').onclick=()=>{clearSave();startGame(false);};
 $('deathMenuBtn').onclick=()=>{$('deathScreen').classList.add('hidden');$('titleScreen').classList.remove('hidden');refreshTitle();};
 $('winMenuBtn').onclick=()=>{$('winScreen').classList.add('hidden');$('titleScreen').classList.remove('hidden');refreshTitle();};
-$('invClose').onclick=()=>$('invModal').classList.remove('show');
-$('notesClose').onclick=()=>$('notesModal').classList.remove('show');
-$('achClose').onclick=()=>$('achModal').classList.remove('show');
+$('invClose').onclick=()=>closeModal('invModal');
+$('notesClose').onclick=()=>closeModal('notesModal');
+$('achClose').onclick=()=>closeModal('achModal');
 $('mapClose').onclick=closeMap;
-$('craftClose').onclick=()=>$('craftModal').classList.remove('show');
-$('questClose').onclick=()=>$('questModal').classList.remove('show');
-$('codexClose').onclick=()=>$('codexModal').classList.remove('show');
+$('craftClose').onclick=()=>closeModal('craftModal');
+$('questClose').onclick=()=>closeModal('questModal');
+$('codexClose').onclick=()=>closeModal('codexModal');
 $('menuClose').onclick=closeMenu;
 $('miniMapWrap').onclick=openMap; /* 點小地圖放大成大地圖 */
 $('winL2Btn').onclick=()=>{
