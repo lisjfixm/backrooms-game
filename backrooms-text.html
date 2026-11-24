@@ -345,6 +345,11 @@ body.l6 #scene{text-shadow:0 0 3px rgba(120,120,120,0.15);}
  * v3.5.5 · 成就觸發勾稽、放棄本局收尾清理、跨局/跨層狀態與計時器守衛、存檔預設補強；
  *          低狀態對比、說明文案對應現況機制、兩視口排版實測微修；
  *          批次 C：氛圍旁白補充、紙條 n30–n32、消耗品「鎮定嗅鹽」配方、成就「檔案學者」。
+ * v3.5.6 · 批次 A：終局音訊中央化 stopAmbientAudio、殘留計時器清理、終局操作守衛、
+ *          getCell/state null 安全、存檔預設補強、跨層殘留覆核、NaN/座標防禦、打字機安全收尾。
+ *          批次 B：兩視口溢出/彈層捲動/熱區字級/低狀態對比覆核；標題音訊安全重建路徑。
+ *          批次 C：鎮定嗅鹽低機率搜刮第二來源；L0/L1/L3/L9/L11 氛圍旁白補充；
+ *          紙條 n33–n35；成就「合成老手」（累計合成 10 次）；平衡數值覆核未調整。
  * ============================================================ */
 :root{--tap:44px;--mono:'SFMono-Regular',ui-monospace,'Menlo','Consolas','Noto Sans Mono',monospace;}
 #statusbar{padding:7px 10px 6px;}
@@ -662,7 +667,7 @@ body.l12 .choice{border-left:1px solid var(--amber);border-right:1px solid var(-
 <div id="scrim" aria-hidden="true"></div>
 <div class="overlay" id="titleScreen">
   <h1 id="titleH1">BACKROOMS</h1>
-  <h2>文 字 探 險 · v3.5.5</h2>
+  <h2>文 字 探 險 · v3.5.6</h2>
   <p>你從現實的縫隙中跌落，睜開眼——<br>嗡嗡作響的日光燈、發黃潮濕的牆紙、漫無邊際的走廊。<br>這裡沒有出口，只有無盡的等待。</p>
   <button class="big-btn" id="startBtn">跌 入 後 室</button>
   <button class="big-btn" id="continueBtn" style="display:none">繼 續 探 索</button>
@@ -830,6 +835,7 @@ const SAVE_KEY_V2='backrooms_text_save_v2';
 const SAVE_KEY_V1='backrooms_text_save_v1';
 let G=null;
 let hallucinationCooldown=0;
+let prevLevel=-1; /* v3.5.6：記錄上一層，層級切換時重置幻覺冷卻，避免跨層殘留 */
 function newGame(){
   G={
     level:0,
@@ -870,6 +876,7 @@ function newGame(){
     logs:[]
   };
   hallucinationCooldown=0;
+  prevLevel=-1;
   G.hideOnce=false;
   let attempts=0;
   while(!validMap()&&attempts<300){
@@ -988,6 +995,7 @@ function buildTyped(tokens,count){
 }
 function typeText(el,html,cb){
   clearInterval(typeState.timer);
+  if(!el){if(cb)cb();return;}
   if(html==null)html='';
   html=String(html);
   if(reduceMotion){el.innerHTML=html;if(cb)cb();return;}
@@ -1012,12 +1020,15 @@ function typeText(el,html,cb){
   typeState.timer=timer;
 }
 function skipType(){
-  if(typeState.timer&&typeState.el){
-    clearInterval(typeState.timer);
-    typeState.el.innerHTML=typeState.full;
-    typeState.timer=null;
-    if(typeState.done)typeState.done();
-  }
+  if(!typeState.timer)return;
+  clearInterval(typeState.timer);
+  typeState.timer=null;
+  try{
+    if(typeState.el)typeState.el.innerHTML=typeState.full;
+  }catch(e){}
+  const cb=typeState.done;
+  typeState.done=null;
+  if(cb)cb();
 }
 let reduceMotion=false;
 try{reduceMotion=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);}catch(e){}
@@ -1318,6 +1329,7 @@ function renderObjective(){
   txt.textContent=cur?('當前目標：'+cur):('主線：沿主層深入，找尋出口');
 }
 function openAch(){
+  if(!G||G.over)return;
   const body=$('achBody');
   const ach=(G&&G.ach)||{};
   const ids=Object.keys(ACH_DEFS);
@@ -1342,13 +1354,15 @@ function abandonRun(){
   G.over=true;
   currentRoom=null;
   try{closeAllModals();}catch(e){}
-  try{stopHeart();clearAmbientTimers();setBuzzLevel(0.10);}catch(e){}
+  try{stopAmbientAudio();}catch(e){}
+  clearTerminalTimers();
   try{document.body.classList.remove('low-san');document.body.classList.remove('lbang');}catch(e){}
   try{const lc=$('levelCard');if(lc){lc.classList.remove('show');lc.classList.add('hidden');}}catch(e){}
   $('deathScreen').classList.add('hidden');
   $('winScreen').classList.add('hidden');
   $('titleScreen').classList.remove('hidden');
   refreshTitle();
+  try{rebuildAmbientAudio();}catch(e){}
 }
 
 const DIRDELTA={N:[0,-1],S:[0,1],E:[1,0],W:[-1,0]};
@@ -1368,6 +1382,9 @@ function move(d){
   const exits=currentRoom.exits;
   if(!exits||!exits[d])return;
   const dd=DIRDELTA[d];
+  if(!dd)return;
+  if(!Number.isFinite(G.pos.x))G.pos.x=0;
+  if(!Number.isFinite(G.pos.y))G.pos.y=0;
   G.pos.x+=dd[0];G.pos.y+=dd[1];
   G.pos.x=clamp(G.pos.x,-50,50);
   G.pos.y=clamp(G.pos.y,-50,50);
@@ -1404,8 +1421,11 @@ function l1Tick(t){
 
 function advanceTurn(t){
   if(!G||G.over)return;
+  if(!Number.isFinite(t)||t<=0)t=1;
   G.turn+=t;
   G.time+=t;
+  if(!Number.isFinite(G.turn))G.turn=0;
+  if(!Number.isFinite(G.time))G.time=0;
   l1Tick(t);
   /* 火把視同照明（不耗電池） */
   const lit=G.flashlight||(G.torchTurns>0);
@@ -1428,6 +1448,9 @@ function advanceTurn(t){
     G.torchTurns-=t;
     if(G.torchTurns<=0){G.torchTurns=0;log('火把燃盡了，只剩縷縷白煙。');}
   }
+  if(!Number.isFinite(G.sanity))G.sanity=100;
+  if(!Number.isFinite(G.battery))G.battery=100;
+  if(!Number.isFinite(G.hp))G.hp=100;
   if(G.sanity<0)G.sanity=0;
   if(G.sanity<25){hallucinate();}
   try{document.body.classList.toggle('low-san',G.sanity<25);}catch(e){}
@@ -1437,6 +1460,7 @@ function advanceTurn(t){
 function enterRoom(){
   if(!G)return;
   if(G.over)return;
+  if(G.level!==prevLevel){hallucinationCooldown=0;prevLevel=G.level;}
   const x=G.pos.x,y=G.pos.y;
   const cell=getCell(x,y);
   if(!cell)return;
@@ -1739,7 +1763,7 @@ function buildL0Room(x,y,cell,first){
 
   /* 死巷的物品選項已由 deadendChoices 處理，這裡不再重複加入 */
   if(!cell.itemTaken&&cell.state.item&&['corridor','junction','pillar'].includes(type)){
-    choices.push({label:cell.state.item==='almond'?'撿起地上的杏仁水':cell.state.item==='battery'?'撿起一節電池':'撿起一張紙條',action:()=>{consumeItem(cell);refreshRoom();}});
+    choices.push({label:cell.state.item==='almond'?'撿起地上的杏仁水':cell.state.item==='battery'?'撿起一節電池':cell.state.item==='calm_salts'?'撿起一小瓶嗅鹽':'撿起一張紙條',action:()=>{consumeItem(cell);refreshRoom();}});
   }
 
   if(cell.state.hound&&!cell.state.houndResolved){
@@ -1760,9 +1784,10 @@ function maybeItem(cell,rng,chance){
   if(cell.state.item)return; /* 已決定過有物品，不再重骰 */
   if(rng()<chance){
     const r=rng();
-    if(r<0.5)cell.state.item='almond';
-    else if(r<0.8)cell.state.item='battery';
-    else cell.state.item='note';
+    if(r<0.44)cell.state.item='almond';
+    else if(r<0.66)cell.state.item='battery';
+    else if(r<0.94)cell.state.item='note';
+    else cell.state.item='calm_salts';
   }
 }
 function consumeItem(cell){
@@ -1771,6 +1796,7 @@ function consumeItem(cell){
   if(it==='almond'){G.almond++;log('你撿起一瓶<span class="hl">杏仁水</span>。');}
   else if(it==='battery'){G.battery=Math.min(100,G.battery+35);log('你找到一節電池，<span class="good">手電筒電池 +35%</span>。');}
   else if(it==='note'){const n=randomNote();addNote(n);log('你拾起一張<span class="hl">皺巴巴的紙條</span>，已存入檔案室。');}
+  else if(it==='calm_salts'){G.inv.calm_salts=(G.inv.calm_salts||0)+1;log('地上有一小瓶封好的<span class="hl">鎮定嗅鹽</span>，你收了起來。');}
   cell.itemTaken=true;cell.state.item=null;
   blip(880,'sine',0.04,0.15);
   renderStatus();
@@ -2104,7 +2130,9 @@ const ACH_DEFS={
   l8_nodark:{title:'未 曾 熄 燈',desc:'未使用火把或照明彈，抵達 Level 8'},
   almond_stock:{title:'杏仁水儲備',desc:'同時持有 5 瓶以上杏仁水'},
   /* v3.5.5 新成就 */
-  archivist:{title:'檔 案 學 者',desc:'收集 15 張紙條'}
+  archivist:{title:'檔 案 學 者',desc:'收集 15 張紙條'},
+  /* v3.5.6 批次 C 新成就 */
+  craft_10:{title:'合 成 老 手',desc:'累計合成 10 次物品'}
 };
 function unlockAch(id){
   if(!G)return;
@@ -2147,7 +2175,10 @@ const notePool=[
   {id:'n29',title:'公寓牆貼',body:'撕下的日曆貼在廚房瓷磚上，那一頁被圈了三次。\n\n「聽樓上的腳步。如果兩次落地之間隔一樣，不要開門。這棟樓沒有樓上。」'},
   {id:'n30',title:'洞壁的刻痕',body:'水晶共鳴的次數我記下來了。\n\n敲第一下，回聲是我的。敲第二下，回聲裡多了一個拍子。再敲，牠開始學我停頓的位置。\n\n別對著水晶說話。牠們在記。'},
   {id:'n31',title:'車站月台遺書',body:'末班車永遠不會進站，但廣播一直播。\n\n我數過二十七塊地磚，盡頭是同一面牆。廣告燈箱裡的明星昨天換了一張臉，今天又換回來。\n\n如果你也聽見隧道裡的腳步，別往回走。回頭的人都留在了月台。'},
-  {id:'n32',title:'編號門後的短箋',body:'這扇門編號被磨掉了，門後不是任何一個你走過的地方。\n\n我把最後一張紙條貼在這裡：穿過門之前，先確認自己還記得自己的名字。\n\n要是忘記了，就別推門。門會記得你，也會記得很牢。'}
+  {id:'n32',title:'編號門後的短箋',body:'這扇門編號被磨掉了，門後不是任何一個你走過的地方。\n\n我把最後一張紙條貼在這裡：穿過門之前，先確認自己還記得自己的名字。\n\n要是忘記了，就別推門。門會記得你，也會記得很牢。'},
+  {id:'n33',title:'停電夾縫的記事',body:'燒過一角的紙，邊緣捲著黑灰：\n\n變壓器第三排母排之後不要再往前。那邊的燈不是壞了，是被關掉的。\n\n我們留了一截導線在格柵上，能接的就接，接不動的別硬拆。'},
+  {id:'n34',title:'襯衫口袋的紙條',body:'晾衣繩上的襯衫口袋裡抽出的一張紙：\n\n曬了三天，繩子還是濕的。院子裡沒有下雨，井裡也沒有水。\n\n別收這件衣服。上一個收衣服的人，第二天就站在自己家門口，敲了半個小時的門。'},
+  {id:'n35',title:'末班地鐵的車票',body:'一張車票，背面用鉛筆寫著字：\n\n月台廣播說下一班五分鐘後到。我等了一夜，燈一直亮著，軌道裡沒有風。\n\n票根別丟。要是你也聽見剎車聲，就把它壓在口袋最裡層，別對著軌道數節數。'}
 ];
 function randomNote(){return pick(notePool);}
 
@@ -2658,6 +2689,14 @@ function toast(msg){
   if(toastTimer)clearTimeout(toastTimer);
   toastTimer=setTimeout(()=>{el.classList.remove('show');},1600);
 }
+/* v3.5.6 終局／重開統一清殘留計時器：層級卡、toast、打字機 */
+function clearTerminalTimers(){
+  try{ if(levelCardTimer){clearTimeout(levelCardTimer);levelCardTimer=null;} }catch(e){}
+  try{ if(toastTimer){clearTimeout(toastTimer);toastTimer=null;} }catch(e){}
+  try{ if(typeState.timer){clearInterval(typeState.timer);typeState.timer=null;} }catch(e){}
+  try{ const ts=$('toast'); if(ts)ts.classList.remove('show'); }catch(e){}
+  try{ const lc=$('levelCard'); if(lc){lc.classList.remove('show');lc.classList.add('hidden');} }catch(e){}
+}
 
 /* ---- 圖鑑：實體與層級資料（首次遭遇/抵達自動記錄，未發現顯示 ???） ---- */
 const ENTITY_DEFS={
@@ -2818,6 +2857,7 @@ function doCraft(r){
   unlockAch('craft_first');
   const craftTotal=Object.values(G.craft).reduce((a,b)=>a+(b||0),0);
   if(craftTotal>=5)unlockAch('craft_5');
+  if(craftTotal>=10)unlockAch('craft_10');
   toast('合成完成：'+r.name);
   log('<span class="good">你合成了 '+r.name+'。</span>');
   renderStatus();
@@ -3046,7 +3086,9 @@ const LEVEL_AMB_EVENTS={
     '空氣裡飄來一陣非常淡的、蛋糕烤焦的味道。',
     '你經過的牆角，氖燈管輕輕地震動著，像是被什麼剛剛碰過。',
     '空氣裡的塵粒在日光燈下懸停不動，直到你走過才繼續飄落。',
-    '某條走廊的牆紙色澤比旁邊新一截，像剛剛貼上去的。'
+    '某條走廊的牆紙色澤比旁邊新一截，像剛剛貼上去的。',
+    '日光燈管交替閃過，空走廊兩端的亮度卻始終對不上。',
+    '你數著牆紙的接縫，數到第十一道時，接縫對不回開頭。'
   ],
   1:[
     '倉庫深處傳來棧板倒下的巨響，過了很久都沒有第二聲。',
@@ -3056,7 +3098,8 @@ const LEVEL_AMB_EVENTS={
     '遠處傳來嬰兒車輪碾過碎石的聲音，但這裡沒有任何輪子。',
     '消防門上的推桿自己動了一下，門卻紋絲不動。',
     '水泥地面上拖著一道長長的水痕，通向一扇關死的消防門。',
-    '更衣櫃某一格輕輕敲響，三聲之後再無動靜。'
+    '更衣櫃某一格輕輕敲響，三聲之後再無動靜。',
+    '飲料機後面的通道裡，傳來一聲拉環開啟的脆響，沒有瓶子落地。'
   ],
   3:[
     '一道電火花劈在腳邊的母排上，白光照亮了半條走廊。',
@@ -3066,7 +3109,8 @@ const LEVEL_AMB_EVENTS={
     '一縷青色電光沿母排爬行，在你經過的剎那貼著牆掠走。',
     '空氣中的臭氧味突然變濃，像是某處正在漏電。',
     '母排上的絕緣皮裂開一道細縫，縫裡透出一點藍白色的光。',
-    '配電間的冷卻風扇空轉著，風道裡卻沒有一點風。'
+    '配電間的冷卻風扇空轉著，風道裡卻沒有一點風。',
+    '成排斷電的指示燈中，唯一一盞綠燈在你經過時滅了下去。'
   ],
   4:[
     '辦公室的影印機自己亮起，吐出一張空白紙，又安靜下來。',
@@ -4287,7 +4331,8 @@ LEVEL_AMB_EVENTS[9]=[
   '你聽見割草機的聲音——但這裡是永夜，從來沒有人割草。',
   '前門掛的風鈴響了一下，可這條街上沒有風。',
   '柏油路面下傳來一陣規律的「咚、咚」，像車子輾過減速丘——但這裡沒有車。',
-  '某戶屋內的爐火還燒著，可灶台邊的鍋從未冒過熱氣。'
+  '某戶屋內的爐火還燒著，可灶台邊的鍋從未冒過熱氣。',
+  '某戶車庫門半開著，裡面的車蓋著罩布，罩布下傳來引擎怠速的低鳴。'
 ];
 /* 出口可達性擴充：L9 出口 (7,7) 必須在起點連通集內 */
 EXTRA_DEEP_CHECKS.push({fn:l9exits,ex:L9_EXIT.x,ey:L9_EXIT.y,bound:14,cap:500});
@@ -4458,7 +4503,8 @@ LEVEL_AMB_EVENTS[11]=[
   '某輛違停的車忽然響起警報，在空街裡迴盪了十秒，然後自己安靜下來。',
   '高樓某扇窗亮著燈，窗後像是有人站著；你走近，那盞燈恰好熄滅。',
   '腳下的報紙被風翻開，頭版日期是三十年前的今天，標題你讀不懂。',
-  '報攤上的晚報攤開著，頭版相片是你剛才走過的街口。'
+  '報攤上的晚報攤開著，頭版相片是你剛才走過的街口。',
+  '街角電話亭的話筒垂在半空，線路裡卻傳來撥號盤轉動的咔噠聲。'
 ];
 LEVEL_AMB_EVENTS[12]=[
   '左側某扇編號門後，傳來模糊的交談聲，你貼近時卻只剩呼吸般的靜默。',
@@ -4860,8 +4906,8 @@ function hubReturnReady(){
 }
 function finishWanderer(){
   G.over=true;
-  try{stopHeart();clearAmbientTimers();}catch(e){}
-  try{setBuzzLevel(0);}catch(e){}
+  try{stopAmbientAudio();}catch(e){}
+  clearTerminalTimers();
   try{document.body.classList.remove('lbang');}catch(e){}
   recordEnding('wanderer');
   clearSave();
@@ -4880,8 +4926,8 @@ function finishReturn(){
   unlockAch('survivor');
   recordEnding('return');
   try{questDone('q_main');}catch(e){}
-  try{stopHeart();clearAmbientTimers();}catch(e){}
-  try{setBuzzLevel(0);}catch(e){}
+  try{stopAmbientAudio();}catch(e){}
+  clearTerminalTimers();
   try{document.body.classList.remove('lbang');}catch(e){}
   clearSave();
   try{closeAllModals();}catch(e){}
@@ -4982,9 +5028,8 @@ function transitionToFinal(){
   recordEnding('escape');
   unlockAch('ending_first');
   questDone('q_main');
-  stopHeart();
-  try{clearAmbientTimers();}catch(e){}
-  try{setBuzzLevel(0);}catch(e){}
+  try{stopAmbientAudio();}catch(e){}
+  clearTerminalTimers();
   clearSave();
   try{closeAllModals();}catch(e){}
   try{document.body.classList.remove('low-san');}catch(e){}
@@ -5031,7 +5076,7 @@ function drinkAlmond(){
   renderStatus();
 }
 function openInv(){
-  if(!G)return;
+  if(!G||G.over)return;
   const body=$('invBody');
   let h='';
   h+='<div class="panel-sub">裝 備</div>';
@@ -5095,8 +5140,10 @@ function openInv(){
   $('invModal').classList.add('show');
 }
 function usePipe(){
+  if(!G||G.over)return;
   if(!G.inv||!G.inv.pipe||G.inv.pipe<=0)return;
   const cell=getCell(G.pos.x,G.pos.y);
+  if(!cell||!cell.state)return;
   const hasHound=cell.state.hound||cell.state.entity==='hound';
   if(hasHound){
     G.inv.pipe--;
@@ -5109,6 +5156,7 @@ function usePipe(){
   }
 }
 function useBandage(){
+  if(!G||G.over)return;
   if(!G.inv||!G.inv.bandage||G.inv.bandage<=0)return;
   G.inv.bandage--;
   G.hp=Math.min(100,G.hp+20);
@@ -5116,6 +5164,7 @@ function useBandage(){
   renderStatus();
 }
 function usePhoto(){
+  if(!G||G.over)return;
   if(!G.inv||!G.inv.photo||G.inv.photo<=0)return;
   G.inv.photo--;
   G.sanity=Math.min(100,G.sanity+20);
@@ -5125,6 +5174,9 @@ function usePhoto(){
 /* ---- v3 擴充消耗品 / 合成物使用 ---- */
 function useInvItem(key){
   if(!G||G.over)return;
+  if(!Number.isFinite(G.hp))G.hp=100;
+  if(!Number.isFinite(G.sanity))G.sanity=100;
+  if(!Number.isFinite(G.battery))G.battery=100;
   switch(key){
     case 'bandage': if(!(G.inv.bandage>0))return; G.inv.bandage--; G.hp=Math.min(100,G.hp+20); log('<span class="good">你用繃帶包紮傷口。生命 +20。</span>'); break;
     case 'medband': if(!(G.inv.medband>0))return; G.inv.medband--; G.hp=Math.min(100,G.hp+35); log('<span class="good">浸藥繃帶清涼地貼上傷口。生命 +35。</span>'); break;
@@ -5133,25 +5185,25 @@ function useInvItem(key){
     case 'sparebat': if(!(G.inv.sparebat>0))return; G.inv.sparebat--; G.battery=Math.min(100,G.battery+40); log('<span class="good">你換上備用電池。手電筒電池 +40%。</span>'); break;
     case 'torch': if(!(G.inv.torch>0))return; G.inv.torch--; G.torchTurns=12; G.noTorch=false; log('<span class="good">你點燃火把。火光暫時照亮四周，不耗電池（約 12 回合）。</span>'); break;
     case 'filter': if(!(G.inv.filter>0))return; G.inv.filter--; G.sanity=Math.min(100,G.sanity+12); hallucinationCooldown=6; log('<span class="good">你戴上濾嘴面罩，嗆人的空氣變得溫和。理智 +12，幻覺暫緩。</span>'); break;
-    case 'flare': if(!(G.inv.flare>0))return; G.inv.flare--; G.torchTurns=Math.max(G.torchTurns,6); G.noTorch=false; {const cell=getCell(G.pos.x,G.pos.y); cell.state.entityResolved=true; log('<span class="good">照明彈轰然亮起，刺眼的白光逼退了暗處的東西。</span>');} break;
+    case 'flare': if(!(G.inv.flare>0))return; G.inv.flare--; G.torchTurns=Math.max(G.torchTurns,6); G.noTorch=false; {const cell=getCell(G.pos.x,G.pos.y); if(cell&&cell.state){cell.state.entityResolved=true;} log('<span class="good">照明彈轰然亮起，刺眼的白光逼退了暗處的東西。</span>');} break;
     /* v3.5.2 新消耗品 */
     case 'salve_pad': if(!(G.inv.salve_pad>0))return; G.inv.salve_pad--; G.hp=Math.min(100,G.hp+15); G.sanity=Math.min(100,G.sanity+5); log('薄荷藥膏墊帶著清涼的香氣。<span class="good">生命 +15、理智 +5。</span>'); break;
     case 'bitter_draught': if(!(G.inv.bitter_draught>0))return; if(G.hp<=10){log('身體太虛，苦湯會要了你的命，你把它收了回去。');return;} G.inv.bitter_draught--; G.hp-=6; G.sanity=Math.min(100,G.sanity+25); log('苦藥湯滑過喉嚨，臉色發白，但思緒前所未有地清醒。<span class="danger">生命 -6</span>，<span class="good">理智 +25。</span>'); break;
     case 'sealed_almond': if(!(G.inv.sealed_almond>0))return; G.inv.sealed_almond--; G.sanity=Math.min(100,G.sanity+40); G.hp=Math.min(100,G.hp+8); log('封膜延緩了揮發，這一口比現開的更濃。<span class="good">理智 +40、生命 +8。</span>'); break;
     case 'dry_cell': if(!(G.inv.dry_cell>0))return; G.inv.dry_cell--; G.battery=Math.min(100,G.battery+25); log('你換上乾電池。<span class="good">電池 +25%。</span>'); break;
-    case 'salt_pouch': if(!(G.inv.salt_pouch>0))return; {const cell=getCell(G.pos.x,G.pos.y); if(cell.state.entity){G.inv.salt_pouch--; cell.state.entityResolved=true; cell.state.houndResolved=true; log('<span class="good">粗鹽灑落地，那東西退開了房間。</span>');} else{log('你撒出粗鹽，這附近沒有可驅散的東西。');} } break;
+    case 'salt_pouch': if(!(G.inv.salt_pouch>0))return; {const cell=getCell(G.pos.x,G.pos.y); if(cell&&cell.state&&cell.state.entity){G.inv.salt_pouch--; cell.state.entityResolved=true; cell.state.houndResolved=true; log('<span class="good">粗鹽灑落地，那東西退開了房間。</span>');} else{log('你撒出粗鹽，這附近沒有可驅散的東西。');} } break;
     case 'wax_candle': if(!(G.inv.wax_candle>0))return; G.inv.wax_candle--; G.torchTurns=Math.max(G.torchTurns,8); log('<span class="good">小蠟燭點燃，一團穩定的暖光照亮四周（約 8 回合）。</span>'); break;
     case 'calm_salts': if(!(G.inv.calm_salts>0))return; G.inv.calm_salts--; G.sanity=Math.min(100,G.sanity+10); hallucinationCooldown=8; log('嗅鹽嗆得你眉心一緊，思緒為之一清。<span class="good">理智 +10</span>，幻覺暫緩。'); break;
-    case 'shockbaton': if(!(G.inv.shockbaton>0))return; {const cell=getCell(G.pos.x,G.pos.y); const t=cell.state.entity; if(t==='hound'||t==='skinstealer'||t==='wretch'){G.inv.shockbaton--; cell.state.entityResolved=true; log('<span class="good">電擊棍火花四迸——那個東西被電暈，抽搐著退入黑暗。</span>');} else{log('你按下電擊棍，嗞一聲電流空轉。這附近沒有可電暈的目標。');} } break;
-    case 'strongpipe': if(!(G.inv.strongpipe>0))return; {const cell=getCell(G.pos.x,G.pos.y); const t=cell.state.entity; if(t){G.inv.strongpipe--; cell.state.entityResolved=true; log('<span class="good">強化鐵棍重重揮出，那個東西哀鳴著退開。</span>');} else{log('你揮了揮強化鐵棍，什麼也沒發生。');} } break;
-    case 'pipe': if(!(G.inv.pipe>0))return; {const cell=getCell(G.pos.x,G.pos.y); const t=cell.state.entity; if(t==='hound'||cell.state.hound){G.inv.pipe--; cell.state.entityResolved=true; cell.state.houndResolved=true; log('<span class="good">你揮起鐵棍猛擊——那個東西慘叫著退入黑暗。</span>');} else{log('你揮了揮鐵棍，什麼也沒發生。');} } break;
+    case 'shockbaton': if(!(G.inv.shockbaton>0))return; {const cell=getCell(G.pos.x,G.pos.y); if(!cell||!cell.state)break; const t=cell.state.entity; if(t==='hound'||t==='skinstealer'||t==='wretch'){G.inv.shockbaton--; cell.state.entityResolved=true; log('<span class="good">電擊棍火花四迸——那個東西被電暈，抽搐著退入黑暗。</span>');} else{log('你按下電擊棍，嗞一聲電流空轉。這附近沒有可電暈的目標。');} } break;
+    case 'strongpipe': if(!(G.inv.strongpipe>0))return; {const cell=getCell(G.pos.x,G.pos.y); if(!cell||!cell.state)break; const t=cell.state.entity; if(t){G.inv.strongpipe--; cell.state.entityResolved=true; log('<span class="good">強化鐵棍重重揮出，那個東西哀鳴著退開。</span>');} else{log('你揮了揮強化鐵棍，什麼也沒發生。');} } break;
+    case 'pipe': if(!(G.inv.pipe>0))return; {const cell=getCell(G.pos.x,G.pos.y); if(!cell||!cell.state)break; const t=cell.state.entity; if(t==='hound'||cell.state.hound){G.inv.pipe--; cell.state.entityResolved=true; cell.state.houndResolved=true; log('<span class="good">你揮起鐵棍猛擊——那個東西慘叫著退入黑暗。</span>');} else{log('你揮了揮鐵棍，什麼也沒發生。');} } break;
     default: return;
   }
   toast('已使用：'+(MAT_NAMES[key]||key));
   renderStatus();refreshRoom();
 }
 function openNotes(){
-  if(!G)return;
+  if(!G||G.over)return;
   const body=$('notesBody');
   if(!G.notes||!G.notes.length){body.innerHTML='<div class="empty">檔案室是空的。<br>在後室中尋找紙條與錄音。</div>';}
   else{
@@ -5166,7 +5218,7 @@ function openNotes(){
 /* ---- 合成面板 ---- */
 function doCraftById(id){const r=RECIPES.find(x=>x.id===id);if(r)doCraft(r);}
 function openCraft(){
-  if(!G)return;
+  if(!G||G.over)return;
   const body=$('craftBody');
   let h='<div class="empty" style="padding:4px 0 10px">材料可在各層搜刮：布料 / 膠帶 / 電線 / 金屬碎片 / 酒精 / 繩索 / 電池芯。</div>';
   for(const r of RECIPES){
@@ -5186,7 +5238,7 @@ function openCraft(){
 
 /* ---- 任務面板 ---- */
 function openQuests(){
-  if(!G)return;
+  if(!G||G.over)return;
   const body=$('questBody');
   let h='';
   for(const id in QUEST_DEFS){
@@ -5202,7 +5254,7 @@ function openQuests(){
 
 /* ---- 圖鑑面板 ---- */
 function openCodex(){
-  if(!G)return;
+  if(!G||G.over)return;
   const body=$('codexBody');
   const codex=(G&&G.codex)||{};
   const entities=codex.entities||{};
@@ -5235,6 +5287,7 @@ function openCodex(){
 
 /* ---- 主選單面板（精簡工具列後，其餘入口收進這裡） ---- */
 function openMenu(){
+  if(!G||G.over)return;
   closeOtherModals('menuModal');
   $('menuModal').classList.add('show');
 }
@@ -5242,6 +5295,7 @@ function openMenu(){
 /* ===== 小地圖（戰爭迷霧：只顯示已走過的房間） ===== */
 let mapBlink=null;
 function openMap(){
+  if(!G||G.over)return;
   renderMap();
   closeOtherModals('mapModal');
   $('mapModal').classList.add('show');
@@ -5556,6 +5610,9 @@ function renderMiniMap(force){
 function rest(){
   if(!G||G.over)return;
   if(!currentRoom)return;
+  if(!Number.isFinite(G.hp))G.hp=100;
+  if(!Number.isFinite(G.sanity))G.sanity=100;
+  if(!Number.isFinite(G.battery))G.battery=100;
   G.time+=3;
   l1Tick(3);
   const r=Math.random();
@@ -5599,23 +5656,37 @@ function hallucinate(){
 
 /* ===== 環境音 ===== */
 let audioCtx=null,buzzNodes=null,heartNode=null,humInterval=null;
+function buildBuzzNodes(){
+  /* 前置：audioCtx 已存在；建立 buzz 雙振盪器、gain 與 hum 音高間距 */
+  if(!audioCtx)return;
+  const osc=audioCtx.createOscillator();
+  osc.type='sine';osc.frequency.value=60;
+  const osc2=audioCtx.createOscillator();
+  osc2.type='sine';osc2.frequency.value=120;
+  const gain=audioCtx.createGain();
+  gain.gain.value=0.04;
+  const gain2=audioCtx.createGain();
+  gain2.gain.value=0.015;
+  osc.connect(gain);gain.connect(audioCtx.destination);
+  osc2.connect(gain2);gain2.connect(audioCtx.destination);
+  osc.start();osc2.start();
+  if(humInterval){clearInterval(humInterval);humInterval=null;}
+  humInterval=setInterval(()=>{if(audioCtx)osc2.frequency.setValueAtTime(118+Math.random()*4,audioCtx.currentTime);},3000);
+  buzzNodes={gain,osc,osc2};
+}
 function initAudio(){
-  if(audioCtx)return;
   try{
-    audioCtx=new (window.AudioContext||window.webkitAudioContext)();
-    const osc=audioCtx.createOscillator();
-    osc.type='sine';osc.frequency.value=60;
-    const osc2=audioCtx.createOscillator();
-    osc2.type='sine';osc2.frequency.value=120;
-    const gain=audioCtx.createGain();
-    gain.gain.value=0.04;
-    const gain2=audioCtx.createGain();
-    gain2.gain.value=0.015;
-    osc.connect(gain);gain.connect(audioCtx.destination);
-    osc2.connect(gain2);gain2.connect(audioCtx.destination);
-    osc.start();osc2.start();
-    humInterval=setInterval(()=>{if(audioCtx)osc2.frequency.setValueAtTime(118+Math.random()*4,audioCtx.currentTime);},3000);
-    buzzNodes={gain,osc,osc2};
+    if(!audioCtx)audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+    if(buzzNodes)return; /* 避免重複疊加節點 */
+    buildBuzzNodes();
+  }catch(e){}
+}
+/* v3.5.6 批次 B：終局停止 buzz 後回到標題時安全重建低嗡；buzzNodes 已在則不重建 */
+function rebuildAmbientAudio(){
+  try{
+    if(!audioCtx){initAudio();return;}
+    if(buzzNodes)return;
+    buildBuzzNodes();
   }catch(e){}
 }
 function blip(freq,type,gain,dur){
@@ -5659,6 +5730,21 @@ function stopHeart(){
 /* v3.5.5 清環境音殘留：停止 hum 隨機音高間距，避免死亡／結局／放棄／重開後對隱藏頁面觸發 */
 function clearAmbientTimers(){
   if(humInterval){clearInterval(humInterval);humInterval=null;}
+}
+/* v3.5.6 終局音訊中央化：清 hum 間距、停心跳、停 buzz 振盪器並歸零 gain，避免終局畫面背後殘留低嗡 */
+function stopAmbientAudio(){
+  try{ if(humInterval){clearInterval(humInterval);} humInterval=null; }catch(e){}
+  try{ stopHeart(); }catch(e){}
+  try{
+    if(buzzNodes){
+      if(buzzNodes.gain&&audioCtx){
+        try{buzzNodes.gain.gain.setTargetAtTime(0,audioCtx.currentTime,0.05);}catch(e){}
+      }
+      if(buzzNodes.osc){try{buzzNodes.osc.stop();}catch(e){}}
+      if(buzzNodes.osc2){try{buzzNodes.osc2.stop();}catch(e){}}
+    }
+    buzzNodes=null;
+  }catch(e){}
 }
 document.addEventListener('click',initAudio,{once:true});
 document.addEventListener('touchstart',initAudio,{once:true});
@@ -5785,6 +5871,10 @@ function fillSaveDefaults(obj){
   if(typeof obj.godSanity!=='boolean')obj.godSanity=false;
   if(typeof obj.godBattery!=='boolean')obj.godBattery=false;
   if(!obj.lastHit||typeof obj.lastHit!=='object')obj.lastHit=null;
+  /* v3.5.6 補預設：跨層隱藏標記、終局標記、無敵模式（壞存檔不得帶成終局/無敵） */
+  if(typeof obj.hideOnce!=='boolean')obj.hideOnce=false;
+  if(typeof obj.over!=='boolean')obj.over=false;
+  if(typeof obj.invincible!=='boolean')obj.invincible=false;
   return obj;
 }
 function loadGame(){
@@ -5830,10 +5920,8 @@ function startGame(fromSave){
     if(fromSave)try{toast('存檔無法讀取，已開始新局');}catch(e){}
   }
   try{skipType();}catch(e){}
-  if(typeState.timer){clearInterval(typeState.timer);typeState.timer=null;}
-  try{clearAmbientTimers();}catch(e){}
-  if(toastTimer){clearTimeout(toastTimer);toastTimer=null;}
-  if(levelCardTimer){clearTimeout(levelCardTimer);levelCardTimer=null;}
+  try{stopAmbientAudio();}catch(e){}
+  clearTerminalTimers();
   const toastEl=$('toast');if(toastEl)toastEl.classList.remove('show');
   currentRoom=null;
   hallucinationCooldown=0;
@@ -5883,12 +5971,13 @@ function doDeath(text,title,cause){
   G.over=true;
   recordEnding('death');
   clearSave(); /* 死亡後清除存檔，避免「繼續探索」載入已死亡狀態 */
-  try{stopHeart();clearAmbientTimers();}catch(e){}
-  try{setBuzzLevel(0.04);}catch(e){}
+  try{stopAmbientAudio();}catch(e){}
+  clearTerminalTimers();
   currentRoom=null;
   try{closeAllModals();}catch(e){}
   try{document.body.classList.remove('low-san');document.body.classList.remove('lbang');}catch(e){}
   try{const lc=$('levelCard');if(lc){lc.classList.remove('show');lc.classList.add('hidden');}}catch(e){}
+  try{const ts=$('toast');if(ts)ts.classList.remove('show');}catch(e){}
   $('winScreen').classList.add('hidden');
   $('deathTitle').textContent=title||'你 迷 失 了';
   if($('deathCause'))$('deathCause').textContent=cause?('死 因：'+cause):'';
@@ -5903,8 +5992,8 @@ $('startBtn').onclick=()=>{
 };
 $('continueBtn').onclick=()=>startGame(true);
 $('retryBtn').onclick=()=>{clearSave();startGame(false);};
-$('deathMenuBtn').onclick=()=>{$('deathScreen').classList.add('hidden');$('titleScreen').classList.remove('hidden');refreshTitle();};
-$('winMenuBtn').onclick=()=>{$('winScreen').classList.add('hidden');$('titleScreen').classList.remove('hidden');refreshTitle();};
+$('deathMenuBtn').onclick=()=>{$('deathScreen').classList.add('hidden');$('titleScreen').classList.remove('hidden');refreshTitle();try{rebuildAmbientAudio();}catch(e){}};
+$('winMenuBtn').onclick=()=>{$('winScreen').classList.add('hidden');$('titleScreen').classList.remove('hidden');refreshTitle();try{rebuildAmbientAudio();}catch(e){}};
 $('invClose').onclick=()=>closeModal('invModal');
 $('notesClose').onclick=()=>closeModal('notesModal');
 $('achClose').onclick=()=>closeModal('achModal');
@@ -5954,6 +6043,8 @@ setInterval(()=>{if(G&&!G.over)renderMiniMap(false);},500); /* 小地圖：狀�
       im.onerror=()=>{try{bg.classList.add('bg-failed');}catch(e){}};
       im.src=u;
     }
+    /* v3.5.6：底圖元素本身的 error 監聽掛鉤；失敗時只移除圖片，保留 --bg 底色與 ::before 暗紗，L6 純黑主題不被覆蓋 */
+    try{bg.addEventListener('error',()=>{try{bg.classList.add('bg-failed');}catch(e){}},true);}catch(e){}
   }catch(e){}
 })();
 
