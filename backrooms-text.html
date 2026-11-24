@@ -342,6 +342,9 @@ body.l6 #scene{text-shadow:0 0 3px rgba(120,120,120,0.15);}
  *          面板與地圖空值防禦、觸控與可讀性微調。
  * v3.5.3 · 設定忠實化校對（層級名稱、實體描述、圖鑑）、方向通道化文案。
  * v3.5.4 · 彈層關閉中央化與地圖重繪 interval 洩漏修復、守衛補強、死亡／結局收尾清理。
+ * v3.5.5 · 成就觸發勾稽、放棄本局收尾清理、跨局/跨層狀態與計時器守衛、存檔預設補強；
+ *          低狀態對比、說明文案對應現況機制、兩視口排版實測微修；
+ *          批次 C：氛圍旁白補充、紙條 n30–n32、消耗品「鎮定嗅鹽」配方、成就「檔案學者」。
  * ============================================================ */
 :root{--tap:44px;--mono:'SFMono-Regular',ui-monospace,'Menlo','Consolas','Noto Sans Mono',monospace;}
 #statusbar{padding:7px 10px 6px;}
@@ -350,7 +353,9 @@ body.l6 #scene{text-shadow:0 0 3px rgba(120,120,120,0.15);}
 .stat-g{display:flex;align-items:center;gap:4px;flex-shrink:0;font-size:10px;color:var(--amber-dim);letter-spacing:.5px;}
 .stat-g b{font-size:11px;color:var(--amber);font-weight:normal;min-width:18px;text-align:right;}
 .stat-g .bar{width:42px;height:6px;}
-.stat-g.low b{color:var(--red);}
+.stat-g.low b{color:var(--red);font-weight:bold;}
+.stat-g.low .bar{border-color:var(--red);}
+.stat-g.low .bar i{filter:brightness(1.25) saturate(1.4);}
 .stat-sub{display:flex;align-items:center;gap:6px;margin-top:5px;overflow-x:auto;scrollbar-width:none;}
 .stat-sub::-webkit-scrollbar{display:none;}
 .chip{font-size:10px;color:var(--amber-dim);border:1px solid var(--amber-faint);padding:1px 7px;border-radius:10px;white-space:nowrap;letter-spacing:.5px;}
@@ -657,7 +662,7 @@ body.l12 .choice{border-left:1px solid var(--amber);border-right:1px solid var(-
 <div id="scrim" aria-hidden="true"></div>
 <div class="overlay" id="titleScreen">
   <h1 id="titleH1">BACKROOMS</h1>
-  <h2>文 字 探 險 · v3.5.4</h2>
+  <h2>文 字 探 險 · v3.5.5</h2>
   <p>你從現實的縫隙中跌落，睜開眼——<br>嗡嗡作響的日光燈、發黃潮濕的牆紙、漫無邊際的走廊。<br>這裡沒有出口，只有無盡的等待。</p>
   <button class="big-btn" id="startBtn">跌 入 後 室</button>
   <button class="big-btn" id="continueBtn" style="display:none">繼 續 探 索</button>
@@ -829,7 +834,7 @@ function newGame(){
   G={
     level:0,
     pos:{x:0,y:0},
-    facing:0,
+    facing:'N',
     hp:100,
     sanity:100,
     almond:2,
@@ -860,6 +865,7 @@ function newGame(){
     noTorch:true,                                /* v3.5.2：是否尚未使用火把/照明彈 */
     qBeacon:false,                               /* v3.5.2：L10 電塔信標是否已留下 */
     godHp:false,godSanity:false,godBattery:false, /* GM 無限開關 */
+    lastHit:null,
     over:false,
     logs:[]
   };
@@ -1018,6 +1024,8 @@ try{reduceMotion=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: redu
 try{$('scene').addEventListener('click',function(e){if(e.target&&e.target.closest&&e.target.closest('button'))return;skipType();});}catch(e){}
 
 function log(msg){
+  if(!G)return;
+  if(!Array.isArray(G.logs))G.logs=[];
   G.logs.push(msg);
   if(G.logs.length>12)G.logs.shift();
   renderLog();
@@ -1328,12 +1336,13 @@ function openAch(){
   $('achModal').classList.add('show');
 }
 function abandonRun(){
-  if(G&&G.over)return;
+  if(!G||G.over)return;
   if(!confirm('放棄本次探險？存檔將被清除。'))return;
   clearSave();
   G.over=true;
   currentRoom=null;
-  try{stopHeart();setBuzzLevel(0.10);}catch(e){}
+  try{closeAllModals();}catch(e){}
+  try{stopHeart();clearAmbientTimers();setBuzzLevel(0.10);}catch(e){}
   try{document.body.classList.remove('low-san');document.body.classList.remove('lbang');}catch(e){}
   try{const lc=$('levelCard');if(lc){lc.classList.remove('show');lc.classList.add('hidden');}}catch(e){}
   $('deathScreen').classList.add('hidden');
@@ -2046,6 +2055,7 @@ function addNote(n){
     unlockAch('first_note');
     if(G.notes.length>=5)unlockAch('note_5');
     if(G.notes.length>=10)unlockAch('note_10');
+    if(G.notes.length>=15)unlockAch('archivist');
     checkQuests();
   }
 }
@@ -2092,7 +2102,9 @@ const ACH_DEFS={
   note_10:{title:'紙 頁 獵 人',desc:'收集 10 張紙條'},
   l6_walker:{title:'黑 暗 漫 步 者',desc:'在 Level 6 走過 12 個房間'},
   l8_nodark:{title:'未 曾 熄 燈',desc:'未使用火把或照明彈，抵達 Level 8'},
-  almond_stock:{title:'杏仁水儲備',desc:'同時持有 5 瓶以上杏仁水'}
+  almond_stock:{title:'杏仁水儲備',desc:'同時持有 5 瓶以上杏仁水'},
+  /* v3.5.5 新成就 */
+  archivist:{title:'檔 案 學 者',desc:'收集 15 張紙條'}
 };
 function unlockAch(id){
   if(!G)return;
@@ -2132,7 +2144,10 @@ const notePool=[
   {id:'n26',title:'水晶測溫記錄',body:'兩塊水晶被並排鑿下，旁邊刻著溫度與日期——日期是明天。\n\n「亮藍色那塊會吸熱。別貼皮膚。兩塊一起帶著，它們靠在一起時不會共鳴。」'},
   {id:'n27',title:'麥田驛站標記',body:'電塔基座上用黑漆畫了一個圓圈，中間一道向上的箭頭。\n\n「沿電塔排成的直線走，城市在同一側。信標留在這裡，後面的人就不會繞回麥田。」'},
   {id:'n28',title:'便利店收銀條',body:'收銀機吐出的條碼紙，日期空白，貨品一欄印著：\n\n「杏仁水 ×1、能量棒 ×1、你不記得拿過的東西 ×1。」\n\n找零金額欄，寫著你的房號。'},
-  {id:'n29',title:'公寓牆貼',body:'撕下的日曆貼在廚房瓷磚上，那一頁被圈了三次。\n\n「聽樓上的腳步。如果兩次落地之間隔一樣，不要開門。這棟樓沒有樓上。」'}
+  {id:'n29',title:'公寓牆貼',body:'撕下的日曆貼在廚房瓷磚上，那一頁被圈了三次。\n\n「聽樓上的腳步。如果兩次落地之間隔一樣，不要開門。這棟樓沒有樓上。」'},
+  {id:'n30',title:'洞壁的刻痕',body:'水晶共鳴的次數我記下來了。\n\n敲第一下，回聲是我的。敲第二下，回聲裡多了一個拍子。再敲，牠開始學我停頓的位置。\n\n別對著水晶說話。牠們在記。'},
+  {id:'n31',title:'車站月台遺書',body:'末班車永遠不會進站，但廣播一直播。\n\n我數過二十七塊地磚，盡頭是同一面牆。廣告燈箱裡的明星昨天換了一張臉，今天又換回來。\n\n如果你也聽見隧道裡的腳步，別往回走。回頭的人都留在了月台。'},
+  {id:'n32',title:'編號門後的短箋',body:'這扇門編號被磨掉了，門後不是任何一個你走過的地方。\n\n我把最後一張紙條貼在這裡：穿過門之前，先確認自己還記得自己的名字。\n\n要是忘記了，就別推門。門會記得你，也會記得很牢。'}
 ];
 function randomNote(){return pick(notePool);}
 
@@ -2675,6 +2690,7 @@ function recordEntity(t){
   if(!G.codex.entities)G.codex.entities={};
   if(!G.codex.entities[t]){
     G.codex.entities[t]=true;
+    unlockAch('codex_first');
     const d=ENTITY_DEFS[t];
     if(d)log('你記下了這個實體的情報：<span class="cold">'+d.name+'</span>（已存入圖鑑）。');
   }
@@ -2747,7 +2763,7 @@ function unequipItem(slot){
 const MAT_NAMES={cloth:'布料',tape:'膠帶',wire:'電線',scrap:'金屬碎片',alcohol:'酒精',rope:'繩索',cell:'電池芯',pipe:'鐵棍',almond:'杏仁水',bandage:'繃帶',lighter:'打火機',crystal:'水晶',
   /* v3.5.2 新增消耗品名稱（避免背包/toast 顯示英文 id） */
   medband:'浸藥繃帶',energy_bar:'能量棒',luckymilk:'幸運豆奶',sparebat:'備用電池',torch:'火把',filter:'濾嘴面罩',flare:'照明彈',shockbaton:'電擊棍',strongpipe:'強化鐵棍',photo:'記憶相片',
-  salve_pad:'薄荷藥膏墊',bitter_draught:'苦藥湯',sealed_almond:'密封杏仁水',dry_cell:'備用乾電池',salt_pouch:'粗鹽驅囊',wax_candle:'蜂蠟小蠟燭'};
+  salve_pad:'薄荷藥膏墊',bitter_draught:'苦藥湯',sealed_almond:'密封杏仁水',dry_cell:'備用乾電池',salt_pouch:'粗鹽驅囊',wax_candle:'蜂蠟小蠟燭',calm_salts:'鎮定嗅鹽'};
 const RECIPES=[
   {id:'bandage_cloth',name:'臨時繃帶',need:{cloth:1,tape:1},give:{bandage:1},desc:'布料混膠帶：基本包紮，生命 +20。'},
   {id:'medband',name:'浸藥繃帶',need:{bandage:1,almond:1},give:{medband:1},desc:'繃帶浸過杏仁水：生命 +35。'},
@@ -2763,7 +2779,9 @@ const RECIPES=[
   {id:'salve_pad',name:'薄荷藥膏墊',need:{bandage:1,cloth:1},give:{salve_pad:1},desc:'浸過清涼藥草的布墊：使用時生命 +15、理智 +5。'},
   {id:'sealed_almond',name:'密封杏仁水',need:{almond:1,tape:1},give:{sealed_almond:1},desc:'封膜延緩揮發：飲用時理智 +40、生命 +8，比現開更濃。'},
   {id:'dry_cell',name:'備用乾電池',need:{cell:1,scrap:1,tape:1},give:{dry_cell:1},desc:'封装電池芯：使用時電池 +25%。'},
-  {id:'wax_candle',name:'蜂蠟小蠟燭',need:{cloth:1},needTool:{lighter:1},give:{wax_candle:1},desc:'布料裹蠟、借打火機引燃：點燃後照明 8 回合。'}
+  {id:'wax_candle',name:'蜂蠟小蠟燭',need:{cloth:1},needTool:{lighter:1},give:{wax_candle:1},desc:'布料裹蠟、借打火機引燃：點燃後照明 8 回合。'},
+  /* v3.5.5 新配方 */
+  {id:'calm_salts',name:'鎮定嗅鹽',need:{alcohol:1,scrap:1},give:{calm_salts:1},desc:'酒精與金屬碎屑封入小瓶：使用時理智 +10，並壓下幻覺一段時間。'}
 ];
 function matCount(k){
   if(!G||!G.inv)return 0;
@@ -3026,7 +3044,9 @@ const LEVEL_AMB_EVENTS={
     '你腳步聲的回音，慢了整整一拍才跟上。',
     '一片牆紙無端鼓起，又像呼吸一樣癟了回去。',
     '空氣裡飄來一陣非常淡的、蛋糕烤焦的味道。',
-    '你經過的牆角，氖燈管輕輕地震動著，像是被什麼剛剛碰過。'
+    '你經過的牆角，氖燈管輕輕地震動著，像是被什麼剛剛碰過。',
+    '空氣裡的塵粒在日光燈下懸停不動，直到你走過才繼續飄落。',
+    '某條走廊的牆紙色澤比旁邊新一截，像剛剛貼上去的。'
   ],
   1:[
     '倉庫深處傳來棧板倒下的巨響，過了很久都沒有第二聲。',
@@ -3034,7 +3054,9 @@ const LEVEL_AMB_EVENTS={
     '通風管道裡傳來爪子刮過金屬的聲音，由遠而近又消失。',
     '你腳邊的陰影比你慢了半步才跟上。',
     '遠處傳來嬰兒車輪碾過碎石的聲音，但這裡沒有任何輪子。',
-    '消防門上的推桿自己動了一下，門卻紋絲不動。'
+    '消防門上的推桿自己動了一下，門卻紋絲不動。',
+    '水泥地面上拖著一道長長的水痕，通向一扇關死的消防門。',
+    '更衣櫃某一格輕輕敲響，三聲之後再無動靜。'
   ],
   3:[
     '一道電火花劈在腳邊的母排上，白光照亮了半條走廊。',
@@ -3042,7 +3064,9 @@ const LEVEL_AMB_EVENTS={
     '你腳下的格柵無端地震動了一下，像有大型變壓器在運轉。',
     '牆上一盞指示燈從紅轉綠，又轉回紅——明明沒有別人在操作。',
     '一縷青色電光沿母排爬行，在你經過的剎那貼著牆掠走。',
-    '空氣中的臭氧味突然變濃，像是某處正在漏電。'
+    '空氣中的臭氧味突然變濃，像是某處正在漏電。',
+    '母排上的絕緣皮裂開一道細縫，縫裡透出一點藍白色的光。',
+    '配電間的冷卻風扇空轉著，風道裡卻沒有一點風。'
   ],
   4:[
     '辦公室的影印機自己亮起，吐出一張空白紙，又安靜下來。',
@@ -4262,7 +4286,8 @@ LEVEL_AMB_EVENTS[9]=[
   '一扇窗的窗簾無風自動掀開一角，又輕輕落下。',
   '你聽見割草機的聲音——但這裡是永夜，從來沒有人割草。',
   '前門掛的風鈴響了一下，可這條街上沒有風。',
-  '柏油路面下傳來一陣規律的「咚、咚」，像車子輾過減速丘——但這裡沒有車。'
+  '柏油路面下傳來一陣規律的「咚、咚」，像車子輾過減速丘——但這裡沒有車。',
+  '某戶屋內的爐火還燒著，可灶台邊的鍋從未冒過熱氣。'
 ];
 /* 出口可達性擴充：L9 出口 (7,7) 必須在起點連通集內 */
 EXTRA_DEEP_CHECKS.push({fn:l9exits,ex:L9_EXIT.x,ey:L9_EXIT.y,bound:14,cap:500});
@@ -4432,7 +4457,8 @@ LEVEL_AMB_EVENTS[11]=[
   '細雨落在空無一人的柏油路上，雨刷在一輛廢車上自動擺動了一下，又停下。',
   '某輛違停的車忽然響起警報，在空街裡迴盪了十秒，然後自己安靜下來。',
   '高樓某扇窗亮著燈，窗後像是有人站著；你走近，那盞燈恰好熄滅。',
-  '腳下的報紙被風翻開，頭版日期是三十年前的今天，標題你讀不懂。'
+  '腳下的報紙被風翻開，頭版日期是三十年前的今天，標題你讀不懂。',
+  '報攤上的晚報攤開著，頭版相片是你剛才走過的街口。'
 ];
 LEVEL_AMB_EVENTS[12]=[
   '左側某扇編號門後，傳來模糊的交談聲，你貼近時卻只剩呼吸般的靜默。',
@@ -4834,7 +4860,7 @@ function hubReturnReady(){
 }
 function finishWanderer(){
   G.over=true;
-  try{stopHeart();}catch(e){}
+  try{stopHeart();clearAmbientTimers();}catch(e){}
   try{setBuzzLevel(0);}catch(e){}
   try{document.body.classList.remove('lbang');}catch(e){}
   recordEnding('wanderer');
@@ -4854,7 +4880,7 @@ function finishReturn(){
   unlockAch('survivor');
   recordEnding('return');
   try{questDone('q_main');}catch(e){}
-  try{stopHeart();}catch(e){}
+  try{stopHeart();clearAmbientTimers();}catch(e){}
   try{setBuzzLevel(0);}catch(e){}
   try{document.body.classList.remove('lbang');}catch(e){}
   clearSave();
@@ -4957,6 +4983,7 @@ function transitionToFinal(){
   unlockAch('ending_first');
   questDone('q_main');
   stopHeart();
+  try{clearAmbientTimers();}catch(e){}
   try{setBuzzLevel(0);}catch(e){}
   clearSave();
   try{closeAllModals();}catch(e){}
@@ -5048,7 +5075,8 @@ function openInv(){
     ['sealed_almond','密封杏仁水','使用：理智 +40、生命 +8'],
     ['dry_cell','備用乾電池','使用：電池 +25%'],
     ['salt_pouch','粗鹽驅囊','使用：驅散當前房間的實體'],
-    ['wax_candle','蜂蠟小蠟燭','使用：點燃，照明 8 回合']
+    ['wax_candle','蜂蠟小蠟燭','使用：點燃，照明 8 回合'],
+    ['calm_salts','鎮定嗅鹽','使用：理智 +10，幻覺暫緩更久']
   ];
   for(const u of useList){
     const key=u[0];const c=G.inv[key]||0;
@@ -5113,6 +5141,7 @@ function useInvItem(key){
     case 'dry_cell': if(!(G.inv.dry_cell>0))return; G.inv.dry_cell--; G.battery=Math.min(100,G.battery+25); log('你換上乾電池。<span class="good">電池 +25%。</span>'); break;
     case 'salt_pouch': if(!(G.inv.salt_pouch>0))return; {const cell=getCell(G.pos.x,G.pos.y); if(cell.state.entity){G.inv.salt_pouch--; cell.state.entityResolved=true; cell.state.houndResolved=true; log('<span class="good">粗鹽灑落地，那東西退開了房間。</span>');} else{log('你撒出粗鹽，這附近沒有可驅散的東西。');} } break;
     case 'wax_candle': if(!(G.inv.wax_candle>0))return; G.inv.wax_candle--; G.torchTurns=Math.max(G.torchTurns,8); log('<span class="good">小蠟燭點燃，一團穩定的暖光照亮四周（約 8 回合）。</span>'); break;
+    case 'calm_salts': if(!(G.inv.calm_salts>0))return; G.inv.calm_salts--; G.sanity=Math.min(100,G.sanity+10); hallucinationCooldown=8; log('嗅鹽嗆得你眉心一緊，思緒為之一清。<span class="good">理智 +10</span>，幻覺暫緩。'); break;
     case 'shockbaton': if(!(G.inv.shockbaton>0))return; {const cell=getCell(G.pos.x,G.pos.y); const t=cell.state.entity; if(t==='hound'||t==='skinstealer'||t==='wretch'){G.inv.shockbaton--; cell.state.entityResolved=true; log('<span class="good">電擊棍火花四迸——那個東西被電暈，抽搐著退入黑暗。</span>');} else{log('你按下電擊棍，嗞一聲電流空轉。這附近沒有可電暈的目標。');} } break;
     case 'strongpipe': if(!(G.inv.strongpipe>0))return; {const cell=getCell(G.pos.x,G.pos.y); const t=cell.state.entity; if(t){G.inv.strongpipe--; cell.state.entityResolved=true; log('<span class="good">強化鐵棍重重揮出，那個東西哀鳴著退開。</span>');} else{log('你揮了揮強化鐵棍，什麼也沒發生。');} } break;
     case 'pipe': if(!(G.inv.pipe>0))return; {const cell=getCell(G.pos.x,G.pos.y); const t=cell.state.entity; if(t==='hound'||cell.state.hound){G.inv.pipe--; cell.state.entityResolved=true; cell.state.houndResolved=true; log('<span class="good">你揮起鐵棍猛擊——那個東西慘叫著退入黑暗。</span>');} else{log('你揮了揮鐵棍，什麼也沒發生。');} } break;
@@ -5550,7 +5579,7 @@ function rest(){
 }
 function help(){
   if(!G||G.over)return;
-  addNote({id:'help',title:'生 存 指 南',body:'【移動】點擊方向按鈕（北/南/東/西）。\n\n【手電筒】黑暗區域需要，會消耗電池。點擊下方「手電筒」或背包開關。\n\n【杏仁水】飲用回復理智與生命（背包中點擊）。\n\n【休息】回復生命，但會消耗時間，黑暗中不安全。\n\n【Level 0】找到閃爍的牆，走進它。\n\n【Level 1】收集 3 個保險絲、找到鑰匙卡，開啟出口。\n\n理智歸零會讓你永遠留在這裡。'});
+  addNote({id:'help',title:'生 存 指 南',body:'【移動】點方向按鈕（北/南/東/西）進入相鄰房間；標籤顯示該方向通往的房間類型。\n\n【手電筒】黑暗區域需要照明，開著會持續消耗電池，電池用盡即熄滅。\n\n【火把】拾取後可短暫照明，不耗電池，回合用完會燃盡。\n\n【杏仁水】飲用回復理智 +30、生命 +8；壓力大時善用，但別喝光最後幾瓶。\n\n【休息】生命 +10、理智 +4，消耗 3 分鐘；黑暗中休息會不安（理智 -6），也可能被聲音驚醒而受傷。\n\n【合成與裝備】背包內可把材料合成道具；防具／工具／護身符三欄裝備提供不同減免效果。\n\n【任務／圖鑑／紙條】選單可查看進行中任務；首次遭遇的實體與抵達的層級會記入圖鑑；紙條散落在各房間，可隨時翻閱。\n\n【危險】黑暗中先開燈；遇到實體保持冷靜，別在無光中直視。生命歸零或理智歸零都會結束本局。\n\n【Level 0】找到閃爍的牆，走進它。\n\n【Level 1】收集 3 個保險絲、找到鑰匙卡，開啟電氣門出口。'});
   openNotes();
 }
 function hallucinate(){
@@ -5569,7 +5598,7 @@ function hallucinate(){
 }
 
 /* ===== 環境音 ===== */
-let audioCtx=null,buzzNodes=null,heartNode=null;
+let audioCtx=null,buzzNodes=null,heartNode=null,humInterval=null;
 function initAudio(){
   if(audioCtx)return;
   try{
@@ -5585,7 +5614,7 @@ function initAudio(){
     osc.connect(gain);gain.connect(audioCtx.destination);
     osc2.connect(gain2);gain2.connect(audioCtx.destination);
     osc.start();osc2.start();
-    setInterval(()=>{if(audioCtx)osc2.frequency.setValueAtTime(118+Math.random()*4,audioCtx.currentTime);},3000);
+    humInterval=setInterval(()=>{if(audioCtx)osc2.frequency.setValueAtTime(118+Math.random()*4,audioCtx.currentTime);},3000);
     buzzNodes={gain,osc,osc2};
   }catch(e){}
 }
@@ -5627,6 +5656,10 @@ function stopHeart(){
     heartNode=null;
   }
 }
+/* v3.5.5 清環境音殘留：停止 hum 隨機音高間距，避免死亡／結局／放棄／重開後對隱藏頁面觸發 */
+function clearAmbientTimers(){
+  if(humInterval){clearInterval(humInterval);humInterval=null;}
+}
 document.addEventListener('click',initAudio,{once:true});
 document.addEventListener('touchstart',initAudio,{once:true});
 
@@ -5662,6 +5695,7 @@ function fillSaveDefaults(obj){
     if(typeof L.hasKeycard!=='boolean')L.hasKeycard=false;
     if(!Number.isFinite(L.generators))L.generators=0;
     if(!Number.isFinite(L.vending))L.vending=0;
+    if(!Number.isFinite(L.blackoutTimer))L.blackoutTimer=0;
     if(typeof L.items!=='object'||!L.items)L.items={};
   }
   if(obj.level===9&&!obj.l9)obj.l9={};
@@ -5743,6 +5777,14 @@ function fillSaveDefaults(obj){
   if(typeof obj.runSeed!=='number')obj.runSeed=1;
   if(typeof obj.steps!=='number')obj.steps=0;
   if(typeof obj.time!=='number')obj.time=0;
+  /* v3.5.5 補預設：朝向、杏仁飲用次數、GM 無限開關、最後受擊紀錄 */
+  if(!['N','S','E','W'].includes(obj.facing))obj.facing='N';
+  if(!Number.isFinite(obj.almondDrunk)||obj.almondDrunk<0)obj.almondDrunk=0;
+  obj.almondDrunk=Math.floor(obj.almondDrunk);
+  if(typeof obj.godHp!=='boolean')obj.godHp=false;
+  if(typeof obj.godSanity!=='boolean')obj.godSanity=false;
+  if(typeof obj.godBattery!=='boolean')obj.godBattery=false;
+  if(!obj.lastHit||typeof obj.lastHit!=='object')obj.lastHit=null;
   return obj;
 }
 function loadGame(){
@@ -5787,6 +5829,15 @@ function startGame(fromSave){
     newGame();
     if(fromSave)try{toast('存檔無法讀取，已開始新局');}catch(e){}
   }
+  try{skipType();}catch(e){}
+  if(typeState.timer){clearInterval(typeState.timer);typeState.timer=null;}
+  try{clearAmbientTimers();}catch(e){}
+  if(toastTimer){clearTimeout(toastTimer);toastTimer=null;}
+  if(levelCardTimer){clearTimeout(levelCardTimer);levelCardTimer=null;}
+  const toastEl=$('toast');if(toastEl)toastEl.classList.remove('show');
+  currentRoom=null;
+  hallucinationCooldown=0;
+  if(G)G.hideOnce=false;
   $('titleScreen').classList.add('hidden');
   $('deathScreen').classList.add('hidden');
   $('winScreen').classList.add('hidden');
@@ -5804,6 +5855,9 @@ function lastHitLabel(){
 }
 function checkDeath(){
   if(!G)return;
+  if(!Number.isFinite(G.hp))G.hp=100;
+  if(!Number.isFinite(G.sanity))G.sanity=100;
+  if(!Number.isFinite(G.battery))G.battery=100;
   if(G&&G.invincible){G.hp=Math.max(G.hp,1);G.sanity=Math.max(G.sanity,1);return;}
   if(G.godHp)G.hp=100;
   if(G.godSanity)G.sanity=100;
@@ -5829,7 +5883,7 @@ function doDeath(text,title,cause){
   G.over=true;
   recordEnding('death');
   clearSave(); /* 死亡後清除存檔，避免「繼續探索」載入已死亡狀態 */
-  try{stopHeart();}catch(e){}
+  try{stopHeart();clearAmbientTimers();}catch(e){}
   try{setBuzzLevel(0.04);}catch(e){}
   currentRoom=null;
   try{closeAllModals();}catch(e){}
